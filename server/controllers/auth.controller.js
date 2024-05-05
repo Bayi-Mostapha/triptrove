@@ -19,13 +19,13 @@ export const signup = async (request, response, next) => {
 
 export const signin = async (request, response, next) => {
     const { email, password } = request.body;
-    try {
+    try{
       const user = await User.findOne({ email });
-  
+     
       if (!user) {
         return response.status(401).json({ message: "Incorrect credentials" });
       }
-    
+      
       const isPasswordCorrect = await bcryptjs.compare(password, user.password);
   
       if (!isPasswordCorrect) {
@@ -35,7 +35,8 @@ export const signin = async (request, response, next) => {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
       response.status(200).json({ message: "User is logged in", user,token });
     } catch (error) {
-      next(error);
+        console.error("Error:", error.message);
+        return response.status(500).json({ message: "Internal server error" });
     }
   };
  

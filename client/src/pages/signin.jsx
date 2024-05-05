@@ -27,18 +27,17 @@ export default function SignUp() {
       console.log(email)
       console.log(password)
       const response = await axiosClient.post('http://localhost:5555/auth/signin', { email, password});
-      if (response.status >= 200 && response.status < 300) {
+      console.log("response")
+      if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
-        // userContext.getUser();
-        // userContext.setIsLoggedIn(true);
         navigate("/home");
         return true;
-    } else {
-      return false; 
-    }
+      } else {
+        console.error("Unexpected response:", response);
+        return false;
+      }
     } catch (error) {
-      console.error('Error sending data:', error);
-      return false; 
+        return false; 
     }
   };
   const handleSubmit = async () => {
@@ -65,7 +64,7 @@ export default function SignUp() {
        password: "",
      });
     } else {
-     console.error({message: 'something went wrong when creating a user '});
+     setError("Incorrect credentials")
      setFormData({ ...formData, password: "" })
     }
   }
