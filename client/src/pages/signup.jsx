@@ -60,7 +60,7 @@ export default function SignUp() {
        password: "",
      });
     } else {
-     console.error({message: 'something went wrong when creating a user '});
+     setError("Email already exist");
     }
   }
   useEffect(()=>{
@@ -91,8 +91,8 @@ export default function SignUp() {
       });   
 
       localStorage.setItem('token',res.data.token);
-      // userContext.getUser();
-      // userContext.setIsLoggedIn(true);
+      userContext.getUser();
+      userContext.setIsLoggedIn(true);
       navigate("/home");
     } catch (error) {
       console.log('could not login with google', error);
