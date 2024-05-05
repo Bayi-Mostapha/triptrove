@@ -93,7 +93,7 @@ export default function SignUp() {
       localStorage.setItem('token',res.data.token);
       // userContext.getUser();
       // userContext.setIsLoggedIn(true);
-      // navigate(USER_FILES_LINK);
+      navigate("/home");
     } catch (error) {
       console.log('could not login with google', error);
     }

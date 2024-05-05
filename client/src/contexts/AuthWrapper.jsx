@@ -18,20 +18,20 @@ export function AuthWrapper({ children }) {
     
 
     const getUser = async () => {
-        // setIsFetchingUser(true);
-        // try {
-        //     const response = await axiosClient.get('http://localhost:5555/get/user');
-        //     const userData = response.data.user; 
-        //     setUser(userData);
-        //     setIsLoggedIn(true);
-        // } catch (err) {
-        //     setIsLoggedIn(false);
-        //     setUser({});
-        //     localStorage.removeItem('token');
-        //     console.error("Error from AuthWrapper:", err);
-        // }  finally {
-        //     setIsFetchingUser(false);
-        // }
+        setIsFetchingUser(true);
+        try {
+            const response = await axiosClient.get('http://localhost:5555/get/user');
+            const userData = response.data.user; 
+            setUser(userData);
+            setIsLoggedIn(true);
+        } catch (err) {
+            setIsLoggedIn(false);
+            setUser({});
+            localStorage.removeItem('token');
+            console.error("Error from AuthWrapper:", err);
+        }  finally {
+            setIsFetchingUser(false);
+        }
     };
 
     const logout = async () => {
