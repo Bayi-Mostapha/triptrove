@@ -3,6 +3,8 @@ import { FcGoogle } from "react-icons/fc"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { axiosClient } from "../api/axios"
 import { Link } from 'react-router-dom';
+import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
+import { app } from '../firebase';
 
 export default function SignUp() {
   const [lang, setLang] = useState("french");
@@ -68,6 +70,34 @@ export default function SignUp() {
       setDisabledFlag(true);
     }
   },[formData]);
+  const handleGoogleClick = async (e) => {
+    try {
+     e.preventDefault();
+      const provider = new GoogleAuthProvider();
+      const auth = getAuth(app);
+
+      const result = await signInWithPopup(auth, provider);
+      console.log(result.user);
+      
+      const splitNames = result.user.displayName.split(" "); 
+      const firstName = splitNames[0];
+      const lastName = splitNames.slice(1).join(" "); 
+
+
+      const res = await axiosClient.post('http://localhost:5555/auth/google',{
+        firstName: firstName,
+        lastName: lastName,
+        email: result.user.email,
+      });   
+
+      localStorage.setItem('token',res.data.token);
+      // userContext.getUser();
+      // userContext.setIsLoggedIn(true);
+      // navigate(USER_FILES_LINK);
+    } catch (error) {
+      console.log('could not login with google', error);
+    }
+  };
   return (
     <div className="max-w-6xl  mx-auto">
       <div className='flex items-center justify-center  p-4'>
@@ -163,7 +193,7 @@ export default function SignUp() {
                 </button>
            </div>
            <div className=''>
-              <div className='border-2 border-gray-200 rounded-xl flex items-center justify-center py-3 w-full cursor-pointer '>
+              <div  onClick={handleGoogleClick} className='border-2 border-gray-200 rounded-xl flex items-center justify-center py-3 w-full cursor-pointer '>
                 <FcGoogle /> 
                 <p className='ml-2 text-lg'>Sign Up with Google</p>
               </div>
