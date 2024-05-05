@@ -1,35 +1,25 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config(); 
 import express, { response } from "express";
-import mongoose from "mongoose";
+import mongoose from "mongoose";   
 import cors from "cors";
-
+import  authRoutes  from "./routes/auth.route.js"
 const app = express(); 
 app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
-     allowedHeaders: ['content-type', 'Authorization'], // Add 'Authorization' to the list of allowed headers
+     allowedHeaders: ['content-type', 'Authorization'], 
     credentials: true, 
- })); 
+ }));  
 
 mongoose.connect(process.env.MONGODB_URL).then(() => {    
     console.log('connected to database successfully');
     app.listen(process.env.PORT, () => {
         console.log(`server is running on the port ${process.env.PORT}`);
       }); 
-}).catch((error) => {
+}).catch((error) => { 
     console.log(`something went wrong while connecting to databse : ${error}`);
 });    
   
-
-
-app.get("/", async (req, res) => {
-  try {
-    
-    res.status(200).json({message: "good"});
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+app.use("/auth", authRoutes);
