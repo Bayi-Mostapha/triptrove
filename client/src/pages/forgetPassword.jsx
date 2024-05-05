@@ -9,10 +9,13 @@ export default function ForgetPassword() {
   const [lang, setLang] = useState("french");
   const [formData, setFormData] = useState({
     email: "",
+    code: ""
   });
   const [error, setError] = useState("");
   const [disabledFlag, setDisabledFlag] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [codeSend, setCodeSend] = useState(false);
+  const [newPass, setNewPass] = useState(false);
   const navigate = useNavigate()
   const changeLang = () => {
     if(lang === "french"){
@@ -21,15 +24,41 @@ export default function ForgetPassword() {
       setLang("french");
     }
   }
+  const sendCode = async (formData) => {
+    try {
+      const { email, code } = formData; 
+      const response = await axiosClient.post('http://localhost:5555/auth/reset-password-code', { email, code });
+      if (response.status === 200) {
+      
+        return true;
+      } else {
+        console.error("Unexpected response:", response);
+        return false;
+      }
+    } catch (error) {
+        return false; 
+    }
+  };
   const sendData = async (formData) => {
     try {
       const { email } = formData; 
-      const response = await axiosClient.post('http://localhost:5555/auth/forgetpassword', { email });
+      const response = await axiosClient.post('http://localhost:5555/auth/reset-password', { email });
       if (response.status === 200) {
-        // localStorage.setItem('token', response.data.token);
-        // userContext.getUser();
-        // userContext.setIsLoggedIn(true);
-        // navigate("/home");
+      
+        return true;
+      } else {
+        console.error("Unexpected response:", response);
+        return false;
+      }
+    } catch (error) {
+        return false; 
+    }
+  };
+  const sendNewPass = async (formData) => {
+    try {
+      const { email, password } = formData; 
+      const response = await axiosClient.post('http://localhost:5555/auth/reset-newpassword', { email, password });
+      if (response.status === 200) {
         return true;
       } else {
         console.error("Unexpected response:", response);
@@ -50,12 +79,53 @@ export default function ForgetPassword() {
     const success = await sendData(formData);
     setLoading(false);
     if (success){
-     console.log('user created  successfully:');
-     setFormData({
-       email: "",
-     });
-    } else {
-     setError("Incorrect credentials")
+      setCodeSend(true)
+    }else{
+      setError("invalid email address")
+    }
+  }
+  const handleReset = async () => {
+    setLoading(true);
+    setError("");
+    if( formData.email === "" ){
+      setError("all feilds are required")
+      setLoading(false);
+      return;
+    }
+    const success = await sendCode(formData);
+    setLoading(false);
+    setFormData({
+      email: "",
+      code: "",
+      password: ""
+    });
+    if (success){
+      setNewPass(true);
+    }else{
+      setError("code or email is incorrect")
+    }
+  }
+  const handleNewPass = async () => {
+    setLoading(true);
+    setError("");
+    if( formData.email === "" ){
+      setError("all feilds are required")
+      setLoading(false);
+      return;
+    }
+    const success = await sendNewPass(formData);
+    setLoading(false);
+    setFormData({
+      email: "",
+      code: "",
+      password: ""
+    });
+    if (success){
+      setNewPass(false);
+      setCodeSend(false);
+      navigate("/signin");
+    }else{
+      setError("something went wrong ")
     }
   }
   useEffect(()=>{
@@ -65,6 +135,8 @@ export default function ForgetPassword() {
       setDisabledFlag(true);
     }
   },[formData]);
+  
+  
   return (
     <div className="max-w-6xl  mx-auto">
     <div className='flex items-center justify-center  p-4'>
@@ -106,10 +178,37 @@ export default function ForgetPassword() {
                 value={formData?.email}
             />
          </div>
+         { codeSend && !newPass && 
+         
+         <div className=' mb-3'>
+            <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>code</label>
+            <input 
+                type="Number" 
+                id="code" 
+                placeholder='x: 120222' 
+                className='py-2 pl-5  outline-none border-2 border-gray-200 rounded-xl w-full'
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                value={formData?.code}
+            />
+         </div>}
+         {
+          newPass && 
+          <div className=' mb-3'>
+            <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>new password</label>
+            <input 
+                type="password" 
+                id="password" 
+                placeholder='x: 120222' 
+                className='py-2 pl-5  outline-none border-2 border-gray-200 rounded-xl w-full'
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                value={formData?.password}
+            />
+         </div>
+         }
          <div className=' mb-4'>
             <button 
             className={`py-3   outline-none text-white text-xl font-medium rounded-xl w-full bg-green-700 ${disabledFlag ? 'cursor-not-allowed opacity-50' : ""}`}
-            onClick={handleSubmit}
+            onClick={codeSend  ? newPass ? handleNewPass : handleReset : handleSubmit}
             disabled={disabledFlag} 
             >
               Sign In

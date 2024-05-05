@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import User from "../models/user.model.js";
+import ResetPass from "../models/resetpass.model.js"
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-  
+import nodemailer from "nodemailer";
 
 export const signup = async (request, response, next) => {
     const { firstName, lastName, email, password } = request.body;
@@ -73,3 +74,66 @@ export const signin = async (request, response, next) => {
       next(error);
     }
   };
+  export const generateCode = async (req, res, next) => {
+      try {
+        const { email } = req.body;
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email" });
+        }
+        await ResetPass.deleteMany({ email });
+        const code = Math.floor(100000 + Math.random() * 900000);
+        const Newpass = ResetPass({ email, code });
+        await Newpass.save();
+
+      console.log(code)
+        // let transporter = nodemailer.createTransport({
+        //   service: "gmail", 
+        //   host: "smtp.gmail.com", 
+        //   auth: {
+        //     user: "redaredael2004@gmail.com", 
+        //     pass: "", 
+        //   },
+        // });
+        
+        // await transporter.sendMail({
+        //   from: "redaredael2004@gmail.com", // you email
+        //   to: email, // to email
+        //   subject: "reset password",
+        //   text:  `Your password reset code is: ${code}`,
+        //   html: "hey good",
+        // });
+        res.status(200).json({ message: "Password reset code sent successfully" });
+    } catch (error) {
+        next(error);
+    }       
+  };
+
+  export const verifyResetCode = async (req, res, next) => {
+    try {
+      const { email, code } = req.body;
+      const user = await ResetPass.findOne({ email: email });
+      if (user && user.code === code) {
+        res.status(200).json({ message: "Password reset code is correct "});
+      } else {
+        res.status(404).json({ message: "Password reset code is incorrect "});
+      }
+    } catch (error) {
+      console.error('Error verifying reset code:', error);
+      return false;
+    }
+  };
+  
+  export const resetPassword = async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
+      await User.updateOne({ email: email }, { password: password});
+      await ResetPass.deleteMany({ email });
+      res.status(200).json({ message: "Password reset code is correct "});
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      return false; 
+    }
+  };
+  

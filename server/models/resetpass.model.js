@@ -2,15 +2,13 @@ import mongoose from "mongoose";
 
 const resetPassSchema = mongoose.Schema(
     {
-        email: {
+        email: { 
             type: String ,
             required: true,
-            unique: true,
         },
         code: {
             type: String ,
             required: true,
-            unique: true,
         },
     },
     {
