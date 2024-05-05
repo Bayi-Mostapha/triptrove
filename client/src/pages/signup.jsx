@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FcGoogle } from "react-icons/fc"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { axiosClient } from "../api/axios"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../firebase';
 
@@ -17,7 +17,7 @@ export default function SignUp() {
   const [error, setError] = useState("");
   const [disabledFlag, setDisabledFlag] = useState(true);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate()
   const changeLang = () => {
     if(lang === "french"){
       setLang("english");
@@ -59,6 +59,7 @@ export default function SignUp() {
        email: "",
        password: "",
      });
+     navigate("/signin")
     } else {
      setError("Email already exist");
     }
