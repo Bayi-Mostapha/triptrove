@@ -17,27 +17,27 @@ export const signup = async (request, response, next) => {
     }     
 }; 
 
-// export const signin = async (request, response, next) => {
-//     const { email, password } = request.body;
-//     try {
-//       const user = await User.findOne({ email });
+export const signin = async (request, response, next) => {
+    const { email, password } = request.body;
+    try {
+      const user = await User.findOne({ email });
   
-//       if (!user) {
-//         return response.status(401).json({ message: "Incorrect credentials" });
-//       }
+      if (!user) {
+        return response.status(401).json({ message: "Incorrect credentials" });
+      }
     
-//       const isPasswordCorrect = await bcryptjs.compare(password, user.password);
+      const isPasswordCorrect = await bcryptjs.compare(password, user.password);
   
-//       if (!isPasswordCorrect) {
-//         return response.status(401).json({ message: "Incorrect credentials" });
-//       }
+      if (!isPasswordCorrect) {
+        return response.status(401).json({ message: "Incorrect credentials" });
+      }
       
-//       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-//       response.status(200).json({ message: "User is logged in", user,token });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      response.status(200).json({ message: "User is logged in", user,token });
+    } catch (error) {
+      next(error);
+    }
+  };
  
 //   export const googleAuth = async (req, res, next) => {
 //     try {

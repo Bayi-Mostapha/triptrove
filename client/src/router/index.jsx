@@ -7,6 +7,7 @@ import AuthLayout from '../layouts/AuthLayout';
 
 // pages
 import SignUp from '../pages/signup';
+import SignIn from '../pages/signin';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
             {
                 path: REGISTER_LINK,
                 element: <SignUp />
+            },
+            {
+                path: LOGIN_LINK,
+                element: <SignIn />
             }
         ]
     },
