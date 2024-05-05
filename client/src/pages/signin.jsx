@@ -32,6 +32,8 @@ export default function SignUp() {
       console.log("response")
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
+        userContext.getUser();
+        userContext.setIsLoggedIn(true);
         navigate("/home");
         return true;
       } else {
@@ -98,8 +100,8 @@ export default function SignUp() {
       });   
 
       localStorage.setItem('token',res.data.token);
-      // userContext.getUser();
-      // userContext.setIsLoggedIn(true);
+      userContext.getUser();
+      userContext.setIsLoggedIn(true);
       navigate("/home");
     } catch (error) {
       console.log('could not login with google', error);

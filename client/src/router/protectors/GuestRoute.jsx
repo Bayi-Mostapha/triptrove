@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { authContext } from "../../contexts/AuthWrapper";
 import { useNavigate } from "react-router-dom";
 
-// import SynCareerLoadingPage from "../../pages/loading";
+import LoadingPage from "../../pages/loading";
 
 
 export default function GuestRoute({ children }) {
@@ -16,10 +16,10 @@ export default function GuestRoute({ children }) {
     useEffect(() => {
         if (!isLoggedIn && localStorage.getItem('token') != null) {
             getUser()
-        } else if (isLoggedIn) {
+        } else if(isLoggedIn) {
             navigate('/home');
         }
     }, [isFetchingUser]);
 
-    return (!isFetchingUser) ? children : <h1>loading</h1>;
+    return (!isFetchingUser) ? children : <LoadingPage />;
 }

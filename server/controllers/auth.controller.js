@@ -9,7 +9,7 @@ export const signup = async (request, response, next) => {
     const { firstName, lastName, email, password } = request.body;
     const user = await User.findOne({ email });
      
-      if (user) {
+      if (user){
         return response.status(401).json({ message: "email already exist" });
       }
       

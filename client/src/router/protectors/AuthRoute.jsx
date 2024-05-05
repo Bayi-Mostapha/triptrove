@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { authContext } from "../../contexts/AuthWrapper";
 import { useNavigate } from "react-router-dom";
-// import SynCareerLoadingPage from "../../pages/loading";
+import LoadingPage from "../../pages/loading";
 
 export default function AuthRoute({ children }) {
     const {
@@ -19,6 +19,5 @@ export default function AuthRoute({ children }) {
         } 
     }, [isFetchingUser,isLoggedIn]);
   
-    return ( isLoggedIn && !isFetchingUser ) ? children : <h1>loading</h1>;
+    return ( isLoggedIn && !isFetchingUser ) ? children : <LoadingPage />;
 }
-{/* <SynCareerLoadingPage /> */}
