@@ -8,6 +8,7 @@ import AuthLayout from '../layouts/AuthLayout';
 // pages
 import SignUp from '../pages/signup';
 import SignIn from '../pages/signin';
+import ForgetPassword from '../pages/forgetPassword';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -16,6 +17,7 @@ import AuthRoute from './protectors/AuthRoute';
 // auth 
 export const LOGIN_LINK = '/signin';
 export const REGISTER_LINK = '/signup';
+export const RESETPASSWORD_LINK = '/forget-password';
 
 
 // Guest 
@@ -48,6 +50,10 @@ export const router = createBrowserRouter([
             {
                 path: LOGIN_LINK,
                 element: <SignIn />
+            },
+            {
+                path: RESETPASSWORD_LINK,
+                element: <ForgetPassword />
             }
         ]
     },
