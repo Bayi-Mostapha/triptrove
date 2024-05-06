@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { TiArrowSortedDown } from "react-icons/ti";
 import { axiosClient } from "../api/axios"
 import { useNavigate } from 'react-router-dom';
-
+import { LOGIN_LINK } from "../router/index"
 
 
 export default function ForgetPassword() {
   const [lang, setLang] = useState("french");
   const [formData, setFormData] = useState({
     email: "",
-    code: ""
+    code: "",
+    password: "",
+    passwordConfirm: "",
   });
   const [error, setError] = useState("");
   const [disabledFlag, setDisabledFlag] = useState(true);
@@ -24,21 +26,7 @@ export default function ForgetPassword() {
       setLang("french");
     }
   }
-  const sendCode = async (formData) => {
-    try {
-      const { email, code } = formData; 
-      const response = await axiosClient.post('http://localhost:5555/auth/reset-password-code', { email, code });
-      if (response.status === 200) {
-      
-        return true;
-      } else {
-        console.error("Unexpected response:", response);
-        return false;
-      }
-    } catch (error) {
-        return false; 
-    }
-  };
+
   const sendData = async (formData) => {
     try {
       const { email } = formData; 
@@ -54,6 +42,23 @@ export default function ForgetPassword() {
         return false; 
     }
   };
+
+  const sendCode = async (formData) => {
+    try {
+      const { email, code } = formData; 
+      const response = await axiosClient.post('http://localhost:5555/auth/reset-password-code', { email, code });
+      if (response.status === 200) {
+      
+        return true;
+      } else {
+        console.error("Unexpected response:", response);
+        return false;
+      }
+    } catch (error) {
+        return false; 
+    }
+  };
+  
   const sendNewPass = async (formData) => {
     try {
       const { email, password } = formData; 
@@ -68,6 +73,7 @@ export default function ForgetPassword() {
         return false; 
     }
   };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
@@ -84,10 +90,11 @@ export default function ForgetPassword() {
       setError("invalid email address")
     }
   }
+
   const handleReset = async () => {
     setLoading(true);
     setError("");
-    if( formData.email === "" ){
+    if( formData.email === "" || formData.code === "" ){
       setError("all feilds are required")
       setLoading(false);
       return;
@@ -95,9 +102,10 @@ export default function ForgetPassword() {
     const success = await sendCode(formData);
     setLoading(false);
     setFormData({
-      email: "",
+      ...formData,
       code: "",
-      password: ""
+      password: "",
+      passwordConfirm: "",
     });
     if (success){
       setNewPass(true);
@@ -108,8 +116,13 @@ export default function ForgetPassword() {
   const handleNewPass = async () => {
     setLoading(true);
     setError("");
-    if( formData.email === "" ){
+    if( formData.email === "" ||  formData.password === "" || formData.passwordConfirm === ""){
       setError("all feilds are required")
+      setLoading(false);
+      return;
+    }
+    if(  formData.password !==  formData.passwordConfirm ){
+      setError("password confirmation is not correct")
       setLoading(false);
       return;
     }
@@ -118,12 +131,13 @@ export default function ForgetPassword() {
     setFormData({
       email: "",
       code: "",
-      password: ""
+      password: "",
+      passwordConfirm: "",
     });
     if (success){
       setNewPass(false);
       setCodeSend(false);
-      navigate("/signin");
+      navigate(LOGIN_LINK);
     }else{
       setError("something went wrong ")
     }
@@ -146,7 +160,7 @@ export default function ForgetPassword() {
          <img src="/assets/image1.jpg" alt="" className='h-full rounded-xl '/>
          <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-center w-full text-white">
             <h3 className='text-4xl  font-semibold px-12'>Welcome to Hostify</h3>
-            <p className='text-sm font-medium '>Take your next travel to onather level</p>
+            <p className='text-sm font-medium '>Take your next travel to onother level</p>
          </div>
        </div>
      </div>
@@ -181,11 +195,11 @@ export default function ForgetPassword() {
          { codeSend && !newPass && 
          
          <div className=' mb-3'>
-            <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>code</label>
+            <label htmlFor="code" className='block text-[#6d6c6c] text-md mb-1'>code</label>
             <input 
                 type="Number" 
                 id="code" 
-                placeholder='x: 120222' 
+                placeholder='ex: 120222' 
                 className='py-2 pl-5  outline-none border-2 border-gray-200 rounded-xl w-full'
                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                 value={formData?.code}
@@ -194,14 +208,28 @@ export default function ForgetPassword() {
          {
           newPass && 
           <div className=' mb-3'>
-            <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>new password</label>
+            <label htmlFor="password" className='block text-[#6d6c6c] text-md mb-1'>new password</label>
             <input 
                 type="password" 
                 id="password" 
-                placeholder='x: 120222' 
+                placeholder='password' 
                 className='py-2 pl-5  outline-none border-2 border-gray-200 rounded-xl w-full'
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 value={formData?.password}
+            />
+         </div>
+         }
+         {
+          newPass && 
+          <div className=' mb-3'>
+            <label htmlFor="password2" className='block text-[#6d6c6c] text-md mb-1'>confirm password</label>
+            <input 
+                type="password" 
+                id="password2" 
+                placeholder='confirm password' 
+                className='py-2 pl-5  outline-none border-2 border-gray-200 rounded-xl w-full'
+                onChange={(e) => setFormData({ ...formData, passwordConfirm: e.target.value })}
+                value={formData?.passwordConfirm}
             />
          </div>
          }

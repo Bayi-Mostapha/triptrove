@@ -193,7 +193,6 @@ export default function SignUp() {
               }
                 </button>
            </div>
-           <Link to="/forget-password">forget password</Link>
            <div className=''>
               <div  onClick={handleGoogleClick} className='border-2 border-gray-200 rounded-xl flex items-center justify-center py-3 w-full cursor-pointer '>
                 <FcGoogle /> 

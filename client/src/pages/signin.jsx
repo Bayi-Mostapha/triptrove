@@ -5,6 +5,7 @@ import { axiosClient } from "../api/axios"
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../firebase';
+import { RESETPASSWORD_LINK } from "../router/index"
 
 export default function SignUp() {
   const [lang, setLang] = useState("french");
@@ -162,6 +163,9 @@ export default function SignUp() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   value={formData?.password}
               />
+           </div>
+           <div className='mb-3'>
+              <Link to={RESETPASSWORD_LINK} className='cursor-pointer'>forget password</Link>  
            </div>
            <div className=' mb-4'>
               <button 
