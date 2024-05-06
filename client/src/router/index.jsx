@@ -6,9 +6,9 @@ import {
 import AuthLayout from '../layouts/AuthLayout';
 
 // pages
-import SignUp from '../pages/signup';
-import SignIn from '../pages/signin';
-import ForgetPassword from '../pages/forgetPassword';
+import SignUp from '../pages/auth/signup';
+import SignIn from '../pages/auth/signin';
+import ForgetPassword from '../pages/auth/forgetPassword';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { TiArrowSortedDown } from "react-icons/ti";
-import { axiosClient } from "../api/axios"
+import { axiosClient } from "../../api/axios"
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_LINK } from "../router/index"
+import { LOGIN_LINK } from "../../router/index"
 
 
 export default function ForgetPassword() {

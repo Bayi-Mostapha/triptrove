@@ -20,7 +20,7 @@ export function AuthWrapper({ children }) {
     const getUser = async () => {
         setIsFetchingUser(true);
         try {
-            const response = await axiosClient.get('http://localhost:5555/get/user');
+            const response = await axiosClient.get('http://localhost:5555/user');
             const userData = response.data.user; 
             setUser(userData);
             setIsLoggedIn(true);

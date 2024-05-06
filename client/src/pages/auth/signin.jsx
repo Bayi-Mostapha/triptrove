@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { FcGoogle } from "react-icons/fc"
 import { TiArrowSortedDown } from "react-icons/ti";
-import { axiosClient } from "../api/axios"
+import { axiosClient } from "../../api/axios"
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
-import { app } from '../firebase';
+import { app } from '../../firebase';
+import { RESETPASSWORD_LINK } from "../../router/index";
 
 export default function SignUp() {
   const [lang, setLang] = useState("french");
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
     email: "",
     password: "",
   });
@@ -27,25 +26,35 @@ export default function SignUp() {
   }
   const sendData = async (formData) => {
     try {
-      const { firstName, lastName, email, password } = formData; 
-      const response = await axiosClient.post('http://localhost:5555/auth/signup', {firstName, lastName, email, password});
-      console.log('Data sent successfully:', response.data);
-      return true; 
+      const { email, password } = formData; 
+      console.log(email)
+      console.log(password)
+      const response = await axiosClient.post('http://localhost:5555/auth/signin', { email, password});
+      console.log("response")
+      if (response.status === 200) {
+        localStorage.setItem('token', response.data.token);
+        userContext.getUser();
+        userContext.setIsLoggedIn(true);
+        navigate("/home");
+        return true;
+      } else {
+        console.error("Unexpected response:", response);
+        return false;
+      }
     } catch (error) {
-      console.error('Error sending data:', error);
-      return false; 
+        return false; 
     }
   };
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
-    if(formData.firstName === "" || formData.lastName === "" || formData.email === "" || formData.password === "" ){
+    if( formData.email === "" || formData.password === "" ){
       setError("all feilds are required")
       setLoading(false);
       return;
     }
-    if(formData.password.length < 8){
-      setError("password must contain 8 characters or more");
+    if(formData.password.trim() === "" ){
+      setError("password is required");
       setLoading(false);
       return;
     }
@@ -59,13 +68,13 @@ export default function SignUp() {
        email: "",
        password: "",
      });
-     navigate("/signin")
     } else {
-     setError("Email already exist");
+     setError("Incorrect credentials")
+     setFormData({ ...formData, password: "" })
     }
   }
   useEffect(()=>{
-    if(formData.firstName && formData.lastName && formData.email && formData.password){
+    if(formData.email && formData.password.trim()){
       setDisabledFlag(false);
     }else{
       setDisabledFlag(true);
@@ -102,7 +111,6 @@ export default function SignUp() {
   return (
     <div className="max-w-6xl  mx-auto">
       <div className='flex items-center justify-center  p-4'>
-
        <div className='basis-1/2 w-3/4 lg:h-screen justify-end hidden lg:flex'>
          <div className='relative h-full'>
            <img src="/assets/image1.jpg" alt="" className='h-full rounded-xl '/>
@@ -123,40 +131,16 @@ export default function SignUp() {
               <TiArrowSortedDown  className='text-gray-700'/>
             </div>
           </div>
-           <h2 className='text-5xl font-medium mb-4'>Sign up</h2>
-           <Link to="/signin" className='flex items-center mb-6'>
-             <p className='text-sm text-gray-500'>Already have an account?</p>
-             <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign In</p>
+           <h2 className='text-5xl font-medium mb-4'>Sign in</h2>
+           <Link to="/signup" className='flex items-center mb-6'>
+             <p  className='text-sm text-gray-500'>don't have an account?</p>
+             <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign up</p>
            </Link>
             { 
               error
                && 
               <div className='mb-2 text-red-600 bg-red-200 py-2 px-4 rounded-md'>{error}</div>
             }
-           <div className='flex flex-col lg:flex-row items-center lg:mb-3'>
-              <div className='w-full mb-3 lg:mb-0 lg:mr-6'>
-                <label htmlFor="fname" className='block text-[#6d6c6c] text-md mb-1'>First Name</label>
-                <input 
-                    type="text" 
-                    id="fname" 
-                    placeholder='First Name' 
-                    className='py-2 pl-5 w-full outline-none border-2 border-gray-200 rounded-xl'
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    value={formData?.firstName}
-                />
-              </div>
-              <div className='w-full mb-3 lg:mb-0'>
-                <label htmlFor="lname" className='block text-[#6d6c6c] text-md mb-1'>last Name</label>
-                <input 
-                    type="text" 
-                    id="lname" 
-                    placeholder='last Name' 
-                    className='py-2 pl-5 w-full  outline-none border-2 border-gray-200 rounded-xl'
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    value={formData?.lastName}
-                />
-              </div>
-           </div>
            <div className=' mb-3'>
               <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>email</label>
               <input 
@@ -179,13 +163,16 @@ export default function SignUp() {
                   value={formData?.password}
               />
            </div>
+           <div className='mb-3'>
+              <Link to={RESETPASSWORD_LINK} className='cursor-pointer'>forget password</Link>  
+           </div>
            <div className=' mb-4'>
               <button 
               className={`py-3   outline-none text-white text-xl font-medium rounded-xl w-full bg-green-700 ${disabledFlag ? 'cursor-not-allowed opacity-50' : ""}`}
               onClick={handleSubmit}
               disabled={disabledFlag} 
               >
-                Sign Up
+                Sign In
                 { loading
                 && 
                 <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
@@ -196,7 +183,7 @@ export default function SignUp() {
            <div className=''>
               <div  onClick={handleGoogleClick} className='border-2 border-gray-200 rounded-xl flex items-center justify-center py-3 w-full cursor-pointer '>
                 <FcGoogle /> 
-                <p className='ml-2 text-lg'>Sign Up with Google</p>
+                <p className='ml-2 text-lg'>Sign In with Google</p>
               </div>
            </div>
          </div>
