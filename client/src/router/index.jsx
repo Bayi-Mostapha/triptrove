@@ -9,6 +9,7 @@ import AuthLayout from '../layouts/AuthLayout';
 import SignUp from '../pages/auth/signup';
 import SignIn from '../pages/auth/signin';
 import ForgetPassword from '../pages/auth/forgetPassword';
+import SubscriptionForm from "../pages/paymentSubscriptionentSubscription"
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -18,6 +19,7 @@ import AuthRoute from './protectors/AuthRoute';
 export const LOGIN_LINK = '/signin';
 export const REGISTER_LINK = '/signup';
 export const RESETPASSWORD_LINK = '/forget-password';
+export const PAYMENT_LINK = '/pay';
 
 
 // Guest 
@@ -54,6 +56,10 @@ export const router = createBrowserRouter([
             {
                 path: RESETPASSWORD_LINK,
                 element: <ForgetPassword />
+            },
+            {
+                path: PAYMENT_LINK,
+                element: <SubscriptionForm />
             }
         ]
     },

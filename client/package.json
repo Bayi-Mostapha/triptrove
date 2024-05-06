@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
+    "@stripe/react-stripe-js": "^2.7.0",
+    "@stripe/stripe-js": "^3.3.0",
+    "antd": "^5.17.0",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

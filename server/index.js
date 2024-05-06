@@ -5,8 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import  authRoutes  from "./routes/auth.route.js"
 import  userRoutes  from "./routes/user.route.js"
-import { verifyToken } from "./controllers/verifytoken.js";
-import  User  from "./models/user.model.js"
+import paymentRoutes from "./routes/payment.route.js"
 
 const app = express(); 
 app.use(express.json()); 
@@ -28,3 +27,4 @@ mongoose.connect(process.env.MONGODB_URL).then(() => {
   
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use('/payment', paymentRoutes);
