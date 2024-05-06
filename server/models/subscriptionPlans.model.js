@@ -2,16 +2,10 @@ import mongoose from "mongoose";
 
 const subscriptionPlanSchema = mongoose.Schema(
     {
-        name: {
-            type: String,
-            required: true,
-            unique: true
-          },
-          price: {
-            type: Number,
-            required: true
-          },
-        }
+      title: { type: String, enum: ['free', 'premium', 'business'], unique: true },
+      price: { type: Number, required: true },
+      priceId: { type: String, required: true },
+    }
 );
 
  const SubscriptionPlan = mongoose.model('SubscriptionPlan', subscriptionPlanSchema);

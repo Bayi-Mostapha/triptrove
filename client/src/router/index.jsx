@@ -9,7 +9,7 @@ import AuthLayout from '../layouts/AuthLayout';
 import SignUp from '../pages/auth/signup';
 import SignIn from '../pages/auth/signin';
 import ForgetPassword from '../pages/auth/forgetPassword';
-import SubscriptionForm from "../pages/paymentSubscriptionentSubscription"
+import SubscriptionForm from "../pages/auth/paymentSubscription"
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -60,9 +60,9 @@ export const router = createBrowserRouter([
             {
                 path: PAYMENT_LINK,
                 element: <SubscriptionForm />
-            }
+            },
         ]
-    },
+    }, 
     {
         path: '*',
         element: <div>Not found</div>

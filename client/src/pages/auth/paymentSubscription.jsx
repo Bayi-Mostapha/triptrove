@@ -6,6 +6,7 @@ import CheckoutForm from "./subscription";
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API_KEY); 
 
 function Test() {
+
   return (
     <div>
       <Elements stripe={stripePromise}>

@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useContext } from 'react'
 import { FcGoogle } from "react-icons/fc"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { axiosClient } from "../../api/axios"
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
+import { authContext } from '../../contexts/AuthWrapper';
+
 
 export default function SignUp() {
+  const userContext = useContext(authContext);
   const [lang, setLang] = useState("french");
   const [formData, setFormData] = useState({
     firstName: "",

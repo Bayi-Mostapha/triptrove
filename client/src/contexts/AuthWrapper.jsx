@@ -21,8 +21,7 @@ export function AuthWrapper({ children }) {
         setIsFetchingUser(true);
         try {
             const response = await axiosClient.get('http://localhost:5555/user');
-            const userData = response.data.user; 
-            setUser(userData);
+            setUser(response.data.user);
             setIsLoggedIn(true);
         } catch (err) {
             setIsLoggedIn(false);

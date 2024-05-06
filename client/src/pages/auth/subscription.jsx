@@ -1,7 +1,10 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Button, Input } from "antd";
 import React, { useState } from "react";
-import { axiosClient } from "../api/axios"
+import { axiosClient } from "../../api/axios"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function CheckoutForm() {
   
   // collect data from the user
@@ -31,18 +34,20 @@ function CheckoutForm() {
         email,
         priceId
       });
-
+      if(response.status !== 200){
+        toast.success("Subscription created successfully!");
+      }
       const confirmPayment = await stripe?.confirmCardPayment(
         response.data.clientSecret
       );
   
       if (confirmPayment?.error) {
-        //here use toast 
+        toast.error("something went wrong");
       } else {
-        //here use toast 
+        toast.success("Subscription created successfully!");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("something went wrong");
     }
   };
   
@@ -67,12 +72,13 @@ function CheckoutForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-
-      <CardElement />
-      <button onClick={createSubscription} disabled={!stripe}>
+       <ToastContainer />
+      <CardElement className="border-2 border-gray-200 py-2 px-5" />
+      <button onClick={createSubscription} disabled={!stripe} className="bg-black text-white py-2 px-5">
         Subscribe
       </button>
     </div>
+   
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { FcGoogle } from "react-icons/fc"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { axiosClient } from "../../api/axios"
@@ -6,14 +6,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
 import { RESETPASSWORD_LINK } from "../../router/index";
+import { authContext } from '../../contexts/AuthWrapper';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignUp() {
+  const userContext = useContext(authContext);
   const [lang, setLang] = useState("french");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
   const [disabledFlag, setDisabledFlag] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
@@ -27,10 +30,7 @@ export default function SignUp() {
   const sendData = async (formData) => {
     try {
       const { email, password } = formData; 
-      console.log(email)
-      console.log(password)
       const response = await axiosClient.post('http://localhost:5555/auth/signin', { email, password});
-      console.log("response")
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
         userContext.getUser();
@@ -38,7 +38,6 @@ export default function SignUp() {
         navigate("/home");
         return true;
       } else {
-        console.error("Unexpected response:", response);
         return false;
       }
     } catch (error) {
@@ -47,21 +46,19 @@ export default function SignUp() {
   };
   const handleSubmit = async () => {
     setLoading(true);
-    setError("");
     if( formData.email === "" || formData.password === "" ){
-      setError("all feilds are required")
+      toast.error("all feilds are required")
       setLoading(false);
       return;
     }
     if(formData.password.trim() === "" ){
-      setError("password is required");
+      toast.error("password is required");
       setLoading(false);
       return;
     }
     const success = await sendData(formData);
     setLoading(false);
     if (success){
-     console.log('user created  successfully:');
      setFormData({
        firstName: "",
        lastName: "",
@@ -69,7 +66,7 @@ export default function SignUp() {
        password: "",
      });
     } else {
-     setError("Incorrect credentials")
+      toast.error("Incorrect credentials");
      setFormData({ ...formData, password: "" })
     }
   }
@@ -105,12 +102,13 @@ export default function SignUp() {
       userContext.setIsLoggedIn(true);
       navigate("/home");
     } catch (error) {
-      console.log('could not login with google', error);
+       toast.error('something went wrong');
     }
   };
   return (
     <div className="max-w-6xl  mx-auto">
       <div className='flex items-center justify-center  p-4'>
+      <ToastContainer />
        <div className='basis-1/2 w-3/4 lg:h-screen justify-end hidden lg:flex'>
          <div className='relative h-full'>
            <img src="/assets/image1.jpg" alt="" className='h-full rounded-xl '/>
@@ -136,11 +134,6 @@ export default function SignUp() {
              <p  className='text-sm text-gray-500'>don't have an account?</p>
              <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign up</p>
            </Link>
-            { 
-              error
-               && 
-              <div className='mb-2 text-red-600 bg-red-200 py-2 px-4 rounded-md'>{error}</div>
-            }
            <div className=' mb-3'>
               <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>email</label>
               <input 

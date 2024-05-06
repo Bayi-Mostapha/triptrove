@@ -19,6 +19,7 @@ const userSchema = mongoose.Schema(
             type: String ,
             required: true,
         },
+        subscriptionType: { type: String, enum: ['free', 'premium', 'business'], default: 'free' },
     },
     {
         timestamps: true,

@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import User from "../models/user.model.js";
 import ResetPass from "../models/resetpass.model.js"
-import bcryptjs from "bcryptjs";
+import bcryptjs from "bcryptjs"; 
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
@@ -13,8 +13,8 @@ export const signup = async (request, response, next) => {
       if (user){
         return response.status(401).json({ message: "email already exist" });
       }
-      
-    0
+      const hashedPassword = bcryptjs.hashSync(password, 10);
+    
     const NewUser = User({firstName,lastName,email,password: hashedPassword});
     try {
         await NewUser.save();
