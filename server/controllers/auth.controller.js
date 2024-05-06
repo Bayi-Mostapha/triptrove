@@ -14,7 +14,7 @@ export const signup = async (request, response, next) => {
         return response.status(401).json({ message: "email already exist" });
       }
       
-    const hashedPassword = bcryptjs.hashSync(password, 10);
+    0
     const NewUser = User({firstName,lastName,email,password: hashedPassword});
     try {
         await NewUser.save();
@@ -128,7 +128,8 @@ export const signin = async (request, response, next) => {
   export const resetPassword = async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      await User.updateOne({ email: email }, { password: password});
+      const hashedPassword = bcryptjs.hashSync(password, 10);
+      await User.updateOne({ email: email }, { password: hashedPassword});
       await ResetPass.deleteMany({ email });
       res.status(200).json({ message: "Password reset code is correct "});
     } catch (error) {
