@@ -6,6 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
 import { authContext } from '../../contexts/AuthWrapper';
+import { LOGIN_LINK } from '../../router/index'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function SignUp() {
@@ -17,7 +20,6 @@ export default function SignUp() {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
   const [disabledFlag, setDisabledFlag] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
@@ -41,14 +43,13 @@ export default function SignUp() {
   };
   const handleSubmit = async () => {
     setLoading(true);
-    setError("");
     if(formData.firstName === "" || formData.lastName === "" || formData.email === "" || formData.password === "" ){
-      setError("all feilds are required")
+      toast.error("all feilds are required")
       setLoading(false);
       return;
     }
     if(formData.password.length < 8){
-      setError("password must contain 8 characters or more");
+      toast.error("password must contain 8 characters or more");
       setLoading(false);
       return;
     }
@@ -62,9 +63,9 @@ export default function SignUp() {
        email: "",
        password: "",
      });
-     navigate("/signin")
+     navigate(LOGIN_LINK)
     } else {
-     setError("Email already exist");
+      toast.error("Email already exist");
     }
   }
   useEffect(()=>{
@@ -99,7 +100,7 @@ export default function SignUp() {
       userContext.setIsLoggedIn(true);
       navigate("/home");
     } catch (error) {
-      console.log('could not login with google', error);
+      toast.error('something went wrong');
     }
   };
   return (
@@ -127,7 +128,7 @@ export default function SignUp() {
             </div>
           </div>
            <h2 className='text-5xl font-medium mb-4'>Sign up</h2>
-           <Link to="/signin" className='flex items-center mb-6'>
+           <Link to={LOGIN_LINK} className='flex items-center mb-6'>
              <p className='text-sm text-gray-500'>Already have an account?</p>
              <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign In</p>
            </Link>
