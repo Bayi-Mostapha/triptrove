@@ -106,7 +106,7 @@ export default function SignUp() {
   return (
     <div className="max-w-6xl  mx-auto">
       <div className='flex items-center justify-center  p-4'>
-
+      <ToastContainer />
        <div className='basis-1/2 w-3/4 lg:h-screen justify-end hidden lg:flex'>
          <div className='relative h-full'>
            <img src="/assets/image1.jpg" alt="" className='h-full rounded-xl '/>
