@@ -5,7 +5,7 @@ import { axiosClient } from "../../api/axios"
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
-import { RESETPASSWORD_LINK } from "../../router/index";
+import { RESETPASSWORD_LINK, PAYMENT_LINK, REGISTER_LINK } from "../../router/index";
 import { authContext } from '../../contexts/AuthWrapper';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -35,7 +35,11 @@ export default function SignUp() {
         localStorage.setItem('token', response.data.token);
         userContext.getUser();
         userContext.setIsLoggedIn(true);
-        navigate("/home");
+        if(userContext.role === "host"){
+          navigate("/pay");
+        }else{
+          navigate("/home");
+        }
         return true;
       } else {
         return false;
@@ -100,6 +104,7 @@ export default function SignUp() {
       localStorage.setItem('token',res.data.token);
       userContext.getUser();
       userContext.setIsLoggedIn(true);
+     
       navigate("/home");
     } catch (error) {
        toast.error('something went wrong');
@@ -130,7 +135,7 @@ export default function SignUp() {
             </div>
           </div>
            <h2 className='text-5xl font-medium mb-4'>Sign in</h2>
-           <Link to="/signup" className='flex items-center mb-6'>
+           <Link to={"/signup/"+userContext.role} className='flex items-center mb-6'>
              <p  className='text-sm text-gray-500'>don't have an account?</p>
              <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign up</p>
            </Link>

@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema(
             required: true,
         },
         subscriptionType: { type: String, enum: ['free', 'premium', 'business'], default: 'free' },
+        role: { type: String, enum: ['host', 'guest'], default: 'guest' },
     },
     {
         timestamps: true,

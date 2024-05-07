@@ -4,6 +4,7 @@ import {
 
 // layouts 
 import AuthLayout from '../layouts/AuthLayout';
+import GuestLayout from '../layouts/GuestLayout';
 
 // pages
 import SignUp from '../pages/auth/signup';
@@ -17,7 +18,7 @@ import AuthRoute from './protectors/AuthRoute';
 
 // auth 
 export const LOGIN_LINK = '/signin';
-export const REGISTER_LINK = '/signup';
+export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
 
@@ -57,12 +58,18 @@ export const router = createBrowserRouter([
                 path: RESETPASSWORD_LINK,
                 element: <ForgetPassword />
             },
+            
+        ]
+    }, 
+    {
+        element: <AuthRoute><GuestLayout /></AuthRoute>,
+        children: [
             {
                 path: PAYMENT_LINK,
                 element: <SubscriptionForm />
             },
         ]
-    }, 
+    },
     {
         path: '*',
         element: <div>Not found</div>

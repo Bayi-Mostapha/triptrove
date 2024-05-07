@@ -9,12 +9,15 @@ export const authContext = createContext({
     user: {},
     setUser: () => { },
     getUser: () => { },
+    role: "",
+    setRole: () => {},
 })
 
 export function AuthWrapper({ children }) {
     const [isFetchingUser, setIsFetchingUser] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [user, setUser] = useState({})
+    const [role, setRole] = useState("guest")
     
 
     const getUser = async () => {
@@ -49,7 +52,8 @@ export function AuthWrapper({ children }) {
             user, setUser,
             getUser,
             isLoggedIn , setIsLoggedIn,
-            logout ,
+            logout , 
+            role , setRole
         }}>
             {children}
         </authContext.Provider>

@@ -2,16 +2,17 @@ import React, { useEffect, useState,useContext } from 'react'
 import { FcGoogle } from "react-icons/fc"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { axiosClient } from "../../api/axios"
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
 import { authContext } from '../../contexts/AuthWrapper';
-import { LOGIN_LINK } from '../../router/index'
+import { LOGIN_LINK, PAYMENT_LINK } from '../../router/index'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function SignUp() {
+  let { role } = useParams();
   const userContext = useContext(authContext);
   const [lang, setLang] = useState("french");
   const [formData, setFormData] = useState({
@@ -33,8 +34,11 @@ export default function SignUp() {
   const sendData = async (formData) => {
     try {
       const { firstName, lastName, email, password } = formData; 
-      const response = await axiosClient.post('http://localhost:5555/auth/signup', {firstName, lastName, email, password});
-      console.log('Data sent successfully:', response.data);
+      if(role !== "host" && role !== "guest"){
+        role = "guest";
+      }
+      const response = await axiosClient.post('http://localhost:5555/auth/signup', {firstName, lastName, email, password, role});
+      
       return true; 
     } catch (error) {
       console.error('Error sending data:', error);
@@ -56,14 +60,18 @@ export default function SignUp() {
     const success = await sendData(formData);
     setLoading(false);
     if (success){
-     console.log('user created  successfully:');
      setFormData({
        firstName: "",
        lastName: "",
        email: "",
        password: "",
      });
-     navigate(LOGIN_LINK)
+
+      if(role == "host"){
+        userContext.setRole("host");
+      }
+      navigate(LOGIN_LINK);
+     
     } else {
       toast.error("Email already exist");
     }
@@ -82,17 +90,19 @@ export default function SignUp() {
       const auth = getAuth(app);
 
       const result = await signInWithPopup(auth, provider);
-      console.log(result.user);
       
       const splitNames = result.user.displayName.split(" "); 
       const firstName = splitNames[0];
       const lastName = splitNames.slice(1).join(" "); 
 
-
+      if(role !== "host" && role !== "guest"){
+        role = "guest";
+      }
       const res = await axiosClient.post('http://localhost:5555/auth/google',{
         firstName: firstName,
         lastName: lastName,
         email: result.user.email,
+        role,
       });   
 
       localStorage.setItem('token',res.data.token);
@@ -132,11 +142,6 @@ export default function SignUp() {
              <p className='text-sm text-gray-500'>Already have an account?</p>
              <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign In</p>
            </Link>
-            { 
-              error
-               && 
-              <div className='mb-2 text-red-600 bg-red-200 py-2 px-4 rounded-md'>{error}</div>
-            }
            <div className='flex flex-col lg:flex-row items-center lg:mb-3'>
               <div className='w-full mb-3 lg:mb-0 lg:mr-6'>
                 <label htmlFor="fname" className='block text-[#6d6c6c] text-md mb-1'>First Name</label>

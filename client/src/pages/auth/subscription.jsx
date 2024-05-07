@@ -1,12 +1,15 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Button, Input } from "antd";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { axiosClient } from "../../api/axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import { authContext } from '../../contexts/AuthWrapper';
 
 function CheckoutForm() {
-  
+  const userContext = useContext(authContext);
+  const navigate = useNavigate()
   // collect data from the user
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,36 +25,45 @@ function CheckoutForm() {
     try {
       // create a payment method
       setLoading(true);
-      const cardElement = elements.getElement(CardElement);
-      const paymentMethod = await stripe?.createPaymentMethod({
-        type: "card",
-        card: cardElement,
-        billing_details: {
-          name,
-          email,
-        },
-      });
+      console.log(userContext.user);
+      // const cardElement = elements.getElement(CardElement);
+      // const paymentMethod = await stripe?.createPaymentMethod({
+      //   type: "card",
+      //   card: cardElement,
+      //   billing_details: {
+      //     name,
+      //     email,
+      //   },
+      // });
       
-      const response = await axiosClient.post("http://localhost:5555/payment/create-subscription", {
-        paymentMethod: paymentMethod?.paymentMethod?.id,
-        name,
-        email,
-        priceId
-      });
+      // const response = await axiosClient.post("http://localhost:5555/payment/create-subscription", {
+      //   paymentMethod: paymentMethod?.paymentMethod?.id,
+      //   name,
+      //   email,
+      //   priceId
+      // });
       setLoading(false)
-      if(response.status !== 200){
-        toast.error("something went wrong");
-        return ;
-      }
-      const confirmPayment = await stripe?.confirmCardPayment(
-        response.data.clientSecret
-      );
+      // if(response.status !== 200){
+      //   toast.error("something went wrong");
+      //   return ;
+      // }
+      // const confirmPayment = await stripe?.confirmCardPayment(
+      //   response.data.clientSecret
+      // );
       
-      if (confirmPayment?.error) {
-        toast.error("something went wrong");
-      } else {
-        toast.success("Subscription created successfully!");
-      }
+      // if (confirmPayment?.error) {
+      //   toast.error("something went wrong");
+      // } else {
+      //   toast.success("Subscription created successfully!");
+      // }
+    } catch (error) {
+      setLoading(false)
+      toast.error("something went wrong");
+    }
+  };
+  const createFreeSubscription = async () => {
+    try {
+        navigate("/home");
     } catch (error) {
       setLoading(false)
       toast.error("something went wrong");
@@ -81,29 +93,31 @@ function CheckoutForm() {
            </div>
          </div>
       </div>
-    <div className="grid gap-4 m-auto pl-16 basis-1/2 ">
+    <div className="grid gap-4 m-auto lg:pl-16 lg:basis-1/2 md:w-2/3 w-full ">
+    <h3 className="text-3xl font-semibold text-center ">Choose a Plan</h3>
       <div>
-        <label htmlFor="free" className="py-5 pl-10 flex items-center justify-start border-2 border-green-800 rounded-xl mb-3">
-          <input type="radio" id="free" name="subscription" value="free" onChange={handleSubscriptionChange} className="mr-8" />
-          <span>Free</span>
+        <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
+            <input id="free" checked={!isPaid} type="radio" value="free" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300 " />
+            <label htmlFor="free" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">free</label>
         </label>
-        <label htmlFor="premium" className="py-5 pl-10 flex items-center justify-start border-2 border-green-800 rounded-xl mb-3">
-          <input type="radio" id="premium" name="subscription" value="premium" onChange={handleSubscriptionChange} className="mr-8" />
-          <span>Premium</span>
+        <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
+            <input id="premium" type="radio" value="premium" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300" />
+            <label htmlFor="premium" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">premium</label>
         </label>
-        <label htmlFor="business" className="py-5 pl-10 flex items-center justify-start border-2 border-green-800 rounded-xl mb-3">
-          <input type="radio" id="business" name="subscription" value="business" onChange={handleSubscriptionChange} className="mr-8" />
-          <span>Business</span>
+        <label className=" flex items-center ps-4 border-2 border-green-600 rounded ">
+            <input id="business" type="radio" value="business" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300" />
+            <label htmlFor="business" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">business</label>
         </label>
+        
       </div>
       
        <ToastContainer />
        {
         isPaid && 
         <>
-          <CardElement className="border-2 border-gray-200 py-2 px-5" />
-          <button onClick={createSubscription} disabled={!stripe} className="bg-black text-white font-medium text-lg py-2 px-5">
-            Pay {price}$
+          <CardElement className="border-2 border-gray-200 py-5 px-5" />
+          <button onClick={createSubscription} disabled={!stripe} className="bg-black text-white text-lg py-3 px-5">
+            checkout {price}$
             { loading
                     && 
                     <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
@@ -112,7 +126,17 @@ function CheckoutForm() {
           </button>
         </>
        }
-     
+       {
+        !isPaid && 
+          <button onClick={createFreeSubscription}  className="bg-black text-white font-medium text-xl py-2 px-5">
+          submit 
+          { loading
+                  && 
+                  <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                  role="status"></div>
+                }
+         </button>
+       }
     </div>
       </div></div>
    

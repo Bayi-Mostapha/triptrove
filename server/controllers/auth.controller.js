@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
 export const signup = async (request, response, next) => {
-    const { firstName, lastName, email, password } = request.body;
+    const { firstName, lastName, email, password, role } = request.body;
     const user = await User.findOne({ email });
      
       if (user){
@@ -15,7 +15,7 @@ export const signup = async (request, response, next) => {
       }
       const hashedPassword = bcryptjs.hashSync(password, 10);
     
-    const NewUser = User({firstName,lastName,email,password: hashedPassword});
+    const NewUser = User({firstName,lastName,email,password: hashedPassword,role});
     try {
         await NewUser.save();
         response.status(201).json({message: "user created succezsfully"});
@@ -64,14 +64,15 @@ export const signin = async (request, response, next) => {
           lastName: req.body.lastName,
           email: req.body.email,
           password: hashedPassword,
-        });
+          role: req.body.role,
+        }); 
         await newUser.save();
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
         const { password: hashedPassword2, ...rest } = newUser._doc;
         res.status(200).json({ message: "User is logged in", rest,token });
       }
     } catch (error) {
-      next(error);
+      next(error);    
     }
   };
   export const generateCode = async (req, res, next) => {
