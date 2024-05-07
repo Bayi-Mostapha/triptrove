@@ -78,4 +78,13 @@ export const createSubscription = async (req, res, next) => {
         }
     } 
 }; 
+export const getPlans = async (req, res, next) => {
+  try {
+    const subscriptionPlans = await SubscriptionPlan.find();
+    res.status(200).json({subscriptionPlans});
+  } catch (error) {
+    console.error('Error getting plans:', error);
+    return res.status(500).json({ error: error.message || 'Failed to get plans' });
+  }
+};
 

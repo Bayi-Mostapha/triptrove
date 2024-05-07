@@ -1,6 +1,6 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Button, Input } from "antd";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { axiosClient } from "../../api/axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,7 +17,7 @@ function CheckoutForm() {
   const [loading, setLoading] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [price, setPrice] = useState(0);
-
+  const [plans, setPlans] = useState([])
   const stripe = useStripe();
   const elements = useElements();
 
@@ -25,37 +25,37 @@ function CheckoutForm() {
     try {
       // create a payment method
       setLoading(true);
-      console.log(userContext.user);
-      // const cardElement = elements.getElement(CardElement);
-      // const paymentMethod = await stripe?.createPaymentMethod({
-      //   type: "card",
-      //   card: cardElement,
-      //   billing_details: {
-      //     name,
-      //     email,
-      //   },
-      // });
+      const cardElement = elements.getElement(CardElement);
+      const paymentMethod = await stripe?.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+        billing_details: {
+          name,
+          email,
+        },
+      });
       
-      // const response = await axiosClient.post("http://localhost:5555/payment/create-subscription", {
-      //   paymentMethod: paymentMethod?.paymentMethod?.id,
-      //   name,
-      //   email,
-      //   priceId
-      // });
+      const response = await axiosClient.post("http://localhost:5555/payment/create-subscription", {
+        paymentMethod: paymentMethod?.paymentMethod?.id,
+        name: userContext.user.firstName + " " + userContext.user.lastName ,
+        email: userContext.user.email,
+        priceId,
+      });
       setLoading(false)
-      // if(response.status !== 200){
-      //   toast.error("something went wrong");
-      //   return ;
-      // }
-      // const confirmPayment = await stripe?.confirmCardPayment(
-      //   response.data.clientSecret
-      // );
+      if(response.status !== 200){
+        toast.error("something went wrong");
+        return ;
+      }
+      const confirmPayment = await stripe?.confirmCardPayment(
+        response.data.clientSecret
+      );
       
-      // if (confirmPayment?.error) {
-      //   toast.error("something went wrong");
-      // } else {
-      //   toast.success("Subscription created successfully!");
-      // }
+      if (confirmPayment?.error) {
+        toast.error("something went wrong");
+      } else {
+        toast.success("Subscription created successfully!");
+         navigate("/home");
+      }
     } catch (error) {
       setLoading(false)
       toast.error("something went wrong");
@@ -65,14 +65,27 @@ function CheckoutForm() {
     try {
         navigate("/home");
     } catch (error) {
-      setLoading(false)
       toast.error("something went wrong");
     }
   };
+
+  const getPlans = async () => {
+    try {
+      const response = await axiosClient.post("http://localhost:5555/payment/get-plans");
+      setPlans(response.data.subscriptionPlans)
+    } catch (error) {
+      setLoading(false)
+      toast.error("something went wrong while getting plans");
+    }
+  };
+  useEffect(()=>{
+    getPlans();
+  },[]);
   const handleSubscriptionChange = (event) => {
-    if (event.target.value === "premium" || event.target.value === "business") {
+    setPriceId(event.target.value);
+    if (event.target.id === "premium" || event.target.id === "business") {
       setIsPaid(true);
-      if(event.target.value === "premium"){
+      if(event.target.id === "premium"){
         setPrice(20)
       }else{
         setPrice(50)
@@ -96,19 +109,18 @@ function CheckoutForm() {
     <div className="grid gap-4 m-auto lg:pl-16 lg:basis-1/2 md:w-2/3 w-full ">
     <h3 className="text-3xl font-semibold text-center ">Choose a Plan</h3>
       <div>
-        <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
-            <input id="free" checked={!isPaid} type="radio" value="free" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300 " />
-            <label htmlFor="free" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">free</label>
-        </label>
-        <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
-            <input id="premium" type="radio" value="premium" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300" />
-            <label htmlFor="premium" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">premium</label>
-        </label>
-        <label className=" flex items-center ps-4 border-2 border-green-600 rounded ">
-            <input id="business" type="radio" value="business" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300" />
-            <label htmlFor="business" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">business</label>
-        </label>
-        
+          <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
+              <input id="free" checked={!isPaid} type="radio" value="null" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300 " />
+              <label htmlFor="free" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">free  0/mo</label> 
+          </label>
+        {
+          plans.map((plan, index)=>(
+            <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded " key={index}>
+                <input id={plan.title} type="radio" value={plan.priceId} onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300 " />
+                <label htmlFor={plan.title} className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{plan.title}  {plan.price}/mo</label> 
+            </label>
+          ))
+        }
       </div>
       
        <ToastContainer />
