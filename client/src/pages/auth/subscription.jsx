@@ -54,7 +54,7 @@ function CheckoutForm() {
         toast.error("something went wrong");
       } else {
         toast.success("Subscription created successfully!");
-         navigate("/home");
+          navigate("/home");
       }
     } catch (error) {
       setLoading(false)
@@ -97,7 +97,7 @@ function CheckoutForm() {
   return (
     <div className="max-w-6xl  mx-auto">
     <div className='flex items-center justify-center  p-4'>
-    <div className='basis-1/2 w-3/4 lg:h-screen justify-end hidden lg:flex'>
+    <div className='basis-1/2 w-3/4 lg:h-screen justify-end hidden lg:flex lg:pr-16 '>
          <div className='relative h-full'>
            <img src="/assets/image1.jpg" alt="" className='h-full rounded-xl '/>
            <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-center w-full text-white">
@@ -106,7 +106,7 @@ function CheckoutForm() {
            </div>
          </div>
       </div>
-    <div className="grid gap-4 m-auto lg:pl-16 lg:basis-1/2 md:w-2/3 w-full ">
+    <div className="grid gap-4 m-auto lg:basis-1/2 md:w-2/3 w-full ">
     <h3 className="text-3xl font-semibold text-center ">Choose a Plan</h3>
       <div>
           <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
@@ -129,7 +129,7 @@ function CheckoutForm() {
         <>
           <CardElement className="border-2 border-gray-200 py-5 px-5" />
           <button onClick={createSubscription} disabled={!stripe} className="bg-black text-white text-lg py-3 px-5">
-            checkout {price}$
+            Pay {price}$
             { loading
                     && 
                     <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"

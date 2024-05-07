@@ -30,7 +30,7 @@ export function AuthWrapper({ children }) {
             setIsLoggedIn(false);
             setUser({});
             localStorage.removeItem('token');
-            console.error("Error from AuthWrapper:", err);
+            // console.error("Error from AuthWrapper:", err);
         }  finally {
             setIsFetchingUser(false);
         }
@@ -51,9 +51,9 @@ export function AuthWrapper({ children }) {
             isFetchingUser, setIsFetchingUser,
             user, setUser,
             getUser,
-            isLoggedIn , setIsLoggedIn,
+            isLoggedIn, setIsLoggedIn,
             logout , 
-            role , setRole
+            role, setRole
         }}>
             {children}
         </authContext.Provider>

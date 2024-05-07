@@ -37,7 +37,7 @@ export default function SignUp() {
         userContext.setIsLoggedIn(true);
         if(userContext.role === "host"){
           navigate("/pay");
-        }else{
+        }else{ 
           navigate("/home");
         }
         return true;

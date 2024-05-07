@@ -11,6 +11,7 @@ import SignUp from '../pages/auth/signup';
 import SignIn from '../pages/auth/signin';
 import ForgetPassword from '../pages/auth/forgetPassword';
 import SubscriptionForm from "../pages/auth/paymentSubscription"
+import Home from "../pages/guest/home"
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -21,6 +22,7 @@ export const LOGIN_LINK = '/signin';
 export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
+export const HOME_LINK = '/home';
 
 
 // Guest 
@@ -62,11 +64,20 @@ export const router = createBrowserRouter([
         ]
     }, 
     {
-        element: <AuthRoute><GuestLayout /></AuthRoute>,
+        element: <AuthRoute><AuthLayout /></AuthRoute>,
         children: [
             {
                 path: PAYMENT_LINK,
                 element: <SubscriptionForm />
+            },
+        ]
+    }, 
+    {
+        element: <><GuestLayout /></>,
+        children: [
+            {
+                path: HOME_LINK,
+                element: <Home />
             },
         ]
     },
