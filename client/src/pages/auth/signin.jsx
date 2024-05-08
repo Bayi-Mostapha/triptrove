@@ -98,7 +98,8 @@ export default function SignIn() {
       const firstName = splitNames[0];
       const lastName = splitNames.slice(1).join(" "); 
 
-
+      console.log(firstName)
+      console.log(lastName)
       const res = await axiosClient.post('http://localhost:5555/auth/google',{
         firstName: firstName,
         lastName: lastName,

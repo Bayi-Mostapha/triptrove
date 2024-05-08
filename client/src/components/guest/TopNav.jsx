@@ -12,7 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
 import { TiArrowSortedDown } from "react-icons/ti";
-import { LOGIN_LINK } from "../../router/index"
+import { LOGIN_LINK, PROFILE_LINK } from "../../router/index"
 import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 import {
@@ -33,9 +33,11 @@ import {
 export default function TopNav() {
     const userContext = useContext(authContext);
     const [language, setLanguage] = useState("US");
-    // useEffect(()=> {
-    //  userContext.getUser();
-    // },[]);
+    useEffect(()=> {
+        if(window.location.pathname === "/home"){
+            userContext.getUser();
+        }
+    },[]);
     const logOut = () => {
      userContext.logout();
     };
@@ -78,7 +80,7 @@ export default function TopNav() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="w-8 h-8">
-                                    <AvatarImage src={userContext.user.image.url} alt="@shadcn"  />
+                                    <AvatarImage src={userContext.user.image?.url} alt="@shadcn"  />
                                     <AvatarFallback>CN</AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>
@@ -86,7 +88,9 @@ export default function TopNav() {
                                 <DropdownMenuLabel>{userContext.user.email}</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="p-0" >
-                                    <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer'> Profile</div>
+                                    <Link className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' to={PROFILE_LINK}>
+                                       Profile
+                                    </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className=""> 
                                     <button className='w-full h-full bg-black text-white py-2 px-3' onClick={logOut}>

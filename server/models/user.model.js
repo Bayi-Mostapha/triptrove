@@ -8,7 +8,6 @@ const userSchema = mongoose.Schema(
         },
         lastName: {
             type: String ,
-            required: true,
         },
         email: {
             type: String ,
@@ -24,11 +23,9 @@ const userSchema = mongoose.Schema(
         image:{
             publicId:{
                 type: String,
-                required: true,
             },
             url: {
                 type: String,
-                required: true,
             }
         },
     },
