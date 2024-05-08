@@ -84,15 +84,20 @@ export const router = createBrowserRouter([
         ]
     }, 
     {
-        element: <><GuestLayout /></>,
+        element: <AuthRoute><GuestLayout /></AuthRoute>,
+        children: [
+            {
+                path: PROFILE_LINK,
+                element: <Profile />
+            },
+        ]
+    },
+    {
+        element: <GuestLayout />,
         children: [
             {
                 path: HOME_LINK,
                 element: <Home />
-            },
-            {
-                path: PROFILE_LINK,
-                element: <Profile />
             },
         ]
     },

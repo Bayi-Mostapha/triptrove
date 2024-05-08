@@ -11,6 +11,8 @@ export const authContext = createContext({
     getUser: () => { },
     role: "",
     setRole: () => {},
+    currentLocation: "",
+    setCurrentLocation: () => {}
 })
 
 export function AuthWrapper({ children }) {
@@ -18,11 +20,12 @@ export function AuthWrapper({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [user, setUser] = useState({})
     const [role, setRole] = useState("guest")
+    const [currentLocation, setCurrentLocation] = useState(null)
     
 
     const getUser = async () => {
-        setIsFetchingUser(true);
         try {
+            setIsFetchingUser(true);
             const isAdmin = localStorage.getItem('admin');
             if(isAdmin){
                 const response = await axiosClient.get('http://localhost:5555/admin');
@@ -62,7 +65,8 @@ export function AuthWrapper({ children }) {
             getUser,
             isLoggedIn, setIsLoggedIn,
             logout , 
-            role, setRole
+            role, setRole,
+            currentLocation , setCurrentLocation,
         }}>
             {children}
         </authContext.Provider>

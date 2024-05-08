@@ -38,7 +38,11 @@ export default function SignIn() {
         if(userContext.role === "host"){
           navigate("/pay");
         }else{ 
-          navigate("/home");
+          if(userContext.currentLocation){
+            navigate(userContext.currentLocation);
+          }else{
+            navigate("/home");
+          } 
         }
         return true;
       } else {

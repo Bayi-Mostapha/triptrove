@@ -33,9 +33,9 @@ import {
 export default function TopNav() {
     const userContext = useContext(authContext);
     const [language, setLanguage] = useState("US");
-    useEffect(()=> {
-     userContext.getUser();
-    },[]);
+    // useEffect(()=> {
+    //  userContext.getUser();
+    // },[]);
     const logOut = () => {
      userContext.logout();
     };

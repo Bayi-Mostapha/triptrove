@@ -7,17 +7,20 @@ export default function AuthRoute({ children }) {
     const {
         getUser,
         isLoggedIn,
-        isFetchingUser
+        isFetchingUser,
+        setCurrentLocation,
     } = useContext(authContext);
     const navigate = useNavigate();
     
     useEffect(() => {
+        setCurrentLocation(window.location.pathname);
         if (!isLoggedIn && localStorage.getItem('token') != null) {
-            getUser()
+            getUser();
         } else if (!isLoggedIn && !isFetchingUser) {
             navigate('/signin');
-        } 
-    }, [isFetchingUser,isLoggedIn]);
+        }
+       
+    }, [isLoggedIn,isFetchingUser]);
   
-    return ( isLoggedIn && !isFetchingUser ) ? children : <LoadingPage />;
+    return ( !isFetchingUser && isLoggedIn ) ? children : <LoadingPage />;
 }
