@@ -23,13 +23,22 @@ export function AuthWrapper({ children }) {
     const getUser = async () => {
         setIsFetchingUser(true);
         try {
-            const response = await axiosClient.get('http://localhost:5555/user');
-            setUser(response.data.user);
-            setIsLoggedIn(true);
+            const isAdmin = localStorage.getItem('admin');
+            if(isAdmin){
+                const response = await axiosClient.get('http://localhost:5555/admin');
+                setUser(response.data.user);
+                setIsLoggedIn(true);
+            }else{
+                const response = await axiosClient.get('http://localhost:5555/user');
+                setUser(response.data.user);
+                setIsLoggedIn(true);
+            }
+            console.log("user ",user)
         } catch (err) {
             setIsLoggedIn(false);
             setUser({});
             localStorage.removeItem('token');
+            localStorage.removeItem('admin');
             // console.error("Error from AuthWrapper:", err);
         }  finally {
             setIsFetchingUser(false);
@@ -39,6 +48,7 @@ export function AuthWrapper({ children }) {
     const logout = async () => {
         try {
             localStorage.removeItem('token');
+            localStorage.removeItem('admin');
             setIsLoggedIn(false);
             setUser({});
         } catch (err) {

@@ -6,6 +6,7 @@ import cors from "cors";
 import  authRoutes  from "./routes/auth.route.js"
 import  userRoutes  from "./routes/user.route.js"
 import paymentRoutes from "./routes/payment.route.js"
+import adminRoutes from "./routes/admin.route.js"
 
 const app = express();  
 app.use(express.json()); 
@@ -26,5 +27,6 @@ mongoose.connect(process.env.MONGODB_URL).then(() => {
 });    
   
 app.use("/auth", authRoutes);
-app.use("/user", userRoutes);
+app.use("/user", userRoutes);  
 app.use('/payment', paymentRoutes);
+app.use('/admin', adminRoutes);

@@ -17,9 +17,13 @@ export default function GuestRoute({ children }) {
         if (!isLoggedIn && localStorage.getItem('token') != null) {
             getUser()
         } else if(isLoggedIn) {
-            navigate('/home');
+            if(localStorage.getItem('admin')){
+                navigate('/admin-dashboard');
+            }else{
+                navigate('/home');
+            }
         }
     }, [isFetchingUser]);
-
+    
     return (!isFetchingUser) ? children : <LoadingPage />;
 }

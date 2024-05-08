@@ -36,27 +36,31 @@ export default function TopNav() {
     useEffect(()=> {
      userContext.getUser();
     },[]);
-    
+    const logOut = () => {
+     userContext.logout();
+    };
   return (
     <>
       {
         userContext.isFetchingUser ?  <Loading /> :
         <div className="w-full border-b-2 border-gray-100 ">
         <div className='flex items-center justify-between py-3 px-3 xl:px-0 max-w-6xl  mx-auto'>
-            <div className='flex items-center basis-1/2 w-full'> 
-                <div className='mr-10 lg:mr-10   text-2xl'>Logo here</div>
+            <div className='flex items-center basis-1/2  w-full'> 
+                <div className='mr-10 lg:mr-3 text-2xl w-full lg:w-36 '>
+                 <img src="/assets/logo.svg" alt="" className='w-full'/>
+                </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Explore</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Nearbly</Link></li>
                 </ul>
             </div>
-             <div className='w-full flex items-center justify-end'>
+             <div className='w-full basis-1/2 flex items-center justify-end'>
                 {
                     userContext.isLoggedIn ?
                     <>
                         {
-                            (userContext.user || userContext.user.role == "guest") 
+                            (!userContext.user || userContext.user.role == "guest") 
                              &&
                             <div className='ml-4 lg:ml-8 cursor-pointer  text-md 0  mr-5 hidden lg:flex'>
                                 <Link to="/signup/host">Become a host</Link>
@@ -85,8 +89,8 @@ export default function TopNav() {
                                     <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer'> Profile</div>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className=""> 
-                                    <button className='w-full h-full bg-black text-white py-2 px-3'>
-                                    <Link to="/signin" className="hove:bg-red-500 text-md">log out</Link>
+                                    <button className='w-full h-full bg-black text-white py-2 px-3' onClick={logOut}>
+                                    log out
                                     </button>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -111,7 +115,7 @@ export default function TopNav() {
                     </>
                     :
                     <>
-                    <div className='ml-4 cursor-pointer  text-md font-small flex'><Link to="/signup/host">Become a host</Link></div>
+                    <div className='ml-4 cursor-pointer  text-md font-small hidden lg:flex'><Link to="/signup/host">Become a host</Link></div>
                     <div className='ml-4 cursor-pointer  flex'>
                         <DropdownMenu >
                             <DropdownMenuTrigger asChild >

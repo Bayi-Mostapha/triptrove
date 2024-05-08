@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const verifyToken = (req, res, next) => {
+export const verifyTokenAdmin = (req, res, next) => {
     const authorization = req.headers.authorization;
     if (!authorization || !authorization.startsWith('Bearer ')) {
       return res.status(403).json({ message: "Forbidden: No token provided" });
@@ -9,7 +9,7 @@ export const verifyToken = (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.userId = decoded.id; 
-      req.role = "user";
+      req.role = "admin"; 
       next();
     } catch (err) {
       console.log('Invalid token:', err);

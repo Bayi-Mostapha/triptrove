@@ -11,7 +11,8 @@ import SignUp from '../pages/auth/signup';
 import SignIn from '../pages/auth/signin';
 import ForgetPassword from '../pages/auth/forgetPassword';
 import SubscriptionForm from "../pages/auth/paymentSubscription"
-import Home from "../pages/guest/home"
+import Home from "../pages/guest/home" 
+import AdminSignIn from "../pages/admin/signin"
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -32,8 +33,8 @@ export const HOME_LINK = '/home';
 
 
 // Admin
-
-
+export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
+export const ADMIN_LOGIN_LINK = '/admin/signin';
 
 
 
@@ -60,7 +61,14 @@ export const router = createBrowserRouter([
                 path: RESETPASSWORD_LINK,
                 element: <ForgetPassword />
             },
-            
+            {
+                path: ADMIN_LOGIN_LINK,
+                element: <AdminSignIn />
+            },
+            {
+                path: RESETPASSWORD_ADMIN_LINK,
+                element: <ForgetPassword />
+            }
         ]
     }, 
     {
