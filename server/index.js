@@ -8,6 +8,7 @@ import userRoutes from "./routes/user.route.js"
 import paymentRoutes from "./routes/payment.route.js"
 import adminRoutes from "./routes/admin.route.js"
 import reviewRoutes from "./routes/review.route.js"
+import reviewReportsRoutes from "./routes/review-report.route.js"
 
 const app = express();
 app.use(express.json());
@@ -32,3 +33,4 @@ app.use("/user", userRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/admin', adminRoutes);
 app.use('/reviews', reviewRoutes);
+app.use('/review-reports', reviewReportsRoutes);
