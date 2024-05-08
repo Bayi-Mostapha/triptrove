@@ -77,8 +77,8 @@ export default function TopNav() {
                         
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                <Avatar className="w-8 h-8">
+                                    <AvatarImage src={userContext.user.image.url} alt="@shadcn"  />
                                     <AvatarFallback>CN</AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>

@@ -11,8 +11,11 @@ import SignUp from '../pages/auth/signup';
 import SignIn from '../pages/auth/signin';
 import ForgetPassword from '../pages/auth/forgetPassword';
 import SubscriptionForm from "../pages/auth/paymentSubscription"
-import Home from "../pages/guest/home" 
+
 import AdminSignIn from "../pages/admin/signin"
+
+import Home from "../pages/guest/home" 
+import Profile from "../pages/guest/profile"
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -27,7 +30,7 @@ export const HOME_LINK = '/home';
 
 
 // Guest 
-
+export const PROFILE_LINK = '/profile';
 
 // Host
 
@@ -86,6 +89,10 @@ export const router = createBrowserRouter([
             {
                 path: HOME_LINK,
                 element: <Home />
+            },
+            {
+                path: PROFILE_LINK,
+                element: <Profile />
             },
         ]
     },
