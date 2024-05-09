@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import User from "../models/user.model.js";
-import { uploadToCloudinary } from "../services/cloudinary.js"
+import { uploadToCloudinary, deleteFromCloudinary } from "../services/cloudinary.js"
 
 export const getUser = async (req, res, next) => {
     try {
@@ -20,6 +20,12 @@ export const uploadProfileImage = async (req, res, next) => {
     try {
       const userId = req.userId;
       const image = req.file;
+
+      const currentUser = await User.findById(userId);
+      if (currentUser.image.publicId) {
+        await deleteFromCloudinary(currentUser.image.publicId);
+      }
+
       let imageData = {}
       if(image){
         const results = await uploadToCloudinary(image.path, "my-profile")
