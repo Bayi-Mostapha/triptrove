@@ -273,7 +273,7 @@ export default function TopNav() {
                         <div className='ml-4 cursor-pointer  flex'>
                             <DropdownMenu >
                                 <DropdownMenuTrigger asChild >
-                                <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-1 px-4'>
+                                <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
                                     <p className='text-sm'>{language}</p> 
                                     <ChevronDown color='#222222' size={18}/>
                                 </div>
@@ -293,7 +293,7 @@ export default function TopNav() {
                     <div className='ml-4 cursor-pointer  flex'>
                         <DropdownMenu >
                             <DropdownMenuTrigger asChild >
-                            <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-1 px-4'>
+                            <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
                                 <p className='text-sm'>{language}</p> 
                                 <ChevronDown color='#222222' size={18}/>
                             </div>
@@ -308,8 +308,8 @@ export default function TopNav() {
                     </div>
                     <div className='ml-4 hidden lg:flex'>
                       <Link to={LOGIN_LINK}>
-                        <div className='py-2 px-5 bg-[#7065F0] text-white text-lg rounded flex items-center justify-center gap-2 cursor-pointer'>
-                            <p>sign in</p> <LogIn color='white' size={18}/>
+                        <div className='py-1 px-4 bg-[#7065F0] rounded flex items-center justify-center cursor-pointer'>
+                            <p className='mr-2 text-white text-lg font-small'>sign in</p> <LogIn color='white' size={18}/>
                         </div>
                       </Link>
                     </div>
