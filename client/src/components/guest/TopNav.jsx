@@ -7,7 +7,7 @@ import { LOGIN_LINK } from "../../router/index"
 import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 import Loading from "../../pages/loading"
-import { Pencil, Eye, EyeOff } from 'lucide-react';
+import { Pencil, Eye, EyeOff, Heart, Bell } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -232,16 +232,16 @@ export default function TopNav() {
                             </div>
                         }
                         <div className='text-green-800 cursor-pointer mr-5'>
-                            <IoNotificationsOutline className=''/>
+                            <Bell color='#7065F0' size={23}/>
                         </div>
                         <div className='text-green-800 cursor-pointer mr-5'>
-                            <MdOutlineFavoriteBorder className=''/>
+                            <Heart color='#7065F0' size={23} />
                         </div>
                         <div className='w-0 h-7 border-[1px] border-[#A7A3A3] mr-3'></div>
                         <div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Avatar className="w-8 h-8">
+                                <Avatar className="w-8 h-8 cursor-pointer">
                                     <AvatarImage src={userContext.user.image?.url} alt="@shadcn"  />
                                     <AvatarFallback>CN</AvatarFallback>
                                 </Avatar>
@@ -334,7 +334,7 @@ export default function TopNav() {
             </DialogHeader>
             {
               changePassword  
-                 ? 
+                ? 
               <div className='flex flex-col items-center justify-center w-full relative '>
               <div className='flex-col flex w-full px-5 mb-5'>
                 <label htmlFor="oldPass">Old Password</label>
