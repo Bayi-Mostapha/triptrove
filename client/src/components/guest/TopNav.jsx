@@ -41,18 +41,29 @@ import {
   } from "@/components/ui/dialog"
  import Loading from "../../pages/loading"
  import { Pencil } from 'lucide-react';
-
+ import { ToastContainer, toast } from 'react-toastify';
+ import 'react-toastify/dist/ReactToastify.css';
+ 
 export default function TopNav() {
     const userContext = useContext(authContext);
     const [language, setLanguage] = useState("US");
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState({
+        firstName: "",
+        email: ""
+      });
     useEffect(()=> {
         if(window.location.pathname === "/home"){
             userContext.getUser();
+           
         }
     },[]);
     useEffect(()=> {
-        console.log(userContext.user)
+        setData({
+            firstName: userContext.user.firstName,
+            email: userContext.user.email
+        });
     },[userContext.user]);
     const logOut = () => {
      userContext.logout();
@@ -82,8 +93,8 @@ const handleFileUpload = (event) => {
   }
 };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+const handleUpdateProfile = async () => {
+ 
 
   if (!file) {
     setError('Please select a file before uploading.');
@@ -109,12 +120,47 @@ const handleSubmit = async (e) => {
     setError('Error uploading image. Please try again later.');
   }
 };
+const handleSubmit = async (e) => {
+    setLoading(true)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+        toast.error('Please enter a valid email address.');
+        return;
+    }
+    if (data.firstName.trim() === '') {
+        toast.error('Please enter your first name.');
+        return;
+    }
+    if(file){
+        handleUpdateProfile();
+    }
+    if(data.email !== userContext.user.email || data.firstName !== userContext.user.firstName){
+        try {
+            const response = await axiosClient.post('/user/update', data);
+            toast.success('Updated successfully:');
+            setData({
+                email: "",
+                firstName: ""
+            });
+          } catch (error) {
+            toast.error('error updating user data. Please try again later.');
+          }
+    }
+    setLoading(false);
+};
 
+
+
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    setData({ ...data, [field]: value });
+  };
   return (
     <>
       {
         userContext.isFetchingUser ?  <Loading /> :
         <div className="w-full border-b-2 border-gray-100 ">
+            <ToastContainer />
         <div className='flex items-center justify-between py-3 px-3 xl:px-0 max-w-6xl  mx-auto'>
             <div className='flex items-center basis-2/3    '> 
                 <div className='mr-10 lg:mr-3 text-2xl basis-1/1 lg:w-36 '>
@@ -240,7 +286,7 @@ const handleSubmit = async (e) => {
             <DialogTitle>Edit Your Profile</DialogTitle>
             </DialogHeader>
             <div className='flex flex-col items-center justify-center w-full relative '>
-              <div className='w-36 h-36 relative  mb-10 '>
+            <div className='w-36 h-36 relative mb-10'>
                 {selectedImage ? (
                     <img src={selectedImage} alt="Selected" className='w-full h-full rounded-full'/>
                 ) : (
@@ -248,16 +294,31 @@ const handleSubmit = async (e) => {
                 )}
                 <label htmlFor="image" className='w-10 h-10 rounded-full bg-[#000000] absolute bottom-1 right-2 flex items-center justify-center cursor-pointer'>
                     <Pencil color='white' size={20}/>
+                    {/* Drag area for uploading */}
+                    <input type="file" className='hidden' id="image" accept=".png,.jpg,.jpeg" onChange={handleFileUpload} />
                 </label>
-                <input type="file" className='hidden' id="image" accept=".png,.jpg,.jpeg" onChange={handleFileUpload} />
-              </div>
+            </div>
               <div className='flex-col flex w-full px-5 mb-5'>
                 <label htmlFor="name">Full Name</label>
-                <input type="text"  id="name" placeholder='Full Name' defaultValue={userContext.user.firstName} className='py-2 pl-5 rounded outline-none border-2 border-gray-300'/>
+                <input 
+                   type="text"  
+                   id="name" 
+                   placeholder='Full Name' 
+                   value={data.firstName} 
+                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
+                   onChange={(e) => handleInputChange(e, 'firstName')}
+                />
               </div>
               <div className='flex-col flex w-full px-5 mb-5'>
                 <label htmlFor="email">Email</label>
-                <input type="text"  id="email" placeholder='email' defaultValue={userContext.user.email} className='py-2 pl-5 rounded outline-none border-2 border-gray-300'/>
+                <input 
+                   type="text"  
+                   id="email" 
+                   placeholder='email' 
+                   value={data.email} 
+                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
+                   onChange={(e) => handleInputChange(e, 'email')}
+                />
               </div>
               <div className='flex-col flex w-full px-5'>
                 <p>change password</p>
@@ -271,6 +332,11 @@ const handleSubmit = async (e) => {
             </DialogClose>
                 <button type="button"  className='basis-1/2 text-white bg-black rounded py-2' onClick={handleSubmit}>
                     update
+                    { loading
+                        && 
+                        <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                        role="status"></div>
+                    }
                 </button>
             </DialogFooter>
         </DialogContent>
