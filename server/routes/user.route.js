@@ -3,6 +3,7 @@ import
 {   getUser,
     uploadProfileImage,
     updateUserData,
+    updateUserPassword,
 }
 from "../controllers/user.controller.js";
 import { verifyToken  } from "../controllers/verifytoken.js";
@@ -14,5 +15,6 @@ const upload = multer({ dest: 'uploads/' });
 router.get("/",verifyToken, getUser);
 router.post("/profile",verifyToken ,upload.single('image'), uploadProfileImage);
 router.post("/update",verifyToken , updateUserData);
+router.post("/update-passwords",verifyToken , updateUserPassword);
 
 export default router;

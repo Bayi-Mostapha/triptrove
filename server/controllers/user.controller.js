@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import User from "../models/user.model.js";
 import { uploadToCloudinary, deleteFromCloudinary } from "../services/cloudinary.js"
+import bcryptjs from "bcryptjs"; 
 
 export const getUser = async (req, res, next) => {
     try {
@@ -22,7 +23,7 @@ export const uploadProfileImage = async (req, res, next) => {
       const image = req.file;
 
       const currentUser = await User.findById(userId);
-      if (currentUser.image.publicId) {
+      if (currentUser.image.publicId) {  
         await deleteFromCloudinary(currentUser.image.publicId);
       }
 
@@ -54,6 +55,36 @@ export const updateUserData = async (req, res, next) => {
     }
 
     return res.status(200).json({ message: "User data updated successfully.", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating user data:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+export const updateUserPassword = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    const { oldPass, newPass } = req.body;
+    if (!oldPass || !newPass ) {
+      return res.status(400).json({ message: "all feilds are required." });
+    }
+
+    const updatedUser = await User.findById(userId);
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isPasswordCorrect = await bcryptjs.compare(oldPass, updatedUser.password);
+    if (!isPasswordCorrect){
+      return response.status(401).json({ message: "Incorrect credentials" });
+    }
+    
+    const hashedPassword = bcryptjs.hashSync(newPass, 10);
+
+    // Update the user's password with the new hashed password
+    updatedUser.password = hashedPassword;
+    await updatedUser.save();
+
+    return res.status(200).json({ message: "User password updated successfully."});
   } catch (error) {
     console.error("Error updating user data:", error);
     return res.status(500).json({ message: "Internal server error." });

@@ -1,160 +1,208 @@
-import React,{ useState, useContext, useEffect } from 'react'
-import { axiosClient } from "../../api/axios"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    DropdownMenuItem,
-  } from "@/components/ui/dropdown-menu"
+import React,{ useState, useContext, useEffect } from 'react';
+import { axiosClient } from "../../api/axios";
 import { Link } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
 import { TiArrowSortedDown } from "react-icons/ti";
-import { LOGIN_LINK, PROFILE_LINK } from "../../router/index"
+import { LOGIN_LINK } from "../../router/index"
 import { IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
+import Loading from "../../pages/loading"
+import { Pencil, Eye, EyeOff } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-  } from "@/components/ui/avatar"
-  import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-  } from "@/components/ui/sheet"
-  import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
- import Loading from "../../pages/loading"
- import { Pencil } from 'lucide-react';
- import { ToastContainer, toast } from 'react-toastify';
- import 'react-toastify/dist/ReactToastify.css';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+
  
+
 export default function TopNav() {
-    const userContext = useContext(authContext);
-    const [language, setLanguage] = useState("US");
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [data, setData] = useState({
-        firstName: "",
-        email: ""
+  const userContext = useContext(authContext);
+  const [language, setLanguage] = useState("US");
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({
+    firstName: "",
+    email: ""
+  });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [file, setFile] = useState(null);
+  const [changePassword, setChangePassword] = useState(false);
+  const [passwords, setPasswords] = useState({
+    oldPass: "",
+    newPass: "",
+    confirmNewPass: "",
+  });
+
+  useEffect(()=> {
+    if(window.location.pathname === "/home"){
+     userContext.getUser();
+    }
+  },[]);
+
+  useEffect(()=> {
+      setData({
+          firstName: userContext.user.firstName,
+          email: userContext.user.email
       });
-    useEffect(()=> {
-        if(window.location.pathname === "/home"){
-            userContext.getUser();
-           
-        }
-    },[]);
-    useEffect(()=> {
-        setData({
-            firstName: userContext.user.firstName,
-            email: userContext.user.email
-        });
-    },[userContext.user]);
-    const logOut = () => {
-     userContext.logout();
-};
+  },[userContext.user]);
 
-
-const [selectedImage, setSelectedImage] = useState(null);
-const [file, setFile] = useState(null);
-const [error, setError] = useState('');
-
-const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-
-  if (file && allowedTypes.includes(file.type)) {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setSelectedImage(reader.result);
-    };
-    reader.readAsDataURL(file);
-    setFile(file);
-    setError('');
-  } else {
-    setSelectedImage(null);
-    setFile(null);
-    setError('Please select a valid PNG, JPEG, or JPG file.');
-  }
-};
-
-const handleUpdateProfile = async () => {
- 
-
-  if (!file) {
-    setError('Please select a file before uploading.');
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('image', file);
-
-  try {
-    const response = await axiosClient.post('/user/profile', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+  useEffect(()=> {
+    setPasswords({
+      oldPass: "",
+      newPass: "",
+      confirmNewPass: "",
     });
-    
-    console.log('Image uploaded successfully:', response.data);
-    setError('');
-    setSelectedImage(null);
-    setFile(null);
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    setError('Error uploading image. Please try again later.');
-  }
-};
-const handleSubmit = async (e) => {
-    setLoading(true)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-        toast.error('Please enter a valid email address.');
-        return;
+    setData({
+      firstName: userContext.user.firstName,
+      email: userContext.user.email
+    });
+  },[changePassword]);
+
+  const logOut = () => {
+    userContext.logout();
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+
+    if (file && allowedTypes.includes(file.type)) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setFile(file);
+    } else {
+      setSelectedImage(null);
+      setFile(null);
+      toast.error('Please select a valid PNG, JPEG, or JPG file.');
     }
-    if (data.firstName.trim() === '') {
-        toast.error('Please enter your first name.');
-        return;
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!file) {
+      toast.error('Please select a file before uploading.');
+      return;
     }
-    if(file){
-        handleUpdateProfile();
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await axiosClient.post('/user/profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      toast.success('Image uploaded successfully');
+      setSelectedImage(null);
+      setFile(null);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Error uploading image. Please try again later.');
     }
-    if(data.email !== userContext.user.email || data.firstName !== userContext.user.firstName){
-        try {
-            const response = await axiosClient.post('/user/update', data);
-            toast.success('Updated successfully:');
-            setData({
-                email: "",
-                firstName: ""
-            });
-          } catch (error) {
-            toast.error('error updating user data. Please try again later.');
-          }
+  };
+
+  const handleSubmit = async (e) => {
+      setLoading(true)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(data.email)) {
+          toast.error('Please enter a valid email address.');
+          return;
+      }
+      if (data.firstName.trim() === '') {
+          toast.error('Please enter your first name.');
+          return;
+      }
+      if(file){
+          handleUpdateProfile();
+      }
+      if(data.email !== userContext.user.email || data.firstName !== userContext.user.firstName){
+          try {
+              const response = await axiosClient.post('/user/update', data);
+              toast.success('Updated successfully:');
+              setData({
+                  email: "",
+                  firstName: ""
+              });
+              toast.success('user data updated successfully')
+            } catch (error) {
+              toast.error('error updating user data. Please try again later.');
+            }
+      }
+      setLoading(false);
+      setOpen(false);
+  };
+
+  const handleSubmitPasswords = async (e) => {
+    setLoading(true);
+    if(passwords.oldPass.trim() === "" || passwords.newPass.trim() === "" || passwords.confirmNewPass.trim() === "" ){
+      toast.error("all feilds are required")
+      setLoading(false);
+      return;
+    }
+    if(passwords.newPass.trim() !== passwords.confirmNewPass.trim()){
+      toast.error("Confirm password is wrong, please try again")
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await axiosClient.post('/user/update-passwords', passwords);
+      
+      if(response.status === 200){
+        toast.success("password updated successfully");
+        setOpen(false);
+        setChangePassword(false);
+      }else{
+        toast.error("somethig went wrong, Please try again later.");
+      }
+    } catch (error) {
+      toast.error('Error updating password. Please try again later.');
     }
     setLoading(false);
-};
-
-
+  }
 
   const handleInputChange = (e, field) => {
     const value = e.target.value;
     setData({ ...data, [field]: value });
   };
+  const handlePassword = (e, field) => {
+    const value = e.target.value;
+    setPasswords({ ...passwords, [field]: value });
+  };
+  
+
+ const [ showPass, setShowPass ] = useState(false)
   return (
     <>
       {
@@ -191,7 +239,6 @@ const handleSubmit = async (e) => {
                         </div>
                         <div className='w-0 h-7 border-[1px] border-[#A7A3A3] mr-3'></div>
                         <div>
-                        
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="w-8 h-8">
@@ -206,7 +253,6 @@ const handleSubmit = async (e) => {
                                     <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => setOpen(true)}>
                                        Profile
                                     </div>
-                                   
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className=""> 
                                     <button className='w-full h-full bg-black text-white py-2 px-3' onClick={logOut}>
@@ -255,10 +301,9 @@ const handleSubmit = async (e) => {
                     <div className='ml-4'><button className='py-2 px-5 bg-[#7065F0] text-white text-lg rounded hidden lg:flex'><Link to={LOGIN_LINK}>sign in</Link></button></div>
                     </>
                 }
-              
                <Sheet>
                 <SheetTrigger   asChild>
-                    <div className='lg:hidden w-7 cursor-pointer ml-4'>
+                    <div className='lg:hidden w-7 cursor-pointer ml-4 '>
                         <img src="/assets/menu.png" alt="" className='w-full'/>
                     </div>
                 </SheetTrigger>
@@ -271,21 +316,86 @@ const handleSubmit = async (e) => {
                             <div className='mr-5 text-[#222222] text-lg cursor-pointer  py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Explore</Link></div>
                             <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Nearbly</Link></div>
                             <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Become a host </Link></div>
+                            {
+                              userContext.isLoggedIn ? <></> : 
+                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="/signin">Sign in</Link></div>
+                            }
                         </div>
                     </SheetDescription>
                     </SheetHeader>
                 </SheetContent>
                 </Sheet>
-
              </div>
         </div>
-        <Dialog open={open} onOpenChange={()=>setOpen(false)}>
-        <DialogTrigger></DialogTrigger>
+        <Dialog open={open} onOpenChange={()=>{setOpen(false); setChangePassword(false);}}>
         <DialogContent className="bg-white ">
             <DialogHeader>
-            <DialogTitle>Edit Your Profile</DialogTitle>
+            <DialogTitle>Edit your password</DialogTitle>
             </DialogHeader>
-            <div className='flex flex-col items-center justify-center w-full relative '>
+            {
+              changePassword  
+                 ? 
+              <div className='flex flex-col items-center justify-center w-full relative '>
+              <div className='flex-col flex w-full px-5 mb-5'>
+                <label htmlFor="oldPass">Old Password</label>
+                <div className='w-full relative'>
+                  <input 
+                    type={showPass ? "text" : "password"}  
+                    id="oldPass" 
+                    placeholder='Your old password' 
+                    value={passwords.oldPass} 
+                    className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                    onChange={(e) => handlePassword(e, 'oldPass')}
+                  />
+                  {
+                    showPass ? 
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                    :
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                  }
+                </div>
+              </div>
+              <div className='flex-col flex w-full px-5 mb-5'>
+                <label htmlFor="newPass">New Password</label>
+                <div className='w-full relative'>
+                <input 
+                  type={showPass ? "text" : "password"}    
+                  id="newPass" 
+                  placeholder='Your new password' 
+                  value={passwords.newPass} 
+                  className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                  onChange={(e) => handlePassword(e, 'newPass')}
+                />
+                 {
+                    showPass ? 
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                    :
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                  }
+                </div>
+              </div>
+              <div className='flex-col flex w-full px-5 mb-1'>
+                <label htmlFor="cNewPass">Confirm New Password</label>
+                <div className='w-full relative'>
+                <input 
+                  type={showPass ? "text" : "password"}    
+                  id="cNewPass" 
+                  placeholder='Confirm your new password' 
+                  value={passwords.confirmNewPass} 
+                  className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                  onChange={(e) => handlePassword(e, 'confirmNewPass')}
+                />
+                 {
+                    showPass ? 
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                    :
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                  }
+                </div>
+              </div>
+            </div>
+              :
+              <div className='flex flex-col items-center justify-center w-full relative '>
             <div className='w-36 h-36 relative mb-10'>
                 {selectedImage ? (
                     <img src={selectedImage} alt="Selected" className='w-full h-full rounded-full'/>
@@ -309,7 +419,7 @@ const handleSubmit = async (e) => {
                    onChange={(e) => handleInputChange(e, 'firstName')}
                 />
               </div>
-              <div className='flex-col flex w-full px-5 mb-5'>
+              <div className='flex-col flex w-full px-5 mb-1'>
                 <label htmlFor="email">Email</label>
                 <input 
                    type="text"  
@@ -321,16 +431,17 @@ const handleSubmit = async (e) => {
                 />
               </div>
               <div className='flex-col flex w-full px-5'>
-                <p>change password</p>
+                <p className='text-sm font-semibold cursor-pointer' onClick={()=>setChangePassword(true)}>change password</p>
               </div>
             </div>
+            }
             <DialogFooter className="sm:justify-start px-5 flex">
             <DialogClose asChild>
                 <button type="button" variant="secondary" onClick={()=>setOpen(false)} className='basis-1/2 border-2 border-black rounded py-2 '>
                  Close
                 </button>
             </DialogClose>
-                <button type="button"  className='basis-1/2 text-white bg-black rounded py-2' onClick={handleSubmit}>
+                <button type="button"  className='basis-1/2 text-white bg-black rounded py-2' onClick={!changePassword ? handleSubmit : handleSubmitPasswords}>
                     update
                     { loading
                         && 
