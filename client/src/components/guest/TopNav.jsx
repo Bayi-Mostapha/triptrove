@@ -357,25 +357,41 @@ export default function TopNav() {
               </div>
               <div className='flex-col flex w-full px-5 mb-5'>
                 <label htmlFor="newPass">New Password</label>
+                <div className='w-full relative'>
                 <input 
-                   type="password"  
-                   id="newPass" 
-                   placeholder='Your new password' 
-                   value={passwords.newPass} 
-                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
-                   onChange={(e) => handlePassword(e, 'newPass')}
+                  type={showPass ? "text" : "password"}    
+                  id="newPass" 
+                  placeholder='Your new password' 
+                  value={passwords.newPass} 
+                  className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                  onChange={(e) => handlePassword(e, 'newPass')}
                 />
+                 {
+                    showPass ? 
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                    :
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                  }
+                </div>
               </div>
               <div className='flex-col flex w-full px-5 mb-1'>
                 <label htmlFor="cNewPass">Confirm New Password</label>
+                <div className='w-full relative'>
                 <input 
-                   type="password"  
-                   id="cNewPass" 
-                   placeholder='Confirm your new password' 
-                   value={passwords.confirmNewPass} 
-                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
-                   onChange={(e) => handlePassword(e, 'confirmNewPass')}
+                  type={showPass ? "text" : "password"}    
+                  id="cNewPass" 
+                  placeholder='Confirm your new password' 
+                  value={passwords.confirmNewPass} 
+                  className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                  onChange={(e) => handlePassword(e, 'confirmNewPass')}
                 />
+                 {
+                    showPass ? 
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                    :
+                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                  }
+                </div>
               </div>
             </div>
               :
