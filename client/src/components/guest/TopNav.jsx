@@ -4,10 +4,17 @@ import { Link } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
 import { TiArrowSortedDown } from "react-icons/ti";
 import { LOGIN_LINK } from "../../router/index"
-import { IoNotificationsOutline } from "react-icons/io5";
-import { MdOutlineFavoriteBorder } from "react-icons/md";
 import Loading from "../../pages/loading"
-import { Pencil, Eye, EyeOff, Heart, Bell } from 'lucide-react';
+import { 
+  Pencil,
+  Eye, 
+  EyeOff, 
+  Heart, 
+  Bell, 
+  ChevronDown,
+  LogOut ,
+  LogIn ,
+} from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -255,9 +262,10 @@ export default function TopNav() {
                                     </div>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className=""> 
-                                    <button className='w-full h-full bg-black text-white py-2 px-3' onClick={logOut}>
-                                    log out
-                                    </button>
+                                    <div className='w-full h-full bg-black text-white py-2 px-3 flex items-center justify-center gap-2 cursor-pointer' onClick={logOut}>
+                                      <LogOut color='white' size={18}/>
+                                      <p>logout </p>
+                                    </div>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -267,7 +275,7 @@ export default function TopNav() {
                                 <DropdownMenuTrigger asChild >
                                 <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-1 px-4'>
                                     <p className='text-sm'>{language}</p> 
-                                    <TiArrowSortedDown/>
+                                    <ChevronDown color='#222222' size={18}/>
                                 </div>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56 bg-white">
@@ -287,7 +295,7 @@ export default function TopNav() {
                             <DropdownMenuTrigger asChild >
                             <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-1 px-4'>
                                 <p className='text-sm'>{language}</p> 
-                                <TiArrowSortedDown/>
+                                <ChevronDown color='#222222' size={18}/>
                             </div>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56 bg-white">
@@ -298,7 +306,13 @@ export default function TopNav() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className='ml-4'><button className='py-2 px-5 bg-[#7065F0] text-white text-lg rounded hidden lg:flex'><Link to={LOGIN_LINK}>sign in</Link></button></div>
+                    <div className='ml-4 hidden lg:flex'>
+                      <Link to={LOGIN_LINK}>
+                        <div className='py-2 px-5 bg-[#7065F0] text-white text-lg rounded flex items-center justify-center gap-2 cursor-pointer'>
+                            <p>sign in</p> <LogIn color='white' size={18}/>
+                        </div>
+                      </Link>
+                    </div>
                     </>
                 }
                <Sheet>
@@ -318,7 +332,11 @@ export default function TopNav() {
                             <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Become a host </Link></div>
                             {
                               userContext.isLoggedIn ? <></> : 
-                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="/signin">Sign in</Link></div>
+                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
+                                <Link to="/signin">
+                                  Sign in  <LogIn color='white' size={18}/>
+                                </Link>
+                              </div>
                             }
                         </div>
                     </SheetDescription>
