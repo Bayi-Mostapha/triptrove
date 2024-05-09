@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const bookingSchema = mongoose.Schema(
     {
+        guest: {
+            type: String,
+            required: true
+        },
         property: {
             type: String,
             required: true
