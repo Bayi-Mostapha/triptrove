@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route.js"
 import userRoutes from "./routes/user.route.js"
 import paymentRoutes from "./routes/payment.route.js"
 import adminRoutes from "./routes/admin.route.js"
+import bookingRoutes from "./routes/booking.route.js"
 import reviewRoutes from "./routes/review.route.js"
 import reviewReportsRoutes from "./routes/review-report.route.js"
 
@@ -32,5 +33,6 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/admin', adminRoutes);
+app.use('/book', bookingRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/review-reports', reviewReportsRoutes);
