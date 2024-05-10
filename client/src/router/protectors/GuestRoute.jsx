@@ -16,9 +16,9 @@ export default function GuestRoute({ children }) {
     useEffect(() => {
         if (!isLoggedIn && localStorage.getItem('token') != null) {
             getUser()
-        } else if(isLoggedIn) {
+        } else if(isLoggedIn){
             if(localStorage.getItem('admin')){
-                navigate('/admin-dashboard');
+                navigate('/admin/dashboard');
             }else{
                 navigate('/home');
             }

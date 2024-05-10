@@ -5,6 +5,7 @@ import {
 // layouts 
 import AuthLayout from '../layouts/AuthLayout';
 import GuestLayout from '../layouts/GuestLayout';
+import AdminLayout from '../layouts/AdminLayout';
 
 // pages
 import SignUp from '../pages/auth/signup';
@@ -13,6 +14,7 @@ import ForgetPassword from '../pages/auth/forgetPassword';
 import SubscriptionForm from "../pages/auth/paymentSubscription"
 
 import AdminSignIn from "../pages/admin/signin"
+import Dashboard from "../pages/admin/dashboard"
 
 import Home from "../pages/guest/home" 
 import Profile from "../pages/guest/profile"
@@ -38,6 +40,7 @@ export const PROFILE_LINK = '/profile';
 // Admin
 export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
 export const ADMIN_LOGIN_LINK = '/admin/signin';
+export const ADMIN_DASHBOARD_LINK = '/admin/dashboard';
 
 
 
@@ -89,6 +92,15 @@ export const router = createBrowserRouter([
             {
                 path: PROFILE_LINK,
                 element: <Profile />
+            },
+        ]
+    },
+    {
+        element: <AuthRoute><AdminLayout /></AuthRoute>,
+        children: [
+            {
+                path: ADMIN_DASHBOARD_LINK,
+                element: <Dashboard />
             },
         ]
     },

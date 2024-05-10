@@ -19,7 +19,6 @@ export default function AuthRoute({ children }) {
         } else if (!isLoggedIn && !isFetchingUser) {
             navigate('/signin');
         }
-       
     }, [isLoggedIn,isFetchingUser]);
   
     return ( !isFetchingUser && isLoggedIn ) ? children : <LoadingPage />;
