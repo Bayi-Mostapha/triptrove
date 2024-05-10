@@ -7,9 +7,10 @@ import authRoutes from "./routes/auth.route.js"
 import userRoutes from "./routes/user.route.js"
 import paymentRoutes from "./routes/payment.route.js"
 import adminRoutes from "./routes/admin.route.js"
+// mostafa
 import bookingRoutes from "./routes/booking.route.js"
 import reviewRoutes from "./routes/review.route.js"
-import reviewReportsRoutes from "./routes/review-report.route.js"
+import reviewReportsRoutes from "./routes/review_report.route.js"
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/admin', adminRoutes);
+// mostafa
 app.use('/book', bookingRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/review-reports', reviewReportsRoutes);
