@@ -102,6 +102,10 @@ export const router = createBrowserRouter([
                 path: ADMIN_DASHBOARD_LINK,
                 element: <Dashboard />
             },
+            {
+                path: "/admin/users",
+                element: <div className="ml-36 mt-10">Users</div>
+            },
         ]
     },
     {

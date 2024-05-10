@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGODB_URL).then(() => {
       }); 
 }).catch((error) => { 
     console.log(`something went wrong while connecting to databse : ${error}`);
-});    
+});     
   
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);  

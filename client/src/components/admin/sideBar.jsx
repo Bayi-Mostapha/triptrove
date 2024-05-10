@@ -15,7 +15,7 @@ export default function SideBar({ children }) {
                     <h1
                         className={`py-2 text-xl text-primary font-semibold overflow-hidden transition-all ${expanded ? "w-32" : "w-0"}`}
                     >
-                        SynCareer
+                        <img src="/assets/logo.svg" alt="" className='w-30'/>
                     </h1>
                     <Button
                         variant='ghost'
@@ -26,7 +26,7 @@ export default function SideBar({ children }) {
                 </div>
 
                 <SidebarContext.Provider value={{ expanded }}>
-                    <div className="flex-1 px-3">{children}</div>
+                    <div className="flex-1 px-3 pt-5">{children}</div>
                 </SidebarContext.Provider>
             </nav>
         </aside>
@@ -40,17 +40,18 @@ export function SidebarItem({ icon, text, location, alert }) {
         <NavLink
             to={location}
             className={`
-        relative flex items-center ${expanded ? 'justify-start' : 'justify-center'} p-3 my-3
+        relative flex items-center ${expanded ? 'justify-start' : 'justify-center'} p-2 
         font-medium rounded-md cursor-pointer
         transition-colors group hover:bg-secondary text-gray-600`}
         >
-            {icon}
-            <span
-                className={`overflow-hidden transition-all ${expanded ? "ml-3" : "hidden"}`}
-            >
-                {text}
-            </span>
-
+            <div className={`group flex items-center p-2 w-36 ${expanded ? "w-36" : "w-fit"} rounded hover:bg-violet-100 hover:text-[#7065F0]`}>
+                {icon}
+                <span
+                    className={`overflow-hidden transition-all ${expanded ? "pl-3" : "hidden"} text-[#222222]`}
+                >
+                    {text}
+                </span>
+            </div>
             {/* alert is for notifications */}
             {alert && (
                 <div

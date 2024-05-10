@@ -2,6 +2,8 @@ import React from 'react'
 
 export default function Dashboard() {
   return (
-    <div>D</div>
+    <div>
+      dddd
+    </div>
   )
 }
