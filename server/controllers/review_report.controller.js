@@ -1,6 +1,6 @@
 import ReviewReport from "../models/review_report.model.js";
 
-// const getReviews = async (req, res) => {
+// export const getReviews = async (req, res) => {
 //     const { pid } = req.params;
 //     try {
 //         const property = await Property.findOne({ _id: pid });
@@ -18,9 +18,6 @@ import ReviewReport from "../models/review_report.model.js";
 //         res.status(500).json({ message: 'Server error' });
 //     }
 // };
-
-module.exports = { getReviews };
-
 
 export const createReport = async (req, res) => {
     const report = new ReviewReport({
