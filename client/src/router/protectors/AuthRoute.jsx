@@ -17,9 +17,12 @@ export default function AuthRoute({ children }) {
         if (!isLoggedIn && localStorage.getItem('token') != null) {
             getUser();
         } else if (!isLoggedIn && !isFetchingUser) {
-            navigate('/signin');
+            if(window.location.pathname.includes("/admin")){
+                navigate('/admin/signin');
+            }else{
+                navigate('/signin');
+            }
         }
-       
     }, [isLoggedIn,isFetchingUser]);
   
     return ( !isFetchingUser && isLoggedIn ) ? children : <LoadingPage />;

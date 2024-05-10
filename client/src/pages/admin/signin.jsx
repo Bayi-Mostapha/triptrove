@@ -33,7 +33,7 @@ export default function SignIn() {
       const response = await axiosClient.post('http://localhost:5555/admin/signin', { email, password});
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
-        // localStorage.setItem('admin', true);
+        localStorage.setItem('admin', true);
         userContext.getUser();
         userContext.setIsLoggedIn(true);
         console.log(userContext.user)
@@ -67,6 +67,7 @@ export default function SignIn() {
        email: "",
        password: "",
      });
+     navigate("/admin/dashboard");
     } else {
       toast.error("Incorrect credentials");
      setFormData({ ...formData, password: "" })
@@ -86,14 +87,6 @@ export default function SignIn() {
       <ToastContainer />
        <div className='basis-2/2 w-full md:basis-1/2 lg:ml-16 flex flex-col lg:mr-10 py-24 lg:pb-0  '>
          <div> 
-          {/* <div className='flex justify-end mb-5 '>
-            <div className='flex items-center cursor-pointer' onClick={changeLang}>
-              <p className=' text-sm text-gray-700 font-medium'>
-                english 
-              </p>
-              <TiArrowSortedDown  className='text-gray-700'/>
-            </div>
-          </div> */}
            <h2 className='text-3xl font-medium mb-4 text-center text-[#7065F0]'>Welcome Admin</h2>
            <div className=' mb-3'>
               <label htmlFor="email" className='block text-[#6d6c6c] text-md mb-1'>email</label>
