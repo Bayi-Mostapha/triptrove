@@ -62,10 +62,10 @@ export function SidebarItem({ icon, text, location, alert }) {
             {!expanded && (
                 <div
                     className={`
-          whitespace-nowrap absolute left-full rounded-md px-2 py-1 ml-6
+          whitespace-nowrap absolute left-full px-2 py-1 ml-6
           bg-secondary text-primary text-sm
           invisible opacity-20 translate-x-3 transition-all
-          group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
+          group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 bg-violet-800 text-white rounded`}
                 >
                     {text}
                 </div>

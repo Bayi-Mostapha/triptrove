@@ -38,7 +38,7 @@ function HostLayout() {
                 <SidebarItem icon={<UserRoundCheck    color="#222222" size={22}/>} text={'Admins'} location={"/dashboard"} />
                 <SidebarItem icon={<Settings      color="#222222" size={22}/>} text={'Settings'} location={"/dashboard"} />
             </SideBar>
-            <main className="p-4 pt-14 pl-24">
+            <main className="pt-16 pl-24 p-3 pr-5">
                 <Outlet />
             </main>
         </>

@@ -15,6 +15,7 @@ import SubscriptionForm from "../pages/auth/paymentSubscription"
 
 import AdminSignIn from "../pages/admin/signin"
 import Dashboard from "../pages/admin/dashboard"
+import Users from "../pages/admin/users"
 
 import Home from "../pages/guest/home" 
 import Profile from "../pages/guest/profile"
@@ -104,7 +105,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/admin/users",
-                element: <div className="ml-36 mt-10">Users</div>
+                element: <Users />
             },
         ]
     },
