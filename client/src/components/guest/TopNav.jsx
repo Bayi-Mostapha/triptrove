@@ -2,7 +2,6 @@ import React,{ useState, useContext, useEffect } from 'react';
 import { axiosClient } from "../../api/axios";
 import { Link, useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
-import { TiArrowSortedDown } from "react-icons/ti";
 import { LOGIN_LINK } from "../../router/index"
 import Loading from "../../pages/loading"
 import { 
