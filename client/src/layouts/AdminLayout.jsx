@@ -1,10 +1,7 @@
 import { Outlet } from "react-router-dom";
 import SideBar, { SidebarItem } from "@/components/admin/sideBar";
 import { authContext } from "@/contexts/AuthWrapper";
-import { useContext } from "react";
-
-
-import { TiArrowSortedDown } from "react-icons/ti";
+import { useContext, useEffect } from "react";
 import 
 { 
     LayoutDashboard,
@@ -14,15 +11,57 @@ import
     Bug ,
     UserRoundCheck ,
     Settings ,
+    Bell ,
  } from 'lucide-react';
-
+ import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+  } from "@/components/ui/avatar"
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+  } from "@/components/ui/dropdown-menu";
+  import { 
+    LogOut 
+  } from 'lucide-react';
 function HostLayout() {
-    const { user } = useContext(authContext)
+    const userContext = useContext(authContext);
+
+    const logOut = () => {
+        userContext.logout();
+        navigate("/admin/signin");
+      };
     return (
         <>
            <header >
-                <nav className="fixed top-0 left-0 right-0 z-0 px-6 py-3 flex items-center bg-violet-400 shadow justify-end">
-                       hhhhhh
+                <nav className="fixed top-0 left-0 right-0 z-0 px-6 py-3 flex items-center  justify-end border-b-[1px] border-gray-100 shadow-sm">
+                    <div className="mr-6 cursor-pointer relative py-1">
+                        <Bell color="#000000" />
+                        <div className="w-2 h-2 bg-red-500 absolute top-1 right-1 rounded-full"></div>
+                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage src={userContext.user.image?.url} alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#bdbbdb]">{userContext.user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56 bg-white">
+                            <DropdownMenuLabel>{userContext.user.email}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="p-0"> 
+                                <div className='w-full h-full bg-black text-white py-2 px-3 flex items-center justify-center gap-2 cursor-pointer' onClick={logOut}>
+                                    <LogOut color='white' size={18}/>
+                                    <p>logout </p>
+                                </div>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </nav >
            </header>
            <SideBar>
