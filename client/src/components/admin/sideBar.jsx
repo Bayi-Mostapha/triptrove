@@ -42,7 +42,7 @@ export function SidebarItem({ icon, text, location, alert }) {
             className={`
         relative flex items-center ${expanded ? 'justify-start' : 'justify-center'} p-2 
         font-medium rounded-md cursor-pointer
-        transition-colors group hover:bg-secondary text-gray-600`}
+        transition-colors group  text-gray-600`}
         >
             <div className={`group flex items-center p-2 w-36 ${expanded ? "w-36" : "w-fit"} rounded hover:bg-violet-100 hover:text-[#7065F0]`}>
                 {icon}

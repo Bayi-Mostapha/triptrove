@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import User from "../models/user.model.js";
+import User from "../models/user.model.js";                 
 import { uploadToCloudinary, deleteFromCloudinary } from "../services/cloudinary.js"
 import bcryptjs from "bcryptjs"; 
 

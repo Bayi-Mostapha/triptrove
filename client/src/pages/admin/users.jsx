@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { ChevronsUpDown } from 'lucide-react';
+import { 
+    ChevronsUpDown,
+    CalendarDays,
+ } from 'lucide-react';
 import {
     Avatar,
     AvatarFallback,
@@ -48,8 +51,19 @@ export default function Users() {
         setSearchQuery("");
     }, [searchColumn]);
     useEffect(() => {
-        console.log(date);0
-    }, [date]);
+        if (date && date.from !== undefined  && date.to !== undefined) {
+            const newUsers = users.filter(user => {
+                const joinDate = new Date(user.createdAt);
+                const startDate = new Date(date.from);
+                const endDate = new Date(date.to);
+                return joinDate >= startDate && joinDate <= endDate;
+            });
+            setFilteredUsers(newUsers);
+        } else {
+            // If either startDate or endDate is not set, reset filteredUsers to all users
+            setFilteredUsers(users);
+        }
+    },[date]);
 
 
     const handleSearchColumnChange = (e) => {
@@ -82,18 +96,7 @@ export default function Users() {
     });
     setFilteredUsers(newUsers);
   },[searchQuery])
-  const handleEndDateChange = (e) => {
-    setSearchQuery(prevState => ({
-        ...prevState,
-        endDate: e.target.value
-    }));
-};
-const handleStartDateChange = (e) => {
-    setSearchQuery(prevState => ({
-        ...prevState,
-        startDate: e.target.value
-    }));
-};
+
 
   return (
 	<div className="flex flex-col">
@@ -102,14 +105,13 @@ const handleStartDateChange = (e) => {
         <div className='w-48 mr-2'>
         <select
                         id="searchColumn"
-                        className="bg-gray-50 border border-gray-300 py-3 text-gray-900 text-sm rounded-lg outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-gray-50 border border-gray-300 py-3 text-gray-900 text-sm rounded-lg outline-none  block w-full p-2.5"
                         value={searchColumn}
                         onChange={handleSearchColumnChange}
                     >
                         <option value="default">Choose search column</option>
                         <option value="username">Username</option>
                         <option value="email">Email</option>
-                        <option value="joinDate">Joined At</option>
                     </select>
         </div>
         {searchColumn === 'joinDate' && (
@@ -121,11 +123,11 @@ const handleStartDateChange = (e) => {
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
+              "w-[300px] flex items-center justify-start text-left font-normal border-[1px] border-gray-300 rounded p-2.5 py-2",
               !date && "text-muted-foreground"
             )}
           >
-            {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
+            <CalendarDays className="mr-2 h-4 w-4" />
             {date?.from ? (
               date.to ? (
                 <>
