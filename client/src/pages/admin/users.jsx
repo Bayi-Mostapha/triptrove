@@ -9,15 +9,32 @@ import { axiosClient } from "../../api/axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { addDays, format } from "date-fns"
+
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 export default function Users() {
     const [users, setUsers] = useState([]);
-
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [searchColumn, setSearchColumn] = useState('default');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [date, setDate] = useState({
+        from: new Date(2022, 0, 20),
+        to: addDays(new Date(2022, 0, 20), 20),
+      })
+    // fetch all users 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axiosClient.get('/user/get-all');
                 setUsers(response.data);
+                setFilteredUsers(response.data);
                 console.log(response.data)     
             } catch (error) {
                 toast.error('Error fetching users');
@@ -26,24 +43,128 @@ export default function Users() {
 
         fetchUsers();
     }, []);
-  
+    useEffect(() => {
+        setFilteredUsers(users);
+        setSearchQuery("");
+    }, [searchColumn]);
+    useEffect(() => {
+        console.log(date);0
+    }, [date]);
+
+
+    const handleSearchColumnChange = (e) => {
+        setSearchColumn(e.target.value);
+    };
+
+    const handleSearchQueryChange = (e) => {
+        setSearchQuery(e.target.value);
+   
+       
+    };
+  useEffect(()=>{
+    const newUsers = users.filter(user => {
+        if (searchColumn === 'username') {
+            return (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+        if (searchColumn === 'email') {
+            return user.email.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+        if (searchColumn === 'joinDate') {
+            // Assuming `createdAt` is a Date object
+            const joinDate = new Date(user.createdAt);
+            const startDate = new Date(searchQuery.startDate);
+            const endDate = new Date(searchQuery.endDate);
+    
+            // Check if the user's join date is within the selected range
+            return joinDate >= startDate && joinDate <= endDate;
+        }
+        return true;
+    });
+    setFilteredUsers(newUsers);
+  },[searchQuery])
+  const handleEndDateChange = (e) => {
+    setSearchQuery(prevState => ({
+        ...prevState,
+        endDate: e.target.value
+    }));
+};
+const handleStartDateChange = (e) => {
+    setSearchQuery(prevState => ({
+        ...prevState,
+        startDate: e.target.value
+    }));
+};
 
   return (
 	<div className="flex flex-col">
     <ToastContainer />
     <div className='py-5 flex items-center'>
         <div className='w-48 mr-2'>
-        <select id="countries" class="bg-gray-50 border border-gray-300 py-3 text-gray-900 text-sm rounded-lg outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            <option selected>Choose search column</option>
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
-            <option value="FR">France</option>
-            <option value="DE">Germany</option>
-        </select>
+        <select
+                        id="searchColumn"
+                        className="bg-gray-50 border border-gray-300 py-3 text-gray-900 text-sm rounded-lg outline-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        value={searchColumn}
+                        onChange={handleSearchColumnChange}
+                    >
+                        <option value="default">Choose search column</option>
+                        <option value="username">Username</option>
+                        <option value="email">Email</option>
+                        <option value="joinDate">Joined At</option>
+                    </select>
         </div>
+        {searchColumn === 'joinDate' && (
+        <>
+       <div >
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            id="date"
+            variant={"outline"}
+            className={cn(
+              "w-[300px] justify-start text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
+          >
+            {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
+            {date?.from ? (
+              date.to ? (
+                <>
+                  {format(date.from, "LLL dd, y")} -{" "}
+                  {format(date.to, "LLL dd, y")}
+                </>
+              ) : (
+                format(date.from, "LLL dd, y")
+              )
+            ) : (
+              <span>Pick a date</span>
+            )}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0 bg-white" align="start">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            numberOfMonths={2}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+        </>
+    )}
+    {searchColumn !== 'joinDate' && (
         <div className='w-48 mr-2'>
-            <input type="text" className='w-full py-2 rounded outline-none border-2 border-gray-300 text-md' />
+            <input
+                type="text"
+                className='w-full py-2 rounded outline-none border-2 border-gray-300 text-md'
+                placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchQueryChange}
+            />
         </div>
+    )}
        
     </div>
     <div className="overflow-x-auto  sm:rounded-lg">
@@ -92,7 +213,7 @@ export default function Users() {
                         </tr>
                     </thead>
                     <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
-                        {users.map(user => (
+                        {filteredUsers.map(user => (
                        <tr className="hover:bg-[#cfcce6] dark:hover:bg-gray-700" key={user._id}>
                        <td className="p-3 w-4">
                            <div className="flex items-center">
@@ -126,3 +247,6 @@ export default function Users() {
 
   )
 }
+
+
+
