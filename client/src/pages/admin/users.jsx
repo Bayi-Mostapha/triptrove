@@ -84,12 +84,10 @@ export default function Users() {
             return user.email.toLowerCase().includes(searchQuery.toLowerCase());
         }
         if (searchColumn === 'joinDate') {
-            // Assuming `createdAt` is a Date object
             const joinDate = new Date(user.createdAt);
             const startDate = new Date(searchQuery.startDate);
             const endDate = new Date(searchQuery.endDate);
     
-            // Check if the user's join date is within the selected range
             return joinDate >= startDate && joinDate <= endDate;
         }
         return true;

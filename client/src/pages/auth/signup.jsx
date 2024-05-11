@@ -90,10 +90,11 @@ export default function SignUp() {
       const auth = getAuth(app);
 
       const result = await signInWithPopup(auth, provider);
-      
+      console.log(result.user)
       const splitNames = result.user.displayName.split(" "); 
       const firstName = splitNames[0];
       const lastName = splitNames.slice(1).join(" "); 
+      const image = result.user.photoURL; 
 
       if(role !== "host" && role !== "guest"){
         role = "guest";
@@ -104,11 +105,35 @@ export default function SignUp() {
         email: result.user.email,
         role,
       });   
-
+    
       localStorage.setItem('token',res.data.token);
       userContext.getUser();
       userContext.setIsLoggedIn(true);
+  try{
+      const imageFetched = await fetch(image);
+      const blob = await imageFetched.blob();
+  
+      const file = new File([blob], "image.jpg", { type: blob.type });
+  
+      const formData = new FormData();
+      formData.append('image', file);
+  
+      const response = await axiosClient.post('/user/profile', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+  
       navigate("/home");
+      return true;
+    } catch (error) {
+      
+      console.error('Error uploading image:', error);
+      toast.error('Error uploading image. Please try again later.');
+      throw error;
+    }
+     
+
     } catch (error) {
       toast.error('something went wrong');
     }

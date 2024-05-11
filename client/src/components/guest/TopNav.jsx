@@ -1,6 +1,6 @@
 import React,{ useState, useContext, useEffect } from 'react';
 import { axiosClient } from "../../api/axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
 import { TiArrowSortedDown } from "react-icons/ti";
 import { LOGIN_LINK } from "../../router/index"
@@ -68,7 +68,7 @@ export default function TopNav() {
     newPass: "",
     confirmNewPass: "",
   });
-
+  const navigate = useNavigate()
   useEffect(()=> {
     if(window.location.pathname === "/home"){
      userContext.getUser();
@@ -96,6 +96,7 @@ export default function TopNav() {
 
   const logOut = () => {
     userContext.logout();
+    navigate("/signin");
   };
 
   const handleFileUpload = (event) => {
