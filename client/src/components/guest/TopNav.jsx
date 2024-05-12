@@ -55,6 +55,7 @@ export default function TopNav() {
   const [language, setLanguage] = useState("US");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [ showPass, setShowPass ] = useState(false)
   const [data, setData] = useState({
     firstName: "",
     email: ""
@@ -209,7 +210,7 @@ export default function TopNav() {
   };
   
 
- const [ showPass, setShowPass ] = useState(false)
+
   return (
     <>
       {

@@ -16,6 +16,7 @@ import SubscriptionForm from "../pages/auth/paymentSubscription"
 import AdminSignIn from "../pages/admin/signin"
 import Dashboard from "../pages/admin/dashboard"
 import Users from "../pages/admin/users"
+import Admins from "../pages/admin/admins-page"
 
 import Home from "../pages/guest/home" 
 import Profile from "../pages/guest/profile"
@@ -42,6 +43,8 @@ export const PROFILE_LINK = '/profile';
 export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
 export const ADMIN_LOGIN_LINK = '/admin/signin';
 export const ADMIN_DASHBOARD_LINK = '/admin/dashboard';
+export const ADMIN_USERS_LINK = '/admin/users';
+export const ADMIN_ADMINS_LINK = '/admin/admins';
 
 
 
@@ -104,8 +107,12 @@ export const router = createBrowserRouter([
                 element: <Dashboard />
             },
             {
-                path: "/admin/users",
+                path: ADMIN_USERS_LINK,
                 element: <Users />
+            },
+            {
+                path: ADMIN_ADMINS_LINK,
+                element: <Admins />
             },
         ]
     },

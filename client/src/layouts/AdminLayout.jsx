@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import SideBar, { SidebarItem } from "@/components/admin/sideBar";
 import { authContext } from "@/contexts/AuthWrapper";
 import { useContext, useEffect } from "react";
+import { ADMIN_ADMINS_LINK } from "../router/index"
 import 
 { 
     LayoutDashboard,
@@ -74,7 +75,9 @@ function HostLayout() {
                 <SidebarItem icon={<Building2   color="#222222" size={22}/>} text={'Properties'} location={"/dashboard"} />
                 <SidebarItem icon={<ClipboardCheck   color="#222222" size={22}/>} text={'Reports'} location={"/dashboard"} />
                 <SidebarItem icon={<Bug    color="#222222" size={22}/>} text={'Bugs'} location={"/dashboard"} />
-                <SidebarItem icon={<UserRoundCheck    color="#222222" size={22}/>} text={'Admins'} location={"/dashboard"} />
+                {  userContext.user.role === "superAdmin" &&
+                    <SidebarItem icon={<UserRoundCheck    color="#222222" size={22}/>} text={'Admins'} location={ADMIN_ADMINS_LINK} />
+                }
                 <SidebarItem icon={<Settings      color="#222222" size={22}/>} text={'Settings'} location={"/dashboard"} />
             </SideBar>
             <main className="pt-16 pl-24 p-3 pr-5">
