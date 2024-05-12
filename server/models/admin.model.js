@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const adminSchema = mongoose.Schema(
     {
+        fullName: {
+            type: String ,
+            required: true,
+        },
         firstName: {
             type: String ,
             required: true,
@@ -20,16 +24,6 @@ const adminSchema = mongoose.Schema(
             required: true,
         },
         role: { type: String, enum: ['admin', 'superAdmin'], default: 'admin' },
-        image:{
-            publicId:{
-                type: String,
-                required: true,
-            },
-            url: {
-                type: String,
-                required: true,
-            }
-        },
     },
     {
         timestamps: true,

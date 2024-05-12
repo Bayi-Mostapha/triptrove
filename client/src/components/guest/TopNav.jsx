@@ -1,8 +1,7 @@
 import React,{ useState, useContext, useEffect } from 'react';
 import { axiosClient } from "../../api/axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
-import { TiArrowSortedDown } from "react-icons/ti";
 import { LOGIN_LINK } from "../../router/index"
 import Loading from "../../pages/loading"
 import { 
@@ -56,6 +55,7 @@ export default function TopNav() {
   const [language, setLanguage] = useState("US");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [ showPass, setShowPass ] = useState(false)
   const [data, setData] = useState({
     firstName: "",
     email: ""
@@ -68,7 +68,7 @@ export default function TopNav() {
     newPass: "",
     confirmNewPass: "",
   });
-
+  const navigate = useNavigate()
   useEffect(()=> {
     if(window.location.pathname === "/home"){
      userContext.getUser();
@@ -96,6 +96,7 @@ export default function TopNav() {
 
   const logOut = () => {
     userContext.logout();
+    navigate("/signin");
   };
 
   const handleFileUpload = (event) => {
@@ -209,7 +210,7 @@ export default function TopNav() {
   };
   
 
- const [ showPass, setShowPass ] = useState(false)
+
   return (
     <>
       {

@@ -42,7 +42,7 @@ export function SidebarItem({ icon, text, location, alert }) {
             className={`
         relative flex items-center ${expanded ? 'justify-start' : 'justify-center'} p-2 
         font-medium rounded-md cursor-pointer
-        transition-colors group hover:bg-secondary text-gray-600`}
+        transition-colors group  text-gray-600`}
         >
             <div className={`group flex items-center p-2 w-36 ${expanded ? "w-36" : "w-fit"} rounded hover:bg-violet-100 hover:text-[#7065F0]`}>
                 {icon}
@@ -62,10 +62,10 @@ export function SidebarItem({ icon, text, location, alert }) {
             {!expanded && (
                 <div
                     className={`
-          whitespace-nowrap absolute left-full rounded-md px-2 py-1 ml-6
+          whitespace-nowrap absolute left-full px-2 py-1 ml-6
           bg-secondary text-primary text-sm
           invisible opacity-20 translate-x-3 transition-all
-          group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
+          group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 bg-violet-800 text-white rounded`}
                 >
                     {text}
                 </div>

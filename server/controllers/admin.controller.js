@@ -41,3 +41,36 @@ export const signin = async (request, response, next) => {
         res.status(500).json({ message: "Internal server error" });
       }   
 }; 
+  export const getAll = async (req, res, next) => {
+    try {
+        const admins = await Admin.find( {},{ password: 0 }).select('firstName lastName fullName email role createdAt');
+        res.status(200).json(admins.map(user => ({
+          ...user.toObject(),
+          createdAt: user.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
+      })));
+      } catch (error) {
+        console.error("Error fetching admins :", error);
+        res.status(500).json({ message: "Internal server error" });
+      }   
+}; 
+  export const createAdmin = async (req, res, next) => {
+    if (req.role !== "superAdmin") {
+      return res.status(402).json({ message: "Admin doesn't have permission to create other admins" });
+  }
+
+    const { firstName, lastName, email, password, role } = req.body;
+    const user = await Admin.findOne({ email });
+     
+      if (user){
+        return res.status(409).json({ message: "email already exist" });
+      }
+      const hashedPassword = bcryptjs.hashSync(password, 10);
+      const fullName = firstName + " " + lastName;
+      const NewUser = Admin({fullName,firstName,lastName,email,password: hashedPassword,role});
+    try {
+        await NewUser.save();
+        res.status(201).json({message: "admin created succezsfully"});
+    } catch (error) {
+        next(error);
+    }   
+}; 
