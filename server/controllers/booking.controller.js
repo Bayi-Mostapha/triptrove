@@ -1,4 +1,27 @@
 import Booking from "../models/booking.model.js";
+// import Property from "../models/property.model.js";
+
+// export const getBookings = async (req, res) => {
+//     try {
+//         const { userId } = req.body;
+
+//         const bookings = await Booking.find({ guest: userId });
+//         if (!bookings) {
+//             return res.status(404).json({ message: 'No bookings found for this user' });
+//         }
+
+//         const bookingsWithProperties = await Promise.all(
+//             bookings.map(async booking => {
+//                 const property = await Property.findById(booking.property);
+//                 return { ...booking.toObject(), property };
+//             })
+//         );
+
+//         res.json(bookingsWithProperties);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 
 export const createBooking = async (req, res) => {
     try {
@@ -26,7 +49,7 @@ export const createBooking = async (req, res) => {
             totalPrice: totalPrice,
         });
 
-        res.status(201).json({ booking });
+        res.status(201).json(booking);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

@@ -1,6 +1,7 @@
+import Review from "../models/review.model.js";
 import ReviewReport from "../models/review_report.model.js";
 
-// export const getReviews = async (req, res) => {
+// export const getReports = async (req, res) => {
 //     const { pid } = req.params;
 //     try {
 //         const property = await Property.findOne({ _id: pid });
@@ -26,7 +27,7 @@ export const createReport = async (req, res) => {
     });
 
     try {
-        const newReport = await report.save();
+        await report.save();
         res.status(201).json({ message: 'Reported successfully' });
     } catch (err) {
         res.status(400).json({ message: err.message });

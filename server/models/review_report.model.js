@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const reviewReportSchema = mongoose.Schema(
     {
         review: {
-            type: Number,
+            type: String,
             required: true,
         },
         reason: {
