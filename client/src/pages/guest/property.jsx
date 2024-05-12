@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils"
 import { addDays, format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, Minus, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -47,6 +47,7 @@ function Property() {
 
     return (
         <>
+            <div className="font-medium">Check in and check out</div>
             <div className="grid gap-2">
                 <Popover>
                     <PopoverTrigger asChild>
@@ -86,9 +87,9 @@ function Property() {
                 </Popover>
             </div>
             <div>
-                <div>Guests</div>
+                <div className="font-medium">Guests</div>
                 <Popover>
-                    <PopoverTrigger className="border px-4 py-2 rounded">
+                    <PopoverTrigger className="border px-4 py-2 rounded text-sm">
                         {adults + children} Guest(s) {infants > 0 && `, ${infants} infant(s)`} {pets > 0 && `, ${pets} pet(s)`}
                     </PopoverTrigger>
                     <PopoverContent>
@@ -98,9 +99,13 @@ function Property() {
                                 <p className="text-sm font-thin">Age +16</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button className="w-8 h-8 flex justify-center items-center border rounded-full text-lg" onClick={() => decrement('adults')}>-</button>
+                                <button className="w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 transition-all" onClick={() => decrement('adults')}>
+                                    <Minus stroke="gray" size='14px' />
+                                </button>
                                 <div>{adults}</div>
-                                <button className="w-8 h-8 flex justify-center items-center border rounded-full text-lg" onClick={() => increment('adults')}>+</button>
+                                <button className="w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 transition-all" onClick={() => increment('adults')}>
+                                    <Plus stroke="gray" size='14px' />
+                                </button>
                             </div>
                         </div>
                     </PopoverContent>
