@@ -99,12 +99,12 @@ function Property() {
                                 <p className="text-sm font-thin">Age +16</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button className="w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 transition-all" onClick={() => decrement('adults')}>
-                                    <Minus stroke="gray" size='14px' />
+                                <button disabled={adults == 1} className="group w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 disabled:border-gray-100 disabled:cursor-not-allowed transition-all" onClick={() => decrement('adults')}>
+                                    <Minus className="stroke-gray-400 group-disabled:stroke-gray-300" size='14px' />
                                 </button>
                                 <div>{adults}</div>
-                                <button className="w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 transition-all" onClick={() => increment('adults')}>
-                                    <Plus stroke="gray" size='14px' />
+                                <button disabled={adults == 12} className="group w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 disabled:border-gray-100 disabled:cursor-not-allowed transition-all" onClick={() => increment('adults')}>
+                                    <Plus className="stroke-gray-400 group-disabled:stroke-gray-300" size='14px' />
                                 </button>
                             </div>
                         </div>
