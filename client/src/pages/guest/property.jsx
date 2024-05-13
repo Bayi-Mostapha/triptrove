@@ -20,9 +20,11 @@ function Property() {
     });
     const disabledDates = [new Date('2024-05-15'), new Date('2024-05-20')];
     const isDateDisabled = date => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         return disabledDates.some(disabledDate =>
             new Date(date).toDateString() === disabledDate.toDateString()
-        );
+        ) || new Date(date) < today;
     };
     // guests input 
     const [adults, setAdults] = useState(1);
