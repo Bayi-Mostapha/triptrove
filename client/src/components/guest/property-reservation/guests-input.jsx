@@ -1,4 +1,11 @@
-function GeustsInput() {
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Minus, Plus } from "lucide-react"
+
+function GeustsInput({ adults, setAdults, maxAdults, children, setChildren, infants, setInfants, maxInfants, pets, setPets, maxPets }) {
     function decrement(toInc) {
         switch (toInc) {
             case 'adults':

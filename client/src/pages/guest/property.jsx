@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils"
 import { addDays, format, startOfDay } from "date-fns"
-import { Calendar as CalendarIcon, Minus, Plus } from "lucide-react"
+import { Calendar as CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -49,7 +49,7 @@ function Property() {
         if (isDisabledDateSelected) {
             toast.error('You have selected a disabled date within the range.')
         } else {
-            console.log('Submit logic goes here.');
+            console.log(adults, children, infants, pets);
         }
     };
 
@@ -95,7 +95,12 @@ function Property() {
                     </PopoverContent>
                 </Popover>
             </div>
-            <GeustsInput />
+            <GeustsInput
+                adults={adults} setAdults={setAdults} maxAdults={maxAdults}
+                children={children} setChildren={setChildren}
+                infants={infants} setInfants={setInfants} maxInfants={maxInfants}
+                pets={pets} setPets={setPets} maxPets={maxPets}
+            />
             <button onClick={handleSubmit}>submit</button>
         </>
     );
