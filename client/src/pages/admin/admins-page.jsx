@@ -10,7 +10,18 @@ import React, { useState, useEffect } from 'react'
     LogIn ,
     ChevronsUpDown,
     CalendarDays,
+    EllipsisVertical ,
   } from 'lucide-react';
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+  } from "@/components/ui/dropdown-menu";
 import {
     Avatar,
     AvatarFallback,
@@ -19,7 +30,7 @@ import {
 import { axiosClient } from "../../api/axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Button } from "@/components/ui/button"
 import { addDays, format } from "date-fns"
 
 import { cn } from "@/lib/utils"
@@ -37,6 +48,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription,
   } from "@/components/ui/dialog"
 import { Axios } from 'axios';
 
@@ -49,7 +61,8 @@ export default function Admins() {
     const [searchQuery, setSearchQuery] = useState('');
     const [date, setDate] = useState();
     const [order, setOrder] = useState({
-        username: false ,
+        firstName: false ,
+        lastName: false ,
         email: false,
         joinDate: false,
         role: false,
@@ -75,7 +88,29 @@ export default function Admins() {
                     const joinDate = new Date(user.createdAt);
                     const startDate = new Date(date.from);
                     const endDate = new Date(date.to);
-                    return joinDate >= startDate && joinDate <= endDate && (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                    console.log(user.fullName.toLowerCase())
+                    console.log(searchQuery.toLowerCase())
+                    return joinDate >= startDate && joinDate <= endDate && (user.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
+                });
+                setFilteredUsers(newUsers);
+                return ;
+            }
+            if (searchColumn === 'firstName') {
+                const newUsers = users.filter(user => {
+                    const joinDate = new Date(user.createdAt);
+                    const startDate = new Date(date.from);
+                    const endDate = new Date(date.to);
+                    return joinDate >= startDate && joinDate <= endDate && user.firstName.toLowerCase().includes(searchQuery.toLowerCase());
+                });
+                setFilteredUsers(newUsers);
+                return ;
+            }
+            if (searchColumn === 'lastName') {
+                const newUsers = users.filter(user => {
+                    const joinDate = new Date(user.createdAt);
+                    const startDate = new Date(date.from);
+                    const endDate = new Date(date.to);
+                    return joinDate >= startDate && joinDate <= endDate &&  user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
                 });
                 setFilteredUsers(newUsers);
                 return ;
@@ -93,7 +128,13 @@ export default function Admins() {
         }else{
             const newUsers = users.filter(user => {
                 if (searchColumn === 'username') {
-                    return (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                    return (user.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
+                }
+                if (searchColumn === 'firstName') {
+                    return user.firstName.toLowerCase().includes(searchQuery.toLowerCase());
+                }
+                if (searchColumn === 'lastName') {
+                    return user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
                 }
                 if (searchColumn === 'email') {
                     return user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -102,24 +143,35 @@ export default function Admins() {
             });
             setFilteredUsers(newUsers);
         }
-         
     }
 
     const filterUsersByOrder = (str) => {
         let sortedUsers = [];
-        if (str === "username") {
-            if (!order.username) {
-                setOrder({ ...order, username: true });
+        if (str === "firstName") {
+            if (!order.firstName) {
+                setOrder({ ...order, firstName: true });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
                     return b.firstName.localeCompare(a.firstName); 
                 });
             } else {
-                setOrder({ ...order, username: false });
+                setOrder({ ...order, firstName: false });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
                     return a.firstName.localeCompare(b.firstName); 
                 });
             }
-        } else if (str === "email") {
+        } else  if (str === "lastName") {
+            if (!order.lastName) {
+                setOrder({ ...order, lastName: true });
+                sortedUsers = filteredUsers.slice().sort((a, b) => {
+                    return b.lastName.localeCompare(a.lastName); 
+                });
+            } else {
+                setOrder({ ...order, lastName: false });
+                sortedUsers = filteredUsers.slice().sort((a, b) => {
+                    return a.lastName.localeCompare(b.lastName); 
+                });
+            }
+        }else if (str === "email") {
             if (!order.email) {
                 setOrder({ ...order, email: true });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
@@ -205,6 +257,7 @@ export default function Admins() {
     const [ showPass, setShowPass ] = useState(false)
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false)
+    const [openD, setOpenD] = useState(false)
     const [data, setData] = useState({
         firstName: "",
         lastName: "",
@@ -260,6 +313,35 @@ export default function Admins() {
             toast.error("email already exist");
         }
     };
+    
+const deleteAdminHandle = async (adminIds) => {
+    try {
+        console.log(adminIds)
+        const response = await axiosClient.delete('/admin', {
+            data: { adminIds } 
+        });
+         return true;
+    } catch (error) {
+        return false;
+    }
+};
+const handleDelete = (admins) =>{
+    if(deleteAdminHandle(admins)){
+        toast.success("Admin is deleted");
+        fetchUsers();
+    }else{
+        toast.error('Error deleting admin');
+    }
+}
+const upgradeAdmin = async (id) => {
+    try {
+        const response = await axiosClient.post('/admin/upgrade-downgrade', {id});
+        toast.success("Admin's role is changed successfully");
+        fetchUsers();
+    } catch (error) {
+        toast.error('Error changing admin role admin');
+    }
+};
   return (
 	<div className="flex flex-col">
     <ToastContainer />
@@ -349,41 +431,45 @@ export default function Admins() {
                 </label>
               
               </div>
-              <div className='flex-col flex w-full px-5 mb-1 relative'>
+              <div className='flex-col flex w-full px-5 mb-1'>
                 <label htmlFor="password">password</label>
-                <input 
-                   type= {
-                    showPass ? "text" : "password" } 
-                   id="password" 
-                   placeholder='password' 
-                   value={data.password} 
-                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
-                   onChange={(e) => handleInputChange(e, 'password')}
-                />
-                 {
-                    showPass ? 
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
-                    :
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
-                  }
+                <div className='relative w-full'>
+                    <input 
+                    type= {
+                        showPass ? "text" : "password" } 
+                    id="password" 
+                    placeholder='password' 
+                    value={data.password} 
+                    className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                    onChange={(e) => handleInputChange(e, 'password')}
+                    />
+                    {
+                        showPass ? 
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                        :
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                    }
+                </div>
               </div>
-              <div className='flex-col flex w-full px-5 mb-1 relative'>
+              <div className='flex-col flex w-full px-5 mb-1'>
                 <label htmlFor="cpassword">confirm password</label>
-                <input 
-                   type= {
-                    showPass ? "text" : "password" }
-                   id="cpassword" 
-                   placeholder='confirm password' 
-                   value={data.cpassword} 
-                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
-                   onChange={(e) => handleInputChange(e, 'cpassword')}
-                />
-                 {
-                    showPass ? 
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
-                    :
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
-                  }
+                <div className='relative w-full'>
+                    <input 
+                    type= {
+                        showPass ? "text" : "password" }
+                    id="cpassword" 
+                    placeholder='confirm password' 
+                    value={data.cpassword} 
+                    className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                    onChange={(e) => handleInputChange(e, 'cpassword')}
+                    />
+                    {
+                        showPass ? 
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                        :
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                    }
+               </div>
               </div>
             </>}
               
@@ -400,7 +486,7 @@ export default function Admins() {
                         Back
                     </button>
                     <button type="button"  className='basis-1/2 text-white bg-black rounded py-2' onClick={submitDataNewAdmin}>
-                    update
+                    Submit
                     { loading
                         && 
                         <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
@@ -436,6 +522,8 @@ export default function Admins() {
             >
                 <option value="default">Search By</option>
                 <option value="username" >Full Name</option>
+                <option value="firstName" >First Name</option>
+                <option value="lastName" >Last Name</option>
                 <option value="email">Email</option>
             </select>
         </div>
@@ -491,7 +579,41 @@ export default function Admins() {
         && 
         <div className='flex items-center justify-end mb-3'>
             <div>
-                <button className='bg-red-700 rounded py-2 px-5 text-white'>Delete</button>
+              
+                  <Dialog>
+                    <DialogTrigger asChild>
+                        <button
+                            className='bg-red-700 rounded py-2 px-5 text-white'
+                        >
+                            Delete
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                        <DialogTitle>Are You sure ? </DialogTitle>
+                        <DialogDescription>
+                            Are you sure , you wanna delete this admin 
+                        </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="sm:justify-start">
+                        <DialogClose asChild>
+                            <div className='flex gap-4 w-full'>
+                            <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                        Close
+                                </button> 
+                                <button onClick={()=>handleDelete(selectedUsers)} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                        Confirm 
+                                        { loading
+                                            && 
+                                            <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                            role="status"></div>
+                                        }
+                                    </button>
+                            </div>
+                        </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                    </Dialog>
             </div>
         </div>
     }
@@ -510,7 +632,7 @@ export default function Admins() {
                                         checked={selectedUsers.length === filteredUsers.length}
                                         onChange={checkAll}
                                     />
-                                    <label for="checkbox-all" className="sr-only">checkbox</label>
+                                    <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-gray-700">
@@ -560,20 +682,67 @@ export default function Admins() {
                                     checked={selectedUsers.includes(user._id)} 
                                     onChange={() => handleCheckboxChange(user._id)} 
                                />
-                               <label for="checkbox-table-1" className="sr-only"></label>
+                               <label htmlFor="checkbox-table-1" className="sr-only"></label>
                            </div>
                        </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.firstName}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {user.lastName}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.email}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <span className={`py-2 px-3 ${(user.role === "host") ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800" }  rounded-lg`}>
+                            <span className={`py-2 px-3 ${(user.role === "admin") ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800" }  rounded-lg`}>
                                 {user.role}
                             </span>
                         </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.createdAt}</td>
-                       <td className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12">
-                           Delete
+                       <td 
+                            className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"
+                       >
+                             <Dialog open={openD} onOpenChange={()=>{setOpenD(false)}}>
+                                <DialogContent className="sm:max-w-md">
+                                    <DialogHeader>
+                                    <DialogTitle>Are You sure ? </DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure , you wanna delete this admin 
+                                    </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter className="sm:justify-start">
+                                    <DialogClose asChild>
+                                        <div className='flex gap-4 w-full'>
+                                        <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                                    Close
+                                            </button> 
+                                            <button onClick={()=>{handleDelete([user._id])}} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                                    Confirm 
+                                                    { loading
+                                                        && 
+                                                        <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                                        role="status"></div>
+                                                    }
+                                                </button>
+                                        </div>
+                                    </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                                </Dialog>
+                               
+                                <DropdownMenu >
+                                    <DropdownMenuTrigger asChild >
+                                      <EllipsisVertical />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-56 bg-white">
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem className="p-0" >
+                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>upgradeAdmin(user._id)}>
+                                               {user.role === "admin" ? "upgrade to superAdmin": "downgrade to Admin" }
+                                            </div>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className=""> 
+                                            <div className='w-full h-full bg-red-700 rounded py-2 px-5 text-white flex items-center justify-center'  onClick={()=>{setOpenD(true);}} >
+                                            <p>Delete </p>
+                                            </div>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                        </td>
                    </tr>
                     ))}
