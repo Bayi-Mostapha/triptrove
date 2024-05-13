@@ -5,11 +5,12 @@ import
     getAdmin,  
     getAll,
     createAdmin,
+    deleteAdmin,
 }
 from "../controllers/admin.controller.js";
 import { verifyTokenAdmin  } from "../controllers/verifytokenadmin.js";
 
-
+  
 const router = express.Router();
 
 
@@ -17,5 +18,6 @@ router.post("/signin", signin);
 router.get("/",verifyTokenAdmin, getAdmin);
 router.get("/get-all",verifyTokenAdmin, getAll);
 router.post("/create",verifyTokenAdmin, createAdmin);
+router.delete("/",verifyTokenAdmin, deleteAdmin);
 
 export default router;

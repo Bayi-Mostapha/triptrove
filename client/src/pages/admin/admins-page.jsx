@@ -49,7 +49,8 @@ export default function Admins() {
     const [searchQuery, setSearchQuery] = useState('');
     const [date, setDate] = useState();
     const [order, setOrder] = useState({
-        username: false ,
+        firstName: false ,
+        lastName: false ,
         email: false,
         joinDate: false,
         role: false,
@@ -75,7 +76,29 @@ export default function Admins() {
                     const joinDate = new Date(user.createdAt);
                     const startDate = new Date(date.from);
                     const endDate = new Date(date.to);
-                    return joinDate >= startDate && joinDate <= endDate && (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                    console.log(user.fullName.toLowerCase())
+                    console.log(searchQuery.toLowerCase())
+                    return joinDate >= startDate && joinDate <= endDate && (user.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
+                });
+                setFilteredUsers(newUsers);
+                return ;
+            }
+            if (searchColumn === 'firstName') {
+                const newUsers = users.filter(user => {
+                    const joinDate = new Date(user.createdAt);
+                    const startDate = new Date(date.from);
+                    const endDate = new Date(date.to);
+                    return joinDate >= startDate && joinDate <= endDate && user.firstName.toLowerCase().includes(searchQuery.toLowerCase());
+                });
+                setFilteredUsers(newUsers);
+                return ;
+            }
+            if (searchColumn === 'lastName') {
+                const newUsers = users.filter(user => {
+                    const joinDate = new Date(user.createdAt);
+                    const startDate = new Date(date.from);
+                    const endDate = new Date(date.to);
+                    return joinDate >= startDate && joinDate <= endDate &&  user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
                 });
                 setFilteredUsers(newUsers);
                 return ;
@@ -93,7 +116,13 @@ export default function Admins() {
         }else{
             const newUsers = users.filter(user => {
                 if (searchColumn === 'username') {
-                    return (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                    return (user.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
+                }
+                if (searchColumn === 'firstName') {
+                    return user.firstName.toLowerCase().includes(searchQuery.toLowerCase());
+                }
+                if (searchColumn === 'lastName') {
+                    return user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
                 }
                 if (searchColumn === 'email') {
                     return user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -102,24 +131,35 @@ export default function Admins() {
             });
             setFilteredUsers(newUsers);
         }
-         
     }
 
     const filterUsersByOrder = (str) => {
         let sortedUsers = [];
-        if (str === "username") {
-            if (!order.username) {
-                setOrder({ ...order, username: true });
+        if (str === "firstName") {
+            if (!order.firstName) {
+                setOrder({ ...order, firstName: true });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
                     return b.firstName.localeCompare(a.firstName); 
                 });
             } else {
-                setOrder({ ...order, username: false });
+                setOrder({ ...order, firstName: false });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
                     return a.firstName.localeCompare(b.firstName); 
                 });
             }
-        } else if (str === "email") {
+        } else  if (str === "lastName") {
+            if (!order.lastName) {
+                setOrder({ ...order, lastName: true });
+                sortedUsers = filteredUsers.slice().sort((a, b) => {
+                    return b.lastName.localeCompare(a.lastName); 
+                });
+            } else {
+                setOrder({ ...order, lastName: false });
+                sortedUsers = filteredUsers.slice().sort((a, b) => {
+                    return a.lastName.localeCompare(b.lastName); 
+                });
+            }
+        }else if (str === "email") {
             if (!order.email) {
                 setOrder({ ...order, email: true });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
@@ -260,6 +300,20 @@ export default function Admins() {
             toast.error("email already exist");
         }
     };
+    
+const deleteAdminHandle = async (adminIds) => {
+    try {
+        console.log(adminIds)
+        const response = await axiosClient.delete('/admin', {
+            data: { adminIds } 
+        });
+        console.log(response.data);
+        toast.success("Admin is deleted");
+        fetchUsers();
+    } catch (error) {
+        toast.error('Error deleting admin:', error);
+    }
+};
   return (
 	<div className="flex flex-col">
     <ToastContainer />
@@ -349,41 +403,45 @@ export default function Admins() {
                 </label>
               
               </div>
-              <div className='flex-col flex w-full px-5 mb-1 relative'>
+              <div className='flex-col flex w-full px-5 mb-1'>
                 <label htmlFor="password">password</label>
-                <input 
-                   type= {
-                    showPass ? "text" : "password" } 
-                   id="password" 
-                   placeholder='password' 
-                   value={data.password} 
-                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
-                   onChange={(e) => handleInputChange(e, 'password')}
-                />
-                 {
-                    showPass ? 
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
-                    :
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
-                  }
+                <div className='relative w-full'>
+                    <input 
+                    type= {
+                        showPass ? "text" : "password" } 
+                    id="password" 
+                    placeholder='password' 
+                    value={data.password} 
+                    className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                    onChange={(e) => handleInputChange(e, 'password')}
+                    />
+                    {
+                        showPass ? 
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                        :
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                    }
+                </div>
               </div>
-              <div className='flex-col flex w-full px-5 mb-1 relative'>
+              <div className='flex-col flex w-full px-5 mb-1'>
                 <label htmlFor="cpassword">confirm password</label>
-                <input 
-                   type= {
-                    showPass ? "text" : "password" }
-                   id="cpassword" 
-                   placeholder='confirm password' 
-                   value={data.cpassword} 
-                   className='py-2 pl-5 rounded outline-none border-2 border-gray-300'
-                   onChange={(e) => handleInputChange(e, 'cpassword')}
-                />
-                 {
-                    showPass ? 
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
-                    :
-                    <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
-                  }
+                <div className='relative w-full'>
+                    <input 
+                    type= {
+                        showPass ? "text" : "password" }
+                    id="cpassword" 
+                    placeholder='confirm password' 
+                    value={data.cpassword} 
+                    className='py-2 pl-5 rounded outline-none border-2 border-gray-300 w-full'
+                    onChange={(e) => handleInputChange(e, 'cpassword')}
+                    />
+                    {
+                        showPass ? 
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><EyeOff color='#bfbfbf' /></div>
+                        :
+                        <div className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShowPass(!showPass)}><Eye color='#bfbfbf' /></div>
+                    }
+               </div>
               </div>
             </>}
               
@@ -400,7 +458,7 @@ export default function Admins() {
                         Back
                     </button>
                     <button type="button"  className='basis-1/2 text-white bg-black rounded py-2' onClick={submitDataNewAdmin}>
-                    update
+                    Submit
                     { loading
                         && 
                         <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
@@ -436,6 +494,8 @@ export default function Admins() {
             >
                 <option value="default">Search By</option>
                 <option value="username" >Full Name</option>
+                <option value="firstName" >First Name</option>
+                <option value="lastName" >Last Name</option>
                 <option value="email">Email</option>
             </select>
         </div>
@@ -491,7 +551,10 @@ export default function Admins() {
         && 
         <div className='flex items-center justify-end mb-3'>
             <div>
-                <button className='bg-red-700 rounded py-2 px-5 text-white'>Delete</button>
+                <button
+                 className='bg-red-700 rounded py-2 px-5 text-white'
+                 onClick={()=>{deleteAdminHandle(selectedUsers)}}
+                >Delete</button>
             </div>
         </div>
     }
@@ -510,7 +573,7 @@ export default function Admins() {
                                         checked={selectedUsers.length === filteredUsers.length}
                                         onChange={checkAll}
                                     />
-                                    <label for="checkbox-all" className="sr-only">checkbox</label>
+                                    <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-gray-700">
@@ -560,19 +623,22 @@ export default function Admins() {
                                     checked={selectedUsers.includes(user._id)} 
                                     onChange={() => handleCheckboxChange(user._id)} 
                                />
-                               <label for="checkbox-table-1" className="sr-only"></label>
+                               <label htmlFor="checkbox-table-1" className="sr-only"></label>
                            </div>
                        </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.firstName}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {user.lastName}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.email}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <span className={`py-2 px-3 ${(user.role === "host") ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800" }  rounded-lg`}>
+                            <span className={`py-2 px-3 ${(user.role === "admin") ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800" }  rounded-lg`}>
                                 {user.role}
                             </span>
                         </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.createdAt}</td>
-                       <td className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12">
+                       <td 
+                            className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"
+                            onClick={()=>{deleteAdminHandle([user._id])}}
+                       >
                            Delete
                        </td>
                    </tr>

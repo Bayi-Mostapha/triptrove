@@ -74,3 +74,17 @@ export const signin = async (request, response, next) => {
         next(error);
     }   
 }; 
+  export const deleteAdmin = async (req, res, next) => {
+    const { adminIds } = req.body; 
+
+    try {
+        for (const adminId of adminIds) {
+            await Admin.findByIdAndDelete(adminId);
+        }
+
+        res.status(200).json({ message: 'Admins deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting admins:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}; 
