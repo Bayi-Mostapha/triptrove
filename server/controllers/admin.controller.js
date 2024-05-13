@@ -43,7 +43,7 @@ export const signin = async (request, response, next) => {
 }; 
   export const getAll = async (req, res, next) => {
     try {
-        // await Admin.find( {},{ password: 0 }).select('firstName lastName fullName email role createdAt');
+       
         const admins = await Admin.find({ _id: { $ne: req.userId } }).select('-password');
 
         res.status(200).json(admins.map(user => ({
@@ -87,6 +87,24 @@ export const signin = async (request, response, next) => {
         res.status(200).json({ message: 'Admins deleted successfully' });
     } catch (error) {
         console.error('Error deleting admins:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}; 
+  export const changeAdminRole = async (req, res, next) => {
+    const { id } = req.body; 
+
+    try {
+       
+        const user =    await Admin.findById(id);
+        if(user.role === "admin"){
+          user.role = "superAdmin";
+        }else{
+          user.role = "admin";
+        }
+        user.save();
+        res.status(200).json({ message: 'admin role updated successfulyy' });
+    } catch (error) {
+        console.error('Error updating admin role', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }; 

@@ -10,7 +10,18 @@ import React, { useState, useEffect } from 'react'
     LogIn ,
     ChevronsUpDown,
     CalendarDays,
+    EllipsisVertical ,
   } from 'lucide-react';
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+  } from "@/components/ui/dropdown-menu";
 import {
     Avatar,
     AvatarFallback,
@@ -19,7 +30,7 @@ import {
 import { axiosClient } from "../../api/axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Button } from "@/components/ui/button"
 import { addDays, format } from "date-fns"
 
 import { cn } from "@/lib/utils"
@@ -37,6 +48,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription,
   } from "@/components/ui/dialog"
 import { Axios } from 'axios';
 
@@ -245,6 +257,7 @@ export default function Admins() {
     const [ showPass, setShowPass ] = useState(false)
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false)
+    const [openD, setOpenD] = useState(false)
     const [data, setData] = useState({
         firstName: "",
         lastName: "",
@@ -307,11 +320,26 @@ const deleteAdminHandle = async (adminIds) => {
         const response = await axiosClient.delete('/admin', {
             data: { adminIds } 
         });
-        console.log(response.data);
+         return true;
+    } catch (error) {
+        return false;
+    }
+};
+const handleDelete = (admins) =>{
+    if(deleteAdminHandle(admins)){
         toast.success("Admin is deleted");
         fetchUsers();
+    }else{
+        toast.error('Error deleting admin');
+    }
+}
+const upgradeAdmin = async (id) => {
+    try {
+        const response = await axiosClient.post('/admin/upgrade-downgrade', {id});
+        toast.success("Admin's role is changed successfully");
+        fetchUsers();
     } catch (error) {
-        toast.error('Error deleting admin:', error);
+        toast.error('Error changing admin role admin');
     }
 };
   return (
@@ -551,10 +579,41 @@ const deleteAdminHandle = async (adminIds) => {
         && 
         <div className='flex items-center justify-end mb-3'>
             <div>
-                <button
-                 className='bg-red-700 rounded py-2 px-5 text-white'
-                 onClick={()=>{deleteAdminHandle(selectedUsers)}}
-                >Delete</button>
+              
+                  <Dialog>
+                    <DialogTrigger asChild>
+                        <button
+                            className='bg-red-700 rounded py-2 px-5 text-white'
+                        >
+                            Delete
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                        <DialogTitle>Are You sure ? </DialogTitle>
+                        <DialogDescription>
+                            Are you sure , you wanna delete this admin 
+                        </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="sm:justify-start">
+                        <DialogClose asChild>
+                            <div className='flex gap-4 w-full'>
+                            <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                        Close
+                                </button> 
+                                <button onClick={()=>handleDelete(selectedUsers)} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                        Confirm 
+                                        { loading
+                                            && 
+                                            <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                            role="status"></div>
+                                        }
+                                    </button>
+                            </div>
+                        </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                    </Dialog>
             </div>
         </div>
     }
@@ -637,9 +696,53 @@ const deleteAdminHandle = async (adminIds) => {
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.createdAt}</td>
                        <td 
                             className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"
-                            onClick={()=>{deleteAdminHandle([user._id])}}
                        >
-                           Delete
+                             <Dialog open={openD} onOpenChange={()=>{setOpenD(false)}}>
+                                <DialogContent className="sm:max-w-md">
+                                    <DialogHeader>
+                                    <DialogTitle>Are You sure ? </DialogTitle>
+                                    <DialogDescription>
+                                        Are you sure , you wanna delete this admin 
+                                    </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter className="sm:justify-start">
+                                    <DialogClose asChild>
+                                        <div className='flex gap-4 w-full'>
+                                        <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                                    Close
+                                            </button> 
+                                            <button onClick={()=>{handleDelete([user._id])}} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                                    Confirm 
+                                                    { loading
+                                                        && 
+                                                        <div className="inline-block h-5 w-5 ml-3 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                                        role="status"></div>
+                                                    }
+                                                </button>
+                                        </div>
+                                    </DialogClose>
+                                    </DialogFooter>
+                                </DialogContent>
+                                </Dialog>
+                               
+                                <DropdownMenu >
+                                    <DropdownMenuTrigger asChild >
+                                      <EllipsisVertical />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-56 bg-white">
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem className="p-0" >
+                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>upgradeAdmin(user._id)}>
+                                               {user.role === "admin" ? "upgrade to superAdmin": "downgrade to Admin" }
+                                            </div>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className=""> 
+                                            <div className='w-full h-full bg-red-700 rounded py-2 px-5 text-white flex items-center justify-center'  onClick={()=>{setOpenD(true);}} >
+                                            <p>Delete </p>
+                                            </div>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                        </td>
                    </tr>
                     ))}
