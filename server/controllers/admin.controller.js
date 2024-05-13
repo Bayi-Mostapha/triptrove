@@ -43,7 +43,9 @@ export const signin = async (request, response, next) => {
 }; 
   export const getAll = async (req, res, next) => {
     try {
-        const admins = await Admin.find( {},{ password: 0 }).select('firstName lastName fullName email role createdAt');
+        // await Admin.find( {},{ password: 0 }).select('firstName lastName fullName email role createdAt');
+        const admins = await Admin.find({ _id: { $ne: req.userId } }).select('-password');
+
         res.status(200).json(admins.map(user => ({
           ...user.toObject(),
           createdAt: user.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
