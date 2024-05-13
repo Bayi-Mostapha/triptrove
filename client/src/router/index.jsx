@@ -18,8 +18,9 @@ import Dashboard from "../pages/admin/dashboard"
 import Users from "../pages/admin/users"
 import Admins from "../pages/admin/admins-page"
 
-import Home from "../pages/guest/home" 
+import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"
+import Property from '@/pages/guest/property';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -35,6 +36,7 @@ export const HOME_LINK = '/home';
 
 // Guest 
 export const PROFILE_LINK = '/profile';
+export const PROPERTY_LINK = '/property/:id';
 
 // Host
 
@@ -49,10 +51,10 @@ export const ADMIN_ADMINS_LINK = '/admin/admins';
 
 
 
- // {
-    //     path: USER_HOME_LINK,
-    //     element: <GuestRoute><div>home</div></GuestRoute>
-    // },
+// {
+//     path: USER_HOME_LINK,
+//     element: <GuestRoute><div>home</div></GuestRoute>
+// },
 
 // router 
 export const router = createBrowserRouter([
@@ -80,7 +82,7 @@ export const router = createBrowserRouter([
                 element: <ForgetPassword />
             }
         ]
-    }, 
+    },
     {
         element: <AuthRoute><AuthLayout /></AuthRoute>,
         children: [
@@ -89,13 +91,17 @@ export const router = createBrowserRouter([
                 element: <SubscriptionForm />
             },
         ]
-    }, 
+    },
     {
         element: <AuthRoute><GuestLayout /></AuthRoute>,
         children: [
             {
                 path: PROFILE_LINK,
                 element: <Profile />
+            },
+            {
+                path: PROPERTY_LINK,
+                element: <Property />
             },
         ]
     },
