@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils"
-import { addDays, format } from "date-fns"
+import { addDays, format, startOfDay } from "date-fns"
 import { Calendar as CalendarIcon, Minus, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -9,41 +9,49 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { toast } from "react-toastify";
+import GeustsInput from "@/components/guest/property-reservation/guests-input";
 
 function Property() {
+    // date range 
     const [date, setDate] = useState({
-        from: new Date(2022, 0, 20),
-        to: addDays(new Date(2022, 0, 20), 20),
-    })
-
+        from: startOfDay(new Date()),
+        to: addDays(startOfDay(new Date()), 1),
+    });
+    const disabledDates = [new Date('2024-05-15'), new Date('2024-05-20')];
+    const isDateDisabled = date => {
+        return disabledDates.some(disabledDate =>
+            new Date(date).toDateString() === disabledDate.toDateString()
+        );
+    };
+    // guests input 
     const [adults, setAdults] = useState(1);
     const maxAdults = 12;
     const [children, setChildren] = useState(0);
     const [infants, setInfants] = useState(0);
+    const maxInfants = 5;
     const [pets, setPets] = useState(0);
+    const maxPets = 3;
 
-    function decrement(toInc) {
-        switch (toInc) {
-            case 'adults':
-                setAdults(prev => {
-                    if (prev > 1)
-                        return prev - 1
-                    return 1
-                })
+    const handleSubmit = () => {
+        let isDisabledDateSelected = false;
+        let currentDate = new Date(date.from);
+        const toDate = new Date(date.to);
+
+        while (currentDate <= toDate) {
+            if (isDateDisabled(currentDate)) {
+                isDisabledDateSelected = true;
                 break;
+            }
+            currentDate = addDays(currentDate, 1);
         }
-    }
-    function increment(toInc) {
-        switch (toInc) {
-            case 'adults':
-                setAdults(prev => {
-                    if (prev < maxAdults)
-                        return prev + 1
-                    return maxAdults
-                })
-                break;
+
+        if (isDisabledDateSelected) {
+            toast.error('You have selected a disabled date within the range.')
+        } else {
+            console.log('Submit logic goes here.');
         }
-    }
+    };
 
     return (
         <>
@@ -82,35 +90,13 @@ function Property() {
                             selected={date}
                             onSelect={setDate}
                             numberOfMonths={2}
+                            disabled={isDateDisabled}
                         />
                     </PopoverContent>
                 </Popover>
             </div>
-            <div>
-                <div className="font-medium">Guests</div>
-                <Popover>
-                    <PopoverTrigger className="border px-4 py-2 rounded text-sm">
-                        {adults + children} Guest(s) {infants > 0 && `, ${infants} infant(s)`} {pets > 0 && `, ${pets} pet(s)`}
-                    </PopoverTrigger>
-                    <PopoverContent>
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <p className="font-medium">Adults</p>
-                                <p className="text-sm font-thin">Age +16</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button disabled={adults == 1} className="group w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 disabled:border-gray-100 disabled:cursor-not-allowed transition-all" onClick={() => decrement('adults')}>
-                                    <Minus className="stroke-gray-400 group-disabled:stroke-gray-300" size='14px' />
-                                </button>
-                                <div>{adults}</div>
-                                <button disabled={adults == 12} className="group w-8 h-8 flex justify-center items-center border rounded-full text-lg hover:bg-gray-50 disabled:border-gray-100 disabled:cursor-not-allowed transition-all" onClick={() => increment('adults')}>
-                                    <Plus className="stroke-gray-400 group-disabled:stroke-gray-300" size='14px' />
-                                </button>
-                            </div>
-                        </div>
-                    </PopoverContent>
-                </Popover>
-            </div>
+            <GeustsInput />
+            <button onClick={handleSubmit}>submit</button>
         </>
     );
 }
