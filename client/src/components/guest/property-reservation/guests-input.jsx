@@ -72,9 +72,9 @@ function GeustsInput({ adults, setAdults, maxAdults, children, setChildren, infa
     }
     return (
         <div>
-            <div className="font-medium">Guests</div>
+            <h4 className="mt-3">Guests</h4>
             <Popover>
-                <PopoverTrigger className="border px-4 py-2 rounded text-sm">
+                <PopoverTrigger className="mt-1 block border px-4 py-2 rounded text-sm mx-auto">
                     {adults + children} Guest{adults + children > 1 && 's'} {infants > 0 && `, ${infants} infant`}{infants > 1 && 's'} {pets > 0 && `, ${pets} pet`}{pets > 1 && 's'}
                 </PopoverTrigger>
                 <PopoverContent>

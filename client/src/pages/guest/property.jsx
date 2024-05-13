@@ -57,53 +57,78 @@ function Property() {
 
     return (
         <>
-            <div className="font-medium">Check in and check out</div>
-            <div className="grid gap-2">
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            id="date"
-                            variant={"outline"}
-                            className={cn(
-                                "w-[300px] justify-start text-left font-normal",
-                                !date && "text-muted-foreground"
-                            )}
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {date?.from ? (
-                                date.to ? (
-                                    <>
-                                        {format(date.from, "LLL dd, y")} -{" "}
-                                        {format(date.to, "LLL dd, y")}
-                                    </>
+            <div className="w-[400px] px-4 py-2 shadow-md rounded">
+                <h3 className="text-xl font-medium">9,228MAD / Per Night</h3>
+                <h4 className="mt-3">Check in and check out</h4>
+                <div className="grid gap-2">
+                    <Popover>
+                        <PopoverTrigger asChild className="mt-1 mx-auto">
+                            <Button
+                                id="date"
+                                variant={"outline"}
+                                className={cn(
+                                    "w-fit justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date?.from ? (
+                                    date.to ? (
+                                        <>
+                                            {format(date.from, "LLL dd, y")} -{" "}
+                                            {format(date.to, "LLL dd, y")}
+                                        </>
+                                    ) : (
+                                        format(date.from, "LLL dd, y")
+                                    )
                                 ) : (
-                                    format(date.from, "LLL dd, y")
-                                )
-                            ) : (
-                                <span>Pick a date</span>
-                            )}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            initialFocus
-                            mode="range"
-                            defaultMonth={date?.from}
-                            selected={date}
-                            onSelect={setDate}
-                            numberOfMonths={2}
-                            disabled={isDateDisabled}
-                        />
-                    </PopoverContent>
-                </Popover>
+                                    <span>Pick a date</span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={date?.from}
+                                selected={date}
+                                onSelect={setDate}
+                                numberOfMonths={2}
+                                disabled={isDateDisabled}
+                            />
+                        </PopoverContent>
+                    </Popover>
+                </div>
+                <GeustsInput
+                    adults={adults} setAdults={setAdults} maxAdults={maxAdults}
+                    children={children} setChildren={setChildren}
+                    infants={infants} setInfants={setInfants} maxInfants={maxInfants}
+                    pets={pets} setPets={setPets} maxPets={maxPets}
+                />
+                <Button
+                    className="mt-4 mb-3 w-full p-2 bg-primary rounded-md font-medium text-white"
+                    onClick={handleSubmit}
+                >
+                    Reserve
+                </Button>
+                <div className="flex justify-between items-center text-sm font-thin">
+                    <p>9228 MAD  * 5 nights</p>
+                    <p>46140 MAD</p>
+                </div>
+                <div className="mt-1 flex justify-between items-center text-sm font-thin">
+                    <p>Cleaning fee</p>
+                    <p>500 MAD</p>
+                </div>
+                <div className="mt-1 flex justify-between items-center text-sm font-thin">
+                    <p>Service fee</p>
+                    <p>150 MAD</p>
+                </div>
+                <div className="my-3 bg-gray-200 w-full h-[1px]"></div>
+                <div className="flex justify-between items-center text-xl">
+                    <p className="font-meduium">Total</p>
+                    <p className="font-thin">46790 MAD</p>
+                </div>
             </div>
-            <GeustsInput
-                adults={adults} setAdults={setAdults} maxAdults={maxAdults}
-                children={children} setChildren={setChildren}
-                infants={infants} setInfants={setInfants} maxInfants={maxInfants}
-                pets={pets} setPets={setPets} maxPets={maxPets}
-            />
-            <button onClick={handleSubmit}>submit</button>
         </>
     );
 }
