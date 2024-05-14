@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils"
-import { addDays, format, startOfDay } from "date-fns"
+import { addDays, differenceInDays, format, startOfDay } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -18,6 +18,7 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
         from: startOfDay(new Date()),
         to: addDays(startOfDay(new Date()), 1),
     });
+    const nNights = differenceInDays(date.to, date.from)
     const isDateDisabled = date => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -100,14 +101,16 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
                 infants={infants} setInfants={setInfants} maxInfants={maxInfants}
                 pets={pets} setPets={setPets} maxPets={maxPets}
             />
+
             <Button
                 className="mt-4 mb-3 w-full p-2 bg-primary rounded-md font-medium text-white"
                 onClick={handleSubmit}
             >
                 Reserve
             </Button>
+
             <div className="flex justify-between items-center text-sm font-thin">
-                <p>9228 MAD  * 5 nights</p>
+                <p>9228 MAD  * {nNights} nights</p>
                 <p>46140 MAD</p>
             </div>
             <div className="mt-1 flex justify-between items-center text-sm font-thin">

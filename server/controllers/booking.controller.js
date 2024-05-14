@@ -3,7 +3,7 @@ import Booking from "../models/booking.model.js";
 
 // export const getBookings = async (req, res) => {
 //     try {
-//         const { userId } = req.body;
+//         const { userId } = req;
 
 //         const bookings = await Booking.find({ guest: userId });
 //         if (!bookings) {
@@ -26,12 +26,13 @@ import Booking from "../models/booking.model.js";
 export const createBooking = async (req, res) => {
     try {
         const { pid } = req.params;
-        const { checkIn, checkOut, totalPrice, guest } = req.body;
+        const { checkIn, checkOut, totalPrice } = req.body;
+        const guest = req.userId;
 
         const existingBookings = await Booking.find({
             property: pid,
             $or: [
-                { checkIn: { $lt: new Date(checkOut) }, checkOut: { $gt: new Date(checkIn) } }, // Check if existing booking overlaps with selected dates
+                { checkIn: { $lt: new Date(checkOut) }, checkOut: { $gt: new Date(checkIn) } },
                 { checkIn: new Date(checkIn) },
                 { checkOut: new Date(checkOut) },
             ],

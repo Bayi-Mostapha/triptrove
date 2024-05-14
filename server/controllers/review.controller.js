@@ -13,7 +13,7 @@ export const createReview = async (req, res) => {
     const review = new Review({
         stars: req.body.stars,
         content: req.body.content,
-        author: req.body.author,
+        author: req.userId,
         property: req.params.pid,
     });
 
