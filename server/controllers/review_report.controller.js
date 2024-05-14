@@ -1,5 +1,14 @@
-import Review from "../models/review.model.js";
 import ReviewReport from "../models/review_report.model.js";
+
+// export const getAllReports = async (req, res) => {
+//     try {
+//         const reportedReviews = await ReviewReport.find();
+//         res.json(reportedReviews);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
 
 // export const getReports = async (req, res) => {
 //     const { pid } = req.params;
@@ -29,6 +38,15 @@ export const createReport = async (req, res) => {
     try {
         await report.save();
         res.status(201).json({ message: 'Reported successfully' });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+export const deleteReport = async (req, res) => {
+    try {
+        await ReviewReport.findByIdAndDelete(req.params.id);
+        res.status(201).json({ message: 'Report deleted successfully' });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
