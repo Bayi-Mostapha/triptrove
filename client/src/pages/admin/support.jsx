@@ -284,6 +284,9 @@ export default function Support() {
     useEffect(()=>{
         setDate(null);
         filterTicketByDate();
+        if(filter === "custom"){
+            setFilteredProblems(problems);
+        }
     },[filter]);
 
     useEffect(() => { 

@@ -18,7 +18,7 @@ import Dashboard from "../pages/admin/dashboard"
 import Users from "../pages/admin/users"
 import Admins from "../pages/admin/admins-page"
 import Support from "../pages/admin/support"
-import Properties from "../pages/admin/support"
+import Properties from "../pages/admin/properties"
 
 import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"

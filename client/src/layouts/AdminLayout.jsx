@@ -72,13 +72,13 @@ function HostLayout() {
                     <SidebarItem icon={<MdOutlineAdminPanelSettings />} text={'Admins'} location={ADMINS_LINK} />
                 } */}
                 <SidebarItem icon={<Users color="#222222" size={22}/>} text={'Users'} location={"/admin/users"} />
-                <SidebarItem icon={<Building2   color="#222222" size={22}/>} text={'Properties'} location={"/dashboard"} />
+                <SidebarItem icon={<Building2   color="#222222" size={22}/>} text={'Properties'} location={"/admin/properties"} />
                 <SidebarItem icon={<ClipboardCheck   color="#222222" size={22}/>} text={'Reports'} location={"/dashboard"} />
                 <SidebarItem icon={<Bug    color="#222222" size={22}/>} text={'Bugs'} location={"/admin/support"} />
                 {  userContext.user.role === "superAdmin" &&
                     <SidebarItem icon={<UserRoundCheck    color="#222222" size={22}/>} text={'Admins'} location={ADMIN_ADMINS_LINK} />
                 }
-                <SidebarItem icon={<Settings      color="#222222" size={22}/>} text={'Settings'} location={"/dashboard"} />
+                <SidebarItem icon={<Settings      color="#222222" size={22}/>} text={'Settings'} location={"/admin/settings"} />
             </SideBar>
             <main className="pt-16 pl-24 p-3 pr-5">
                 <Outlet />
