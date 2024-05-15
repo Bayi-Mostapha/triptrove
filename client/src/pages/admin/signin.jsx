@@ -36,7 +36,6 @@ export default function SignIn() {
         localStorage.setItem('admin', true);
         userContext.getUser();
         userContext.setIsLoggedIn(true);
-        console.log(userContext.user)
        
         return true;
       } else {
@@ -109,9 +108,6 @@ export default function SignIn() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   value={formData?.password}
               />
-           </div>
-           <div className='mb-3'>
-              <Link to={RESETPASSWORD_LINK} className='cursor-pointer'>forget password</Link>  
            </div>
            <div className=' mb-4'>
               <button 

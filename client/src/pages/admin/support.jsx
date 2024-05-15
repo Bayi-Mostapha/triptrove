@@ -3,6 +3,7 @@ import { authContext } from "@/contexts/AuthWrapper";
  import { 
     ChevronsUpDown,
     CalendarDays,
+    ChevronDown,
     EllipsisVertical ,
     SquareArrowLeft, 
   } from 'lucide-react';
@@ -42,18 +43,18 @@ export default function Support() {
     const [ messages, setMessages] = useState([]);
 
     const checkAll = () => {
-        if (selectedUsers.length === filteredUsers.length) {
-            setSelectedUsers([]);
+        if (selectedProblems.length === filteredProblems.length) {
+            setSelectedProblems([]);
         } else {
-            const allUserIds = filteredUsers.map(user => user._id);
-            setSelectedUsers(allUserIds);
+            const allTicketsId = filteredProblems.map(elem => elem._id);
+            setSelectedProblems(allTicketsId);
         }
     };
     
-    const handleInputChange = (e, field) => {
-        const value = e.target.value;
-        setData({ ...data, [field]: value });
-    };
+    // const handleInputChange = (e, field) => {
+    //     const value = e.target.value;
+    //     setData({ ...data, [field]: value });
+    // };
   
     const getAllProblems = async () => {
         try {
@@ -100,6 +101,16 @@ export default function Support() {
         });
     }
 
+    const handleCheckboxChange = (ticketId) => {
+        setSelectedProblems(prevSelectedProblems => {
+            if (prevSelectedProblems.includes(ticketId)) {
+                return prevSelectedProblems.filter(id => id !== ticketId);
+            } else {
+                return [...prevSelectedProblems, ticketId];
+            }
+        });
+    };
+
     const closeTicket = async (id) => {
         if(!id){
             return;
@@ -141,13 +152,210 @@ export default function Support() {
     useEffect(()=>{
         handleSetTicket(actualTicket?._id);
     },[problems]);
+   
+    const [ filter, setFilter ] = useState("filter by");
+    const [date, setDate] = useState();
+    const [order, setOrder] = useState({
+        category: false ,
+        title: false,
+        createdAt: false,
+        status: false,
+        email: false,
+    });
+    
+    const filterTicketByDate = () => {
+        const today = new Date(); 
+        switch (filter) {
+            case "all":
+                setFilteredProblems(problems);
+                break;
+            case "custom":
+                if(date && date.from !== undefined  && date.to !== undefined){
+                    const newTickets = problems.filter(problem => {
+                        const joinDate = new Date(problem.createdAt);
+                        const startDate = new Date(date.from);
+                        const endDate = new Date(date.to);
+                        return joinDate >= startDate && joinDate <= endDate ;
+                    });
+                    setFilteredProblems(newTickets);
+                    return ;
+                }
+                break;
+            case "today":
+                const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+                const todayTickets = problems.filter(problem => {
+                    const joinDate = new Date(problem.createdAt);
+                    return joinDate >= startOfToday && joinDate < endOfToday;
+                });
+                setFilteredProblems(todayTickets);
+                break;
+            case "lastw":
+                const endOfLastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+                const startOfLastWeek = new Date(endOfLastWeek.getFullYear(), endOfLastWeek.getMonth(), endOfLastWeek.getDate() - endOfLastWeek.getDay());
+                const lastWeekTickets = problems.filter(problem => {
+                    const joinDate = new Date(problem.createdAt);
+                    return joinDate >= startOfLastWeek && joinDate < endOfLastWeek;
+                });
+                setFilteredProblems(lastWeekTickets);
+                break;
+            case "lastm":
+                const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                const lastMonthTickets = problems.filter(problem => {
+                    const joinDate = new Date(problem.createdAt);
+                    return joinDate >= startOfLastMonth && joinDate <= endOfLastMonth;
+                });
+                setFilteredProblems(lastMonthTickets);
+                break;
+            default:
+                break;
+        }
+    }
+    const filterTicketsByOrder = (str) => {
+        let sortedTickets = [];
+        if (str === "category") {
+            if (!order.category) {
+                setOrder({ ...order, category: true });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return b.category.localeCompare(a.category); 
+                });
+            } else {
+                setOrder({ ...order, category: false });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return a.category.localeCompare(b.category); 
+                });
+            }
+        } else if (str === "email") {
+            if (!order.email) {
+                setOrder({ ...order, email: true });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return b.user.email.localeCompare(a.user.email); 
+                });
+            } else {
+                setOrder({ ...order, email: false });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return a.user.email.localeCompare(b.user.email); 
+                });
+            }
+        } else if (str === "title") {
+            if (!order.title) {
+                setOrder({ ...order, title: true });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return b.title.localeCompare(a.title); 
+                });
+            } else {
+                setOrder({ ...order, title: false });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return a.title.localeCompare(b.title); 
+                });
+            }
+        }else if (str === "status") {
+            if (!order.status) {
+                setOrder({ ...order, status: true });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return b.status.localeCompare(a.status); 
+                });
+            } else {
+                setOrder({ ...order, status: false });
+                sortedTickets = filteredProblems.slice().sort((a, b) => {
+                    return a.status.localeCompare(b.status); 
+                });
+            }
+        }else if (str === "createdAt") {
+            sortedTickets = filteredProblems.slice().sort((a, b) => {
+                const dateA = new Date(a.createdAt);
+                const dateB = new Date(b.createdAt);
+                if (!order.createdAt) {
+                    return dateB - dateA; 
+                } else {
+                    return dateA - dateB; 
+                }
+            });
+            if (!order.createdAt) {
+                setOrder({ ...order, createdAt: true });
+            } else {
+                setOrder({ ...order, createdAt: false });
+            }
+        }
+        setFilteredProblems(sortedTickets);
+    };
 
+    useEffect(()=>{
+        setDate(null);
+        filterTicketByDate();
+    },[filter]);
+
+    useEffect(() => { 
+        filterTicketByDate();
+    },[date]);
   return (
     <div className='flex w-full'>
     {
         actualTicket == null ? 
             <div className="flex flex-col w-full">
-                <div className='pb-16'>filteres</div>
+                <div className={`flex items-center pt-12 pb-5 w-full mr-3  ${(filter === "custom") ? "justify-between" : "justify-end"}`}>
+                    {  
+                        filter === "custom" &&
+                        <div className='mr-3'>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                <button
+                                    id="date"
+                                    variant={"outline"}
+                                    className={cn(
+                                    "w-[300px] flex items-center justify-start text-left font-normal border-[1px] border-gray-300 rounded p-2.5 py-2",
+                                    !date && "text-muted-foreground"
+                                    )}
+                                >
+                                    <CalendarDays className="mr-2 h-4 w-4" />
+                                    {date?.from ? (
+                                    date.to ? (
+                                        <>
+                                        {format(date.from, "LLL dd, y")} -{" "}
+                                        {format(date.to, "LLL dd, y")}
+                                        </>
+                                    ) : (
+                                        format(date.from, "LLL dd, y")
+                                    )
+                                    ) : (
+                                    <span>Pick a range</span>
+                                    )}
+                                </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                                <Calendar
+                                    initialFocus
+                                    mode="range"
+                                    defaultMonth={date?.from}
+                                    selected={date}
+                                    onSelect={setDate}
+                                    numberOfMonths={2}
+                                />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    }
+                    <div className='w-24 mr-3'>
+                        <DropdownMenu >
+                            <DropdownMenuTrigger asChild >
+                                <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
+                                    <p className='text-sm'>filter by</p> 
+                                    <ChevronDown color='#222222' size={18}/>
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 bg-white">
+                                <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
+                                <DropdownMenuRadioItem value="all">all</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="today">today</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="lastw">last week</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="custom">custem range</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
                 <div className="overflow-x-auto  sm:rounded-lg">
                     <div className="inline-block min-w-full align-middle">
                         <div className="overflow-hidden ">
@@ -157,41 +365,41 @@ export default function Support() {
                                         <th className="p-4">
                                             <div className="flex items-center">
                                                 <input 
-                                                id="checkbox-all" 
-                                                type="checkbox" 
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300"
-                                                checked={problems.length === filteredProblems.length}
-                                                onChange={checkAll}
+                                                    id="checkbox-all" 
+                                                    type="checkbox" 
+                                                    className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300"
+                                                    checked={selectedProblems.length === filteredProblems.length }
+                                                    onChange={checkAll}
                                                 />
                                                 <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
-                                            <div className='flex items-center cursor-pointer' > 
+                                            <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("email")}> 
                                                 <p className='mr-2 text-[#ffffff] '>reported By </p> 
                                                 <ChevronsUpDown size={18} color='#ffffff' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
-                                            <div className='flex items-center cursor-pointer' > 
+                                            <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("category")}> 
                                                 <p className='mr-2 text-[#ffffff] '>category</p> 
                                                 <ChevronsUpDown size={18} color='#ffffff' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                            <div className='flex items-center cursor-pointer' > 
-                                                <p className='mr-2 text-[#ffffff] '>description</p> 
+                                            <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("title")}> 
+                                                <p className='mr-2 text-[#ffffff] '>title</p> 
                                                 <ChevronsUpDown size={18} color='#ffffff' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                            <div className='flex items-center cursor-pointer' > 
+                                            <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("status")}> 
                                                 <p className='mr-2 text-[#ffffff]' >status</p> 
                                                 <ChevronsUpDown size={18} color='#ffffff' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                            <div className='flex items-center cursor-pointer' > 
+                                            <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("createdAt")} > 
                                                 <p className='mr-2 text-[#ffffff] '>created at</p> 
                                                 <ChevronsUpDown size={18} color='#ffffff' />
                                             </div>
