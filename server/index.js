@@ -14,6 +14,7 @@ import reviewReportsRoutes from "./routes/review_report.route.js"
 import problemRoutes from "./routes/problem.route.js"
 // hakim
 import propertyRoutes from "./routes/property.route.js"
+import favoriteRoutes from "./routes/favorite-property.route.js"
 
 const app = express();
 app.use(express.json());
@@ -44,5 +45,6 @@ app.use('/reviews', reviewRoutes);
 app.use('/review-reports', reviewReportsRoutes);
 // hakim 
 app.use('/properties', propertyRoutes);
+app.use('/favorites', favoriteRoutes);
 
 

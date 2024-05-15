@@ -1,24 +1,20 @@
 import Property from '../models/property.model.js';
-import User from '../models/user.model.js';
+import Review from '../models/review.model.js';
 import Booking from '../models/booking.model.js';
 import moment from 'moment';
 
 export const getProperty = async (req, res) => {
     try {
         const propertyId = req.params.id;
-        const property = await Property.findById(propertyId);
+        const property = await Property.findById(propertyId).populate('owner', ['fullName', 'image', 'created_at']);
         if (!property) {
             return res.status(404).json({ message: 'Property not found' });
         }
 
-        const owner = await User.findById(property.owner);
-        if (!owner) {
-            return res.status(404).json({ message: 'Owner not found' });
-        }
+        const reviews = Review.find({ property: propertyId })
 
         const bookings = await Booking.find({ property: propertyId });
-
-        const reservations = bookings.flatMap(booking => {
+        const reservations = bookings.flatMap((booking) => {
             const checkIn = moment(booking.checkIn);
             const checkOut = moment(booking.checkOut);
             const dates = [];
@@ -29,7 +25,7 @@ export const getProperty = async (req, res) => {
             return dates;
         });
 
-        res.json({ property, owner, reservations });
+        res.json({ property, reviews, reservations });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
