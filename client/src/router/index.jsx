@@ -18,6 +18,7 @@ import Dashboard from "../pages/admin/dashboard"
 import Users from "../pages/admin/users"
 import Admins from "../pages/admin/admins-page"
 import Support from "../pages/admin/support"
+import Properties from "../pages/admin/support"
 
 import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"
@@ -49,6 +50,7 @@ export const ADMIN_DASHBOARD_LINK = '/admin/dashboard';
 export const ADMIN_USERS_LINK = '/admin/users';
 export const ADMIN_ADMINS_LINK = '/admin/admins';
 export const ADMIN_SUPPORT_LINK = '/admin/support';
+export const ADMIN_PROPERTIES_LINK = '/admin/properties';
 
 
 
@@ -125,6 +127,10 @@ export const router = createBrowserRouter([
             {
                 path: ADMIN_SUPPORT_LINK,
                 element: <Support />
+            },
+            {
+                path: ADMIN_PROPERTIES_LINK,
+                element: <Properties />
             },
         ]
     },
