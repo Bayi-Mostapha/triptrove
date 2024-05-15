@@ -324,7 +324,7 @@ export default function Users() {
                            </div>
                        </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                       <Avatar className="w-10 h-10 cursor-pointer">
+                            <Avatar className="w-10 h-10 cursor-pointer">
                                 <AvatarImage src={user.image?.url} alt="@shadcn"  />
                                 <AvatarFallback className="bg-[#bdbbdb]">{user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
