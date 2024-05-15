@@ -249,10 +249,10 @@ export default function TopNav() {
                         <div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Avatar className="w-8 h-8 cursor-pointer">
-                                    <AvatarImage src={userContext.user.image?.url} alt="@shadcn"  />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage src={userContext.user.image?.url} alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#bdbbdb]">{userContext.user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56 bg-white">
                                 <DropdownMenuLabel>{userContext.user.email}</DropdownMenuLabel>

@@ -324,10 +324,10 @@ export default function Users() {
                            </div>
                        </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                           <Avatar className="w-8 h-8 cursor-pointer">
-                               <AvatarImage src="/assets/profile.png" alt="@shadcn"  />
-                               <AvatarFallback>CN</AvatarFallback>
-                           </Avatar>
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage src={user.image?.url} alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#bdbbdb]">{user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
                        </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.firstName} {user.lastName}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.email}</td>

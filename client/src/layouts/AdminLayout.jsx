@@ -40,7 +40,7 @@ function HostLayout() {
     return (
         <>
            <header >
-                <nav className="fixed top-0 left-0 right-0 z-0 px-6 py-3 flex items-center  justify-end border-b-[1px] border-gray-100 shadow-sm">
+                <nav className="fixed top-0 left-0 right-0 z-0 px-6 py-3 flex items-center  justify-end border-b-[1px] border-gray-100 shadow-sm bg-white">
                     <div className="mr-6 cursor-pointer relative py-1">
                         <Bell color="#000000" />
                         <div className="w-2 h-2 bg-red-500 absolute top-1 right-1 rounded-full"></div>
@@ -72,13 +72,13 @@ function HostLayout() {
                     <SidebarItem icon={<MdOutlineAdminPanelSettings />} text={'Admins'} location={ADMINS_LINK} />
                 } */}
                 <SidebarItem icon={<Users color="#222222" size={22}/>} text={'Users'} location={"/admin/users"} />
-                <SidebarItem icon={<Building2   color="#222222" size={22}/>} text={'Properties'} location={"/dashboard"} />
+                <SidebarItem icon={<Building2   color="#222222" size={22}/>} text={'Properties'} location={"/admin/properties"} />
                 <SidebarItem icon={<ClipboardCheck   color="#222222" size={22}/>} text={'Reports'} location={"/dashboard"} />
-                <SidebarItem icon={<Bug    color="#222222" size={22}/>} text={'Bugs'} location={"/dashboard"} />
+                <SidebarItem icon={<Bug    color="#222222" size={22}/>} text={'Bugs'} location={"/admin/support"} />
                 {  userContext.user.role === "superAdmin" &&
                     <SidebarItem icon={<UserRoundCheck    color="#222222" size={22}/>} text={'Admins'} location={ADMIN_ADMINS_LINK} />
                 }
-                <SidebarItem icon={<Settings      color="#222222" size={22}/>} text={'Settings'} location={"/dashboard"} />
+                <SidebarItem icon={<Settings      color="#222222" size={22}/>} text={'Settings'} location={"/admin/settings"} />
             </SideBar>
             <main className="pt-16 pl-24 p-3 pr-5">
                 <Outlet />
