@@ -12,6 +12,21 @@ export const getFavorites = async (req, res) => {
     }
 };
 
+export const isFavorite = async (req, res) => {
+    try {
+        const propertyId = req.params.pid
+        const existsInFavorite = await FavoriteProperty.find({ property: propertyId, user: req.userId })
+        let isUserFavorite = false
+        if (existsInFavorite) {
+            isUserFavorite = true
+        }
+        res.send(isUserFavorite)
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 export const toggleFav = async (req, res) => {
     try {
         const { pid } = req.params;
