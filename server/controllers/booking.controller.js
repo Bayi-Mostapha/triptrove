@@ -51,6 +51,7 @@ export const createBookingSession = async (req, res) => {
         const property = await Property.findOne({ _id: pid });
 
         const stripe = new Stripe(process.env.MostaphaStripe);
+        const frontend = process.env.FRONTEND_URL || 'http://localhost:5173/'
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
@@ -64,8 +65,8 @@ export const createBookingSession = async (req, res) => {
                 },
                 quantity: nights
             }],
-            success_url: `http://localhost:5173/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
-            cancel_url: 'http://localhost:5173/booking-fail',
+            success_url: frontend + `booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
+            cancel_url: frontend + 'booking-fail',
         })
         res.json({ url: session.url })
     } catch (error) {

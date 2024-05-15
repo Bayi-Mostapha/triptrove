@@ -53,8 +53,8 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
     };
 
     return (
-        <div className="px-4 py-2 shadow-md rounded">
-            <h3 className="text-xl font-medium">9,228MAD / Per Night</h3>
+        <div className="px-3 py-5 shadow-md rounded bg-[#FDFDFD]">
+            <h3 className="text-xl font-medium">9228 MAD/Per Night</h3>
             <h4 className="mt-3">Check in and check out</h4>
             <div className="grid gap-2">
                 <Popover>
@@ -103,7 +103,7 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
             />
 
             <Button
-                className="mt-4 mb-3 w-full p-2 bg-primary rounded-md font-medium text-white"
+                className="mt-5 mb-7 w-full p-2 bg-primary rounded-md font-semibold text-white"
                 onClick={handleSubmit}
             >
                 Reserve
@@ -121,7 +121,9 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
                 <p>Service fee</p>
                 <p>150 MAD</p>
             </div>
-            <div className="my-3 bg-gray-200 w-full h-[1px]"></div>
+
+            <div className="my-5 bg-gray-200 w-full h-[1px]"></div>
+
             <div className="flex justify-between items-center text-xl">
                 <p className="font-meduium">Total</p>
                 <p className="font-thin">46790 MAD</p>
