@@ -12,7 +12,7 @@ import {
 import { toast } from "react-toastify";
 import GeustsInput from "@/components/guest/property-reservation/guests-input";
 
-function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
+function Booking({ place, disabledDates, maxInfants, maxPets }) {
     // date range 
     const [date, setDate] = useState({
         from: startOfDay(new Date()),
@@ -54,8 +54,8 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
 
     return (
         <div className="px-3 py-5 shadow-md rounded bg-[#FDFDFD]">
-            <h3 className="text-xl font-medium">9228 MAD/Per Night</h3>
-            <h4 className="mt-3">Check in and check out</h4>
+            <h3 className="text-xl font-medium">{place.price} MAD/Per Night</h3>
+            <h4 className="mt-3">Check-in, check-out days</h4>
             <div className="grid gap-2">
                 <Popover>
                     <PopoverTrigger asChild className="mt-1 mx-auto">
@@ -96,7 +96,7 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
                 </Popover>
             </div>
             <GeustsInput
-                adults={adults} setAdults={setAdults} maxAdults={maxAdults}
+                adults={adults} setAdults={setAdults} maxAdults={place.guests}
                 children={children} setChildren={setChildren}
                 infants={infants} setInfants={setInfants} maxInfants={maxInfants}
                 pets={pets} setPets={setPets} maxPets={maxPets}
@@ -110,7 +110,7 @@ function Booking({ disabledDates, maxAdults, maxInfants, maxPets }) {
             </Button>
 
             <div className="flex justify-between items-center text-sm font-thin">
-                <p>9228 MAD  * {nNights} nights</p>
+                <p>{place.price} MAD  * {nNights} nights</p>
                 <p>46140 MAD</p>
             </div>
             <div className="mt-1 flex justify-between items-center text-sm font-thin">

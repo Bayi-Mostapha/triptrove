@@ -8,8 +8,9 @@ const reviewSchema = mongoose.Schema(
         },
         content: String,
         author: {
-            type: String,
-            required: true,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
         },
         property: {
             type: String,

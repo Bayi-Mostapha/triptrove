@@ -5,7 +5,7 @@ export default function PlaceGallery({ place }) {
 
     if (showAllPhotos) {
         return (
-            <div className="absolute inset-0 bg-black text-white min-h-screen">
+            <div className="absolute z-[9999] inset-0 bg-black text-white min-h-screen">
                 <div className="bg-black p-8 grid gap-6">
                     <div>
                         <h2 className="text-3xl mr-48">Photos of {place.title}</h2>

@@ -11,7 +11,7 @@ export const getProperty = async (req, res) => {
             return res.status(404).json({ message: 'Property not found' });
         }
 
-        const reviews = Review.find({ property: propertyId })
+        const reviews = Review.find({ property: propertyId }).populate('author', ['fullName', 'image']);
 
         const bookings = await Booking.find({ property: propertyId });
         const reservations = bookings.flatMap((booking) => {
