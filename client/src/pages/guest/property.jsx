@@ -5,6 +5,8 @@ import { axiosClient } from "@/api/axios";
 import AddressLink from "@/components/guest/property-reservation/address-link";
 import PlaceGallery from "@/components/guest/property-reservation/gallery";
 import MapContainer from "@/components/guest/property-reservation/map";
+import StarRating from "@/components/guest/property-reservation/star-rating";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 function Property() {
     const dummyPlace = {
@@ -46,14 +48,13 @@ function Property() {
         }
     ]
     const dummyReservations = [
-        '2024-06-13',
-        '2024-06-14',
-        '2024-06-15',
-        '2024-06-16',
-        '2024-07-09',
-        '2024-06-10',
-        '2024-06-11',
-    ]
+        new Date('2024-06-14').toISOString(),
+        new Date('2024-06-15').toISOString(),
+        new Date('2024-06-16').toISOString(),
+        new Date('2024-07-09').toISOString(),
+        new Date('2024-07-10').toISOString(),
+        new Date('2024-07-11').toISOString(),
+    ];
 
     const { id } = useParams();
     const [place, setPlace] = useState(null);
@@ -159,23 +160,32 @@ function Property() {
                 />
             </div>
             <div>
-                <h2 className="mb-2 font-medium text-xl">Location</h2>
+                <h2 className=" text-center mt-6 mb-2 font-medium text-xl">Location</h2>
                 <MapContainer location={[30.296117, -9.462425]} />
             </div>
-            <div>
-                <div className="flex flex-col items-center">
-                    <h2 className="font-medium text-xl">Overall rating</h2>
-                    <p className="text-6xl font-semibold">{rating}</p>
-                    <div>
-
-                    </div>
-                    <p className="text-sm">Based on {reviews.length} reviews</p>
-                </div>
-                <div>
-
-                </div>
+            <div className="mt-8 flex flex-col items-center">
+                <h2 className="font-medium text-xl">Overall rating</h2>
+                <p className="text-6xl font-semibold">{rating}</p>
+                <StarRating size={50} rating={rating} gap={5} />
+                <p className="text-sm">Based on {reviews.length} reviews</p>
             </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {
+                    reviews.map(review =>
+                        <div>
+                            <div className="flex items-start gap-4">
+                                <Avatar>
+                                    <AvatarImage src={review.author.image} />
+                                    <AvatarFallback className='uppercase'>{review.author.fullName.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <p className="font-medium">{review.author.fullName}</p>
+                            </div>
+                            <StarRating size={12} rating={rating} gap={0} />
+                            <p>{review.content}</p>
+                        </div>
+                    )
+                }
+            </div>
         </div>
     );
 }

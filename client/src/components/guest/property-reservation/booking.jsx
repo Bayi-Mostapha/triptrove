@@ -1,41 +1,43 @@
 import { useState } from "react";
-import { cn } from "@/lib/utils"
-import { addDays, differenceInDays, format, startOfDay } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { addDays, differenceInDays, format, startOfDay } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 import { toast } from "react-toastify";
 import GeustsInput from "@/components/guest/property-reservation/guests-input";
+import { axiosClient } from "@/api/axios";
 
 function Booking({ place, disabledDates, maxInfants, maxPets }) {
     // date range 
     const [date, setDate] = useState({
         from: startOfDay(new Date()),
-        to: addDays(startOfDay(new Date()), 1),
+        to: addDays(startOfDay(new Date()), 5),
     });
-    const nNights = differenceInDays(date.to, date.from)
-    const isDateDisabled = date => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+
+    const nNights = date.to ? differenceInDays(date.to, date.from) : 0;
+
+    const isDateDisabled = (date) => {
+        const today = startOfDay(new Date());
         return disabledDates.some(disabledDate =>
-            new Date(date).toDateString() === disabledDate.toDateString()
-        ) || new Date(date) < today;
+            startOfDay(new Date(disabledDate)).getTime() === date.getTime()
+        ) || date < today;
     };
-    // guests input 
+
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
     const [infants, setInfants] = useState(0);
     const [pets, setPets] = useState(0);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let isDisabledDateSelected = false;
-        let currentDate = new Date(date.from);
-        const toDate = new Date(date.to);
+        let currentDate = date.from;
+        const toDate = date.to;
 
         while (currentDate <= toDate) {
             if (isDateDisabled(currentDate)) {
@@ -46,15 +48,26 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
         }
 
         if (isDisabledDateSelected) {
-            toast.error('You have selected a disabled date within the range.')
+            toast.error('You have selected a disabled date within the range.');
         } else {
-            console.log(adults, children, infants, pets);
+            // const data = {
+            //     checkIn: addDays(date.from, 1),
+            //     checkOut: addDays(date.to, 1)
+            // };
+
+            // try {
+            //     const res = await axiosClient.post('/book/payment-session/dsfds', data);
+            //     console.log(res);
+            // } catch (error) {
+            //     console.error(error);
+            //     toast.error('Failed to create booking session. Please try again.');
+            // }
         }
     };
 
     return (
         <div className="px-3 py-5 shadow-md rounded bg-[#FDFDFD]">
-            <h3 className="text-xl font-medium">{place.price} MAD/Per Night</h3>
+            <h3 className="text-xl font-medium">{place.price} MAD/Per Night</h3>
             <h4 className="mt-3">Check-in, check-out days</h4>
             <div className="grid gap-2">
                 <Popover>
@@ -88,7 +101,7 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
                             mode="range"
                             defaultMonth={date?.from}
                             selected={date}
-                            onSelect={setDate}
+                            onSelect={(range) => setDate(range || { from: date.from, to: date.to })}
                             numberOfMonths={2}
                             disabled={isDateDisabled}
                         />
@@ -111,7 +124,7 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
 
             <div className="flex justify-between items-center text-sm font-thin">
                 <p>{place.price} MAD  * {nNights} nights</p>
-                <p>46140 MAD</p>
+                <p>{place.price * nNights} MAD</p>
             </div>
             <div className="mt-1 flex justify-between items-center text-sm font-thin">
                 <p>Cleaning fee</p>
@@ -126,7 +139,7 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
 
             <div className="flex justify-between items-center text-xl">
                 <p className="font-meduium">Total</p>
-                <p className="font-thin">46790 MAD</p>
+                <p>{(place.price * nNights) + 500 + 150} MAD</p>
             </div>
         </div>
     );
