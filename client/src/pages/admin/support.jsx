@@ -5,8 +5,10 @@ import { authContext } from "@/contexts/AuthWrapper";
     CalendarDays,
     ChevronDown,
     EllipsisVertical ,
-    SquareArrowLeft, 
-  } from 'lucide-react';
+    ArrowLeft , 
+    SquareX  ,
+X,
+} from 'lucide-react';
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -471,37 +473,40 @@ export default function Support() {
 :
     <div className='w-full pt-4'>
         <div className='pb-2 c'>
-            <div className='cursor-pointer' onClick={()=> setActualTicket(null)}>
-                <SquareArrowLeft size={30} />
-            </div>
+           
         </div>
-        <div className='flex flex-col rounded bg-violet-100 w-full py-5 px-7 mb-4 min-h-screen'> 
+        <div className='flex flex-col rounded bg-[#faf8f8] w-full py-5 px-7 mb-4 min-h-screen relative'> 
+        <div className='cursor-pointer absolute top-3 right-3 z-0' onClick={()=> setActualTicket(null)}>
+                <X    size={30} />
+            </div>
           <div className="flex item-center justify-between">
-            <h3 className='text-3xl font-medium  mb-3 text-violet-950'>Ticket: {actualTicket.title}</h3>
+            <h3 className='text-3xl font-medium  mb-3 text-violet-950'><span className='text-5xl font-semibold'>Ticket:</span> {actualTicket.title}</h3>
             {
                 actualTicket.status === "open" && 
                 <button className='rounded py-1 px-4 bg-[#371250] text-white text-md' onClick={()=>{closeTicket(actualTicket._id)}}>Close ticket</button>
             }
             </div>
-          <p className='text-sm text-gray-700 mb-1'>Description: {actualTicket.description}</p>
-          <p className='text-sm text-gray-700 mb-1'>Submitted By:{actualTicket.user.fullName}</p>
-          <p className='text-sm text-gray-700 mb-1'>Date: {actualTicket.createdAt}</p>
+          <p className='text-sm text-gray-700 '><span className='font-semibold text-lg'>category    :</span> {actualTicket.category}</p>
+          <p className='text-sm text-gray-700 '><span className='font-semibold text-lg'>description :</span> {actualTicket.description}</p>
+          <p className='text-sm text-gray-700 '><span className='font-semibold text-lg'>Submitted By:</span>{actualTicket.user.fullName}</p>
+          <p className='text-sm text-gray-700 '><span className='font-semibold text-lg'>Date        :</span> {actualTicket.createdAt}</p>
            <div className="border-b-[1px] border-[#e0e0e0] w-full mt-6"></div>
            <div className='flex flex-col gap-4 py-5  w-full '>
               {
                 messages.map((msg, index)=>(
-                <div className='flex flex-col w-full' key={index}>
-                    <p className='ml-3'>{msg.content }</p>
+                <div className='flex flex-col' key={index}>
+                    <p className='ml-3 text-lg font-medium text-[#7065F0] '>{(msg.senderRole === "admin" || msg.senderRole === "superAdmin")  ? "Admin" : actualTicket.user.firstName}:</p>
+                    <p className='ml-4 text-md text-gray-600'>{msg.content }</p>
                 </div>
                 ))
               }
            </div>
             {
-                actualTicket.status === "open" &&
+                true &&
                 <div className="w-full  p-3">
                     <div className='relative '>
                         <textarea  id="messageArea" onChange={(e)=>handleMessageChange(e)}  className="rounded w-full py-4 px-5 pr-24 outline-none border-[1px] border-gray-300 min-h-24" placeholder='answer ticket'></textarea>
-                        <button className='absolute top-2 right-3 py-2 px-5 bg-black text-white rounded' onClick={submitMessage}>send</button>
+                        <button className='absolute top-6 right-3 py-2 px-5 bg-[#7065F0] text-white rounded' onClick={submitMessage}>send</button>
                     </div>
                 </div>
             }

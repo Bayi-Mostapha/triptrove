@@ -120,7 +120,7 @@ export default function SignIn() {
       <div className='flex items-center justify-center  p-4'>
       <ToastContainer />
        <div className='basis-1/2 w-3/4 lg:h-screen justify-end hidden lg:flex'>
-         <div className='relative h-full'>
+         <div className='relative h-full p-5'>
            <img src="/assets/image1.jpg" alt="" className='h-full rounded-xl '/>
            <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-center w-full text-white">
               <h3 className='text-4xl  font-semibold px-12'>Welcome to Hostify</h3>

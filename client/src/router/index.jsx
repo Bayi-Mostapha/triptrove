@@ -27,6 +27,7 @@ import Property from '@/pages/guest/property';
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
+import AdminAuthRoute from './protectors/AdminAuthRoute';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -110,7 +111,7 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        element: <AuthRoute><AdminLayout /></AuthRoute>,
+        element: <AdminAuthRoute><AdminLayout /></AdminAuthRoute>,
         children: [
             {
                 path: ADMIN_DASHBOARD_LINK,

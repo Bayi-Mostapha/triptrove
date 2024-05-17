@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import SideBar, { SidebarItem } from "@/components/admin/sideBar";
 import { authContext } from "@/contexts/AuthWrapper";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ADMIN_ADMINS_LINK } from "../router/index"
 import 
 { 
@@ -30,17 +30,18 @@ import
   import { 
     LogOut 
   } from 'lucide-react';
-function HostLayout() {
+function AdminLayout() {
     const userContext = useContext(authContext);
-
+   
     const logOut = () => {
         userContext.logout();
         navigate("/admin/signin");
-      };
+    };
+      
     return (
         <>
            <header >
-                <nav className="fixed top-0 left-0 right-0 z-0 px-6 py-3 flex items-center  justify-end border-b-[1px] border-gray-100 shadow-sm bg-white">
+                <nav className="fixed top-0 left-0 right-0 z-10 px-6 py-3 flex items-center  justify-end border-b-[1px] border-gray-100 shadow-sm bg-white">
                     <div className="mr-6 cursor-pointer relative py-1">
                         <Bell color="#000000" />
                         <div className="w-2 h-2 bg-red-500 absolute top-1 right-1 rounded-full"></div>
@@ -87,4 +88,4 @@ function HostLayout() {
     );
 }
 
-export default HostLayout;
+export default AdminLayout;
