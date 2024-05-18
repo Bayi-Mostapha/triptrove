@@ -24,6 +24,8 @@ import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"
 import Property from '@/pages/guest/property';
 
+import PropertyReviews from '@/pages/host/property-reviews';
+
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
@@ -44,7 +46,7 @@ export const BOOKING_SUCCESS = '/booking-success';
 export const BOOKINGS = '/bookings';
 
 // Host
-
+export const REVIEWS = '/listing-reviews/:id';
 
 // Admin
 export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
@@ -113,6 +115,11 @@ export const router = createBrowserRouter([
             {
                 path: BOOKING_SUCCESS,
                 element: <BookingSucces />
+            },
+            // for host 
+            {
+                path: REVIEWS,
+                element: <PropertyReviews />
             },
         ]
     },

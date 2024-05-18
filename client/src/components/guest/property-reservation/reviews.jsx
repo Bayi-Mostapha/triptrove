@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/property-dialog";
 import Review from "@/components/guest/property-reservation/review";
 import {
     DropdownMenu,
