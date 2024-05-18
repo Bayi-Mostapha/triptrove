@@ -30,6 +30,7 @@ import PropertyReviews from '@/pages/host/property-reviews';
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import BookingSucces from '@/pages/guest/booking-success';
+import Bookings from '@/pages/guest/bookings';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -115,6 +116,10 @@ export const router = createBrowserRouter([
             {
                 path: BOOKING_SUCCESS,
                 element: <BookingSucces />
+            },
+            {
+                path: BOOKINGS,
+                element: <Bookings />
             },
             // for host 
             {

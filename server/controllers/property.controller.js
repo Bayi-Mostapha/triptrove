@@ -6,12 +6,12 @@ import moment from 'moment';
 export const getProperty = async (req, res) => {
     try {
         const propertyId = req.params.id;
-        const property = await Property.findById(propertyId).populate('owner', ['fullName', 'image', 'created_at']);
+        const property = await Property.findById(propertyId).populate('owner', 'fullName image created_at');
         if (!property) {
             return res.status(404).json({ message: 'Property not found' });
         }
 
-        const reviews = Review.find({ property: propertyId }).populate('author', ['fullName', 'image']);
+        const reviews = Review.find({ property: propertyId }).populate('author', 'fullName image');
 
         const bookings = await Booking.find({ property: propertyId });
         const reservations = bookings.flatMap((booking) => {

@@ -8,7 +8,7 @@ import { verifyToken } from "../controllers/verifytoken.js";
 
 const router = express.Router();
 
-// router.get("/", getBookings);
+// router.get("/", verifyToken, getBookings);
 router.post("/payment-session/:pid", createBookingSession);
 router.post("/:pid", verifyToken, createBooking);
 
