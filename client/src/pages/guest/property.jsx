@@ -6,7 +6,8 @@ import AddressLink from "@/components/guest/property-reservation/address-link";
 import PlaceGallery from "@/components/guest/property-reservation/gallery";
 import MapContainer from "@/components/guest/property-reservation/map";
 import StarRating from "@/components/guest/property-reservation/star-rating";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import Reviews from "@/components/guest/property-reservation/reviews";
+import { formatDistanceToNow } from "date-fns";
 
 function Property() {
     const dummyPlace = {
@@ -36,7 +37,8 @@ function Property() {
             author: {
                 fullName: 'Moha Moha',
                 image: '/img2.webp',
-            }
+            },
+            created_at: '2024-06-17T14:00:00.000Z'
         },
         {
             stars: 3,
@@ -44,8 +46,9 @@ function Property() {
             author: {
                 fullName: 'hi hi',
                 image: '/img3.webp',
-            }
-        }
+            },
+            created_at: '2024-06-15T12:00:00.000Z'
+        },
     ]
     const dummyReservations = [
         new Date('2024-06-14').toISOString(),
@@ -88,7 +91,10 @@ function Property() {
 
     return (
         <div>
-            <Link className="w-fit block mt-5 text-primary text-sm">Back to home</Link>
+            <Link className="w-fit flex items-center mt-5 text-primary text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-primary" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6" /></svg>
+                Back to home
+            </Link>
             <h1 className="mt-1 text-3xl font-medium">{place.title}</h1>
             <AddressLink className='mb-5 text-sm w-fit'>{place.city}, {place.streetAddress}</AddressLink>
             <PlaceGallery place={place} />
@@ -130,7 +136,7 @@ function Property() {
                             <img className="w-14 h-14 object-cover rounded-full" src={place.owner.image} alt={`${place.owner.fullName} picture`} />
                             <div>
                                 <p className="font-medium">{place.owner.fullName}</p>
-                                <p className="text-sm text-gray-400">Hosting since {place.owner.created_at}</p>
+                                <p className="text-sm text-gray-400">Hosting for {formatDistanceToNow(place.owner.created_at)}</p>
                             </div>
                         </div>
                     </div>
@@ -169,23 +175,8 @@ function Property() {
                 <StarRating size={50} rating={rating} gap={5} />
                 <p className="text-sm">Based on {reviews.length} reviews</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {
-                    reviews.map(review =>
-                        <div>
-                            <div className="flex items-start gap-4">
-                                <Avatar>
-                                    <AvatarImage src={review.author.image} />
-                                    <AvatarFallback className='uppercase'>{review.author.fullName.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <p className="font-medium">{review.author.fullName}</p>
-                            </div>
-                            <StarRating size={12} rating={rating} gap={0} />
-                            <p>{review.content}</p>
-                        </div>
-                    )
-                }
-            </div>
+
+            <Reviews reviews={reviews} />
         </div>
     );
 }
