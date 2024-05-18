@@ -5,7 +5,12 @@ import emptyStar from '/public/assets/empty_star.svg';
 import { differenceInDays, parseISO, isAfter, format } from 'date-fns';
 import {
     Dialog,
+    DialogClose,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from '@/components/ui/button';
@@ -23,6 +28,10 @@ function Booking({ booking }) {
         };
         console.log(review);
     };
+
+    const cancelBooking = () => {
+
+    }
 
     const renderStars = () => {
         let starsToRender = (!rating || rating < 0) ? 0 : rating;
@@ -51,7 +60,7 @@ function Booking({ booking }) {
     const nightsBooked = differenceInDays(parseISO(booking.checkOut), checkInDate);
 
     return (
-        <div className="mb-4 p-4 border bg-gray-50 rounded-lg">
+        <div className="mb-4 p-4 border shadow-sm rounded-lg">
             <div className="md:flex md:gap-6">
                 <div className="mb-2">
                     <img
@@ -68,38 +77,67 @@ function Booking({ booking }) {
                     <p><span className="text-gray-700">Total Price:</span> {booking.totalPrice} MAD</p>
                 </div>
             </div>
-            {canReview && (
+            <div className='flex gap-4 items-center justify-end'>
                 <Dialog>
-                    <DialogTrigger className="block ml-auto">Leave a review</DialogTrigger>
+                    <DialogTrigger className='px-4 py-2 bg-red-500 rounded text-white font-medium'>
+                        Cancel Booking
+                    </DialogTrigger>
                     <DialogContent>
-                        <h3 className="text-lg font-medium">Leave a Review</h3>
-                        <div className="flex justify-between items-center gap-4">
-                            <input
-                                type="number"
-                                min="0"
-                                max="5"
-                                className="w-28 p-2 border rounded"
-                                placeholder="Rating (0-5)"
-                                value={rating}
-                                onChange={(e) => setRating(parseFloat(e.target.value))}
-                            />
-                            {renderStars()}
-                        </div>
-                        <textarea
-                            className="w-full p-2 border rounded"
-                            placeholder="Write your review here..."
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                        <Button
-                            className='block my-3 ml-auto'
-                            onClick={handleReviewSubmit}
-                        >
-                            Submit Review
-                        </Button>
+                        <DialogHeader>
+                            <DialogTitle>Are you sure you want to cancel this booking?</DialogTitle>
+                            <DialogDescription>
+                                This action cannot be undone. You will receive a refund within 15 days.
+                            </DialogDescription>
+                            <DialogFooter>
+                                <DialogClose>
+                                    <Button variant='outline'>
+                                        Close
+                                    </Button>
+                                </DialogClose>
+                                <Button
+                                    onclick={cancelBooking} variant='destructive'>
+                                    Confirm Cancel
+                                </Button>
+                            </DialogFooter>
+                        </DialogHeader>
                     </DialogContent>
                 </Dialog>
-            )}
+
+                {canReview && (
+                    <Dialog>
+                        <DialogTrigger className='px-4 py-2 bg-primary rounded text-white font-medium'>
+                            Leave a review
+                        </DialogTrigger>
+                        <DialogContent>
+                            <h3 className="text-lg font-medium">Leave a Review</h3>
+                            <div className="flex justify-between items-center gap-4">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="5"
+                                    className="w-28 p-2 border rounded"
+                                    placeholder="Rating (0-5)"
+                                    value={rating}
+                                    onChange={(e) => setRating(parseFloat(e.target.value))}
+                                />
+                                {renderStars()}
+                            </div>
+                            <textarea
+                                className="w-full p-2 border rounded"
+                                placeholder="Write your review here..."
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                            />
+                            <Button
+                                className='block my-3 ml-auto'
+                                onClick={handleReviewSubmit}
+                            >
+                                Submit Review
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
+                )}
+            </div>
         </div>
     );
 }

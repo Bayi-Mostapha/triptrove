@@ -5,12 +5,28 @@ import Stripe from "stripe";
 export const getBookings = async (req, res) => {
     try {
         const { userId } = req;
-        const bookings = await Booking.find({ guest: userId }).populate('property', 'title photos');
+        const bookings = await Booking.find({ guest: userId, status: 'paid' }).populate('property', '_id title photos');
         res.json(bookings);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const cancelBooking = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const booking = await Booking.findByIdAndUpdate(id, { status: 'canceled' }, { new: true });
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        res.json(booking);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 function calculateNights(checkInDate, checkOutDate) {
     const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
