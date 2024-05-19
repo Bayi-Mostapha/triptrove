@@ -1,5 +1,7 @@
 import { reportColumns } from "@/components/admin/reports/columns";
 import MyTable from "@/components/admin/table";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const data = [
     {
@@ -57,6 +59,21 @@ const data = [
 ]
 
 function Reports() {
+    const { id } = useParams()
+    useEffect(() => {
+        // if (!id) {
+        //     return;
+        // }
+        // if (id == 'all') {
+        //     axiosClient.get(`/properties/${id}`).then(response => {
+        //         setReviews(response.data);
+        //     });
+        // } else {
+        //     axiosClient.get(`/properties/${id}`).then(response => {
+        //         setReviews(response.data);
+        //     });
+        // }
+    }, [])
     return (
         <div className="mt-5">
             <MyTable columns={reportColumns} data={data} />

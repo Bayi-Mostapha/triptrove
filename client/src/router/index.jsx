@@ -129,7 +129,7 @@ export const router = createBrowserRouter([
             },
             // for admin 
             {
-                path: '/reports',
+                path: '/reports/:id',
                 element: <Reports />
             },
         ]

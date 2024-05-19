@@ -34,11 +34,7 @@ function PropertyReviews() {
         // if (!id) {
         //     return;
         // }
-        // if (id == 'all') {
-        //     axiosClient.get(`/properties/${id}`).then(response => {
-        //         setReviews(response.data);
-        //     });
-        // } else {
+        // make this async and stuff :) 
         //     axiosClient.get(`/properties/${id}`).then(response => {
         //         setReviews(response.data);
         //     });
