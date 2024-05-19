@@ -2,6 +2,19 @@ import Booking from "../models/booking.model.js";
 import Property from "../models/property.model.js";
 import Stripe from "stripe";
 
+export const getAllBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find()
+            .populate([
+                { path: 'guest', select: 'fullName email image' },
+                { path: 'property', select: 'title owner', populate: { path: 'owner', select: 'fullName' } }
+            ]);
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const getBookings = async (req, res) => {
     try {
         const { userId } = req;

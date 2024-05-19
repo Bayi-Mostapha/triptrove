@@ -32,6 +32,7 @@ import AuthRoute from './protectors/AuthRoute';
 import BookingSucces from '@/pages/guest/booking-success';
 import Bookings from '@/pages/guest/bookings';
 import Reports from '@/pages/admin/reports';
+import AdminBookings from '@/pages/admin/bookings';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -131,6 +132,10 @@ export const router = createBrowserRouter([
             {
                 path: '/reports/:id',
                 element: <Reports />
+            },
+            {
+                path: '/admin/bookings',
+                element: <AdminBookings />
             },
         ]
     },

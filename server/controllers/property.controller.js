@@ -13,7 +13,7 @@ export const getProperty = async (req, res) => {
 
         const reviews = Review.find({ property: propertyId }).populate('author', 'fullName image');
 
-        const bookings = await Booking.find({ property: propertyId });
+        const bookings = await Booking.find({ property: propertyId, status: 'paid' });
         const reservations = bookings.flatMap((booking) => {
             const checkIn = moment(booking.checkIn);
             const checkOut = moment(booking.checkOut);
