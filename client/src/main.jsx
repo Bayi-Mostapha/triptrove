@@ -6,12 +6,15 @@ import {
     RouterProvider,
 } from 'react-router-dom';
 import { router } from './router';
-import  "./index.css";
+import "./index.css";
 import { AuthWrapper } from "./contexts/AuthWrapper";
+import { ExchangeRateProvider } from "./contexts/exchangeRatesWrapper";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <AuthWrapper>
-         <ToastContainer />
-        <RouterProvider router={router} />
+        <ExchangeRateProvider>
+            <ToastContainer />
+            <RouterProvider router={router} />
+        </ExchangeRateProvider>
     </AuthWrapper>
 );
