@@ -76,6 +76,7 @@ function Reports() {
     }, [])
     return (
         <div className="mt-5">
+            <h1 className="mb-4 text-xl font-medium">Review reports</h1>
             <MyTable columns={reportColumns} data={data} />
         </div>
     );
