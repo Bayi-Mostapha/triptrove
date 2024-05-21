@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Booking from "@/components/guest/bookings/booking";
+import { axiosClient } from "@/api/axios";
 
 const dummybookings = [
     {
@@ -25,13 +26,18 @@ const dummybookings = [
 function Bookings() {
     const [bookings, setBookings] = useState([]);
 
+    // async function getBookings() {
+    //     const res = await axiosClient.get('/book')
+    //     setBookings(res.data)
+    // }
     useEffect(() => {
+        // getBookings()
         setBookings(dummybookings);
     }, []);
 
     return (
         <div>
-            <h1 className="mb-4 text-2xl font-semibold">Your bookings</h1>
+            <h1 className="my-4 text-2xl font-medium">Your bookings</h1>
             {
                 bookings.length > 0 ?
                     bookings.map((booking, index) => {
@@ -40,7 +46,7 @@ function Bookings() {
                         );
                     })
                     :
-                    <p className="text-center text-gray-500">No bookings</p>
+                    <p className="text-center text-gray-500">You have no bookings</p>
             }
         </div>
     );
