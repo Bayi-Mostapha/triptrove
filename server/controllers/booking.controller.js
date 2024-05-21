@@ -1,5 +1,6 @@
 import Booking from "../models/booking.model.js";
 import Property from "../models/property.model.js";
+import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
 
 export const getAllBookings = async (req, res) => {
@@ -104,6 +105,22 @@ export const createBooking = async (req, res) => {
             checkOut: new Date(checkOut),
             totalPrice: totalPrice,
         });
+
+        const property = await Property.findById(pid).populate('owner');
+        const hostId = property.owner._id;
+        const hostWallet = await Wallet.findOne({ host: hostId });
+
+        const hostEarnings = totalPrice * 0.90;
+
+        if (hostWallet) {
+            hostWallet.balance += hostEarnings;
+            await hostWallet.save();
+        } else {
+            await Wallet.create({
+                host: hostId,
+                balance: hostEarnings,
+            });
+        }
 
         res.status(201).json(booking);
     } catch (error) {

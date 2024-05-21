@@ -71,22 +71,4 @@ export const bookingsColumns = [
             return <p className="text-xs text-gray-600">{format(date, 'MMMM dd, yyyy - hh:mm a')}</p>
         },
     },
-    {
-        header: "Action",
-        cell: ({ row }) => {
-            const id = row.original._id;
-            return (
-                row.original.status == 'canceled' ?
-                    <Button
-                        className='p-0'
-                        variant='ghost'
-                        onClick={() => { console.log(id); }}
-                    >
-                        <Trash size={16} color="red" />
-                    </Button>
-                    :
-                    <p className="px-1">-</p>
-            )
-        },
-    },
 ]
