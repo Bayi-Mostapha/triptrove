@@ -1,0 +1,91 @@
+import { bookingsColumns } from "@/components/admin/bookings/columns";
+import MyTable from "@/components/admin/table";
+import { useEffect, useState } from "react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
+
+const data = [
+    {
+        _id: "reviewReportId1",
+        guest: {
+            _id: "authorId1",
+            fullName: "John Doe",
+            image: "authorImageUrl",
+            email: "johndoe@example.com"
+        },
+        property: {
+            _id: "propertyId2",
+            title: "Cozy Cabin",
+            owner: {
+                fullName: "Mohammed Ali",
+            }
+        },
+        status: 'paid',
+        fullPrice: 1000,
+        createdAt: "2024-05-17T00:00:00.000Z",
+    },
+    {
+        _id: "reviewReportId2",
+        guest: {
+            _id: "authorId2",
+            fullName: "Mohamed Doe",
+            image: "authorImageUrl",
+            email: "mohamedali@example.com"
+        },
+        property: {
+            _id: "propertyId2",
+            title: "Cozy Cabin",
+            owner: {
+                fullName: "Mohammed Ali",
+            }
+        },
+        status: 'canceled',
+        fullPrice: 550,
+        createdAt: "2024-05-19T00:00:00.000Z",
+    },
+]
+
+function AdminBookings() {
+    const [filter, setFilter] = useState("all");
+
+    const filteredData = data.filter(booking =>
+        filter === "all" || booking.status === filter
+    );
+
+    useEffect(() => {
+        //     axiosClient.get(`/properties/${id}`).then(response => {
+        //         setReviews(response.data);
+        //     });
+    }, [])
+
+    return (
+        <div className="mt-5">
+            <h1 className="text-xl font-medium">Bookings</h1>
+            <DropdownMenu>
+                <DropdownMenuTrigger className="ml-auto block">
+                    <Button className="my-4 flex items-center gap-1" variant='outline'>
+                        Filter <ChevronDown size={16} color="gray" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setFilter("all")}>All</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setFilter("paid")}>Paid</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setFilter("canceled")}>Canceled</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <MyTable columns={bookingsColumns} data={filteredData} />
+        </div>
+    );
+}
+
+export default AdminBookings;

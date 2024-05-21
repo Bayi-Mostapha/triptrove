@@ -27,10 +27,16 @@ import Property from '@/pages/guest/property';
 
 import List from "../pages/host/listg"
 
+import PropertyReviews from '@/pages/host/property-reviews';
+
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
+import BookingSucces from '@/pages/guest/booking-success';
+import Bookings from '@/pages/guest/bookings';
+import Reports from '@/pages/admin/reports';
+import AdminBookings from '@/pages/admin/bookings';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -43,9 +49,11 @@ export const HOME_LINK = '/home';
 // Guest 
 export const PROFILE_LINK = '/profile';
 export const PROPERTY_LINK = '/property/:id';
+export const BOOKING_SUCCESS = '/booking-success';
+export const BOOKINGS = '/bookings';
 
 // Host
-export const HOST_LINK = '/host';
+export const REVIEWS = '/listing-reviews/:id';
 
 // Admin
 export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
@@ -110,6 +118,28 @@ export const router = createBrowserRouter([
             {
                 path: PROPERTY_LINK,
                 element: <Property />
+            },
+            {
+                path: BOOKING_SUCCESS,
+                element: <BookingSucces />
+            },
+            {
+                path: BOOKINGS,
+                element: <Bookings />
+            },
+            // for host 
+            {
+                path: REVIEWS,
+                element: <PropertyReviews />
+            },
+            // for admin 
+            {
+                path: '/reports/:id',
+                element: <Reports />
+            },
+            {
+                path: '/admin/bookings',
+                element: <AdminBookings />
             },
         ]
     },

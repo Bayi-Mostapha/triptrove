@@ -1,0 +1,85 @@
+import { reportColumns } from "@/components/admin/reports/columns";
+import MyTable from "@/components/admin/table";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+const data = [
+    {
+        _id: "reviewReportId1",
+        review: {
+            _id: "reviewId1",
+            stars: 5,
+            content: "Great property!",
+            author: {
+                _id: "authorId1",
+                fullName: "John Doe",
+                image: "authorImageUrl",
+                email: "johndoe@example.com"
+            },
+            property: {
+                _id: "propertyId1",
+                title: "Beautiful Beach House",
+                owner: {
+                    fullName: "Alice Johnson",
+                }
+            },
+            createdAt: "2024-05-18T00:00:00.000Z",
+            updatedAt: "2024-05-18T00:00:00.000Z"
+        },
+        reason: "Inappropriate content",
+        createdAt: "2024-05-18T00:00:00.000Z",
+        updatedAt: "2024-05-18T00:00:00.000Z"
+    },
+    {
+        _id: "reviewReportId2",
+        review: {
+            _id: "reviewId2",
+            stars: 3,
+            content: "Average experience.",
+            author: {
+                _id: "authorId2",
+                fullName: "Jane Smith",
+                image: "authorImageUrl",
+                email: "janesmith@example.com"
+            },
+            property: {
+                _id: "propertyId2",
+                title: "Cozy Cabin",
+                owner: {
+                    fullName: "Mohammed Ali",
+                }
+            },
+            createdAt: "2024-05-17T00:00:00.000Z",
+            updatedAt: "2024-05-17T00:00:00.000Z"
+        },
+        reason: "Spam",
+        createdAt: "2024-05-17T00:00:00.000Z",
+        updatedAt: "2024-05-17T00:00:00.000Z"
+    }
+]
+
+function Reports() {
+    const { id } = useParams()
+    useEffect(() => {
+        // if (!id) {
+        //     return;
+        // }
+        // if (id == 'all') {
+        //     axiosClient.get(`/properties/${id}`).then(response => {
+        //         setReviews(response.data);
+        //     });
+        // } else {
+        //     axiosClient.get(`/properties/${id}`).then(response => {
+        //         setReviews(response.data);
+        //     });
+        // }
+    }, [])
+    return (
+        <div className="mt-5">
+            <h1 className="mb-4 text-xl font-medium">Review reports</h1>
+            <MyTable columns={reportColumns} data={data} />
+        </div>
+    );
+}
+
+export default Reports;
