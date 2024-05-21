@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const propertyReportSchema = mongoose.Schema(
     {
+        reporter: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
         property: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Property",
