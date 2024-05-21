@@ -50,18 +50,18 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
         if (isDisabledDateSelected) {
             toast.error('You have selected a disabled date within the range.');
         } else {
-            // const data = {
-            //     checkIn: addDays(date.from, 1),
-            //     checkOut: addDays(date.to, 1)
-            // };
+            const data = {
+                checkIn: addDays(date.from, 1),
+                checkOut: addDays(date.to, 1)
+            };
 
-            // try {
-            //     const res = await axiosClient.post('/book/payment-session/dsfds', data);
-            //     console.log(res);
-            // } catch (error) {
-            //     console.error(error);
-            //     toast.error('Failed to create booking session. Please try again.');
-            // }
+            try {
+                const res = await axiosClient.post('/book/payment-session/' + place._id, data);
+                window.location.href = res.data.url;
+            } catch (error) {
+                console.error(error);
+                toast.error('Failed to create booking session. Please try again.');
+            }
         }
     };
 
