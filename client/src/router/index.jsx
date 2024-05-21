@@ -6,6 +6,7 @@ import {
 import AuthLayout from '../layouts/AuthLayout';
 import GuestLayout from '../layouts/GuestLayout';
 import AdminLayout from '../layouts/AdminLayout';
+import HostLayout from '../layouts/HostLayout';
 
 // pages
 import SignUp from '../pages/auth/signup';
@@ -23,6 +24,8 @@ import Properties from "../pages/admin/properties"
 import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"
 import Property from '@/pages/guest/property';
+
+import List from "../pages/host/listg"
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -42,7 +45,7 @@ export const PROFILE_LINK = '/profile';
 export const PROPERTY_LINK = '/property/:id';
 
 // Host
-
+export const HOST_LINK = '/host';
 
 // Admin
 export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
@@ -108,6 +111,15 @@ export const router = createBrowserRouter([
                 path: PROPERTY_LINK,
                 element: <Property />
             },
+        ]
+    },
+    {
+        element: <AuthRoute><HostLayout /></AuthRoute>,
+        children: [
+            {
+                path: HOST_LINK,
+                element: <List />
+            }
         ]
     },
     {
