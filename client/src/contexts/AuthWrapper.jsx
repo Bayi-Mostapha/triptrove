@@ -31,10 +31,12 @@ export function AuthWrapper({ children }) {
                 const response = await axiosClient.get('http://localhost:5555/admin');
                 setUser(response.data.user);
                 setIsLoggedIn(true);
+                setRole("admin");
             }else{
                 const response = await axiosClient.get('http://localhost:5555/user');
                 setUser(response.data.user);
                 setIsLoggedIn(true);
+                setRole("user");
             }
         } catch (err) {
             setIsLoggedIn(false);
@@ -46,6 +48,7 @@ export function AuthWrapper({ children }) {
             setIsFetchingUser(false);
         }
     };
+    
 
     const logout = async () => {
         try {

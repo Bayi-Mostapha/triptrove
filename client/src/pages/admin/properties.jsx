@@ -137,6 +137,7 @@ export default function Properties() {
     });
    const [ selectedCity , setSelectedCity ] = useState("null");
    const [ selectedType , setSelectedType ] = useState("null");
+   const [ selectedOwner , setSelectedOwner ] = useState("null");
    const handleSelectChange = (event) => {
     setSelectedCity(event.target.value);
 };
@@ -193,7 +194,10 @@ export default function Properties() {
             filtered = filtered.filter(property => property.city.toLowerCase().includes(selectedCity.toLowerCase()));
         }
         if (selectedType !== "null") {
-            filtered = filtered.filter(property => property.Type.toLowerCase().includes(selectedType.toLowerCase()));
+            filtered = filtered.filter(property => property.Type === selectedType);
+        }
+        if (selectedOwner !== "null") {
+            filtered = filtered.filter(property => property.owner._id === selectedOwner);
         }
         
         setFilteredProperties(filtered);
@@ -330,9 +334,17 @@ export default function Properties() {
       const  filtered = properties.filter(property => property.owner._id === id);
       setFilteredProperties(filtered);
     }
+    const resetFilters = (id) =>{
+        setFilteredProperties(properties);
+        setFilter("null");
+        setSelectedCity('null');
+        setSelectedType("null")
+        setSelectedOwner("null")
+        setDate(null);
+    }
     useEffect(() => {
         filterProps();
-    }, [filter, date, selectedCity, selectedType]);
+    }, [filter, date, selectedCity, selectedType, selectedOwner]);
     
   return (
     <div className='flex w-full'>
@@ -388,6 +400,7 @@ export default function Properties() {
                             <option value="casa">casa</option>
                         </select>
                     </div>
+                    <div><button onClick={resetFilters}>reset</button></div>
                     <div  className='mr-3'>
                         <select name="type" id="" onChange={handleTypeChange} value={selectedType}>
                             <option value="null">choose a Type</option>
@@ -501,7 +514,6 @@ export default function Properties() {
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.city}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">20 </td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">4.9</td>
-                                        
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{problem.createdAt}</td>
                                         <td 
                                             className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"
@@ -517,7 +529,7 @@ export default function Properties() {
                                             </div>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="p-0" >
-                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>filterByOwner(problem.owner._id)}>
+                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>filterProps(problem.owner._id)}>
                                             view all properties of {problem.owner.firstName}
                                             </div>
                                             </DropdownMenuItem>

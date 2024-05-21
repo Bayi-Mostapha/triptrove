@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { 
-    ChevronsUpDown,
-    CalendarDays,
+    ArrowDownUp ,
+    CalendarDays ,
+    Filter ,
+    FilterX ,
+    Trash2 ,
+    User ,
  } from 'lucide-react';
 import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
+    Avatar ,
+    AvatarFallback ,
+    AvatarImage ,
   } from "@/components/ui/avatar"
 import { axiosClient } from "../../api/axios"
 import { ToastContainer, toast } from 'react-toastify';
@@ -35,6 +39,9 @@ export default function Users() {
         joinDate: false,
         role: false,
     });
+    const [ filterComponents, setFilterComponents] = useState(false);
+    const [ selectedRole, setSelectedRole] = useState(null);
+    const [ selectedSubs, setSelectedSubs] = useState(null);
     // fetch all users 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -50,30 +57,30 @@ export default function Users() {
 
         fetchUsers();
     }, []);
+
+
     const filterUsersFunction = () => {
+        let filtered = users.slice();
+        console.log(filtered)
         if(date && date.from !== undefined  && date.to !== undefined){
             if (searchColumn === 'username') {
-                const newUsers = users.filter(user => {
+                filtered = filtered.filter(user => {
                     const joinDate = new Date(user.createdAt);
                     const startDate = new Date(date.from);
                     const endDate = new Date(date.to);
                     return joinDate >= startDate && joinDate <= endDate && (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
                 });
-                setFilteredUsers(newUsers);
-                return ;
             }
             if (searchColumn === 'email') {
-                const newUsers = users.filter(user => {
+                filtered = filtered.filter(user => {
                     const joinDate = new Date(user.createdAt);
                     const startDate = new Date(date.from);
                     const endDate = new Date(date.to);
                     return joinDate >= startDate && joinDate <= endDate && (user.email.toLowerCase().includes(searchQuery.toLowerCase()));
                 });
-                setFilteredUsers(newUsers);
-                return ;
             }
         }else{
-            const newUsers = users.filter(user => {
+            filtered = filtered.filter(user => {
                 if (searchColumn === 'username') {
                     return (user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
                 }
@@ -82,11 +89,84 @@ export default function Users() {
                 }
                 return true;
             });
-            setFilteredUsers(newUsers);
         }
-         
+        if(selectedRole !== null ){
+            filtered = filtered.filter(user => {
+                if (selectedRole === 'host' || selectedRole === 'guest') {
+                    return user.role.toLowerCase().includes(selectedRole.toLowerCase()) ;
+                }
+                return true;
+            });
+          
+        }
+        if(selectedSubs !== null ){
+            filtered = filtered.filter(user => {
+                if (selectedSubs === 'free' || selectedSubs === 'premium' || selectedSubs === "business") {
+                    return user.subscriptionType.toLowerCase().includes(selectedSubs.toLowerCase()) ;
+                }
+                return true;
+            });
+          
+        }
+        setFilteredUsers(filtered);
     }
 
+    
+    const resetFilters = (e) => {
+        setFilterComponents(!filterComponents);
+        setSelectedRole(null);
+        setSearchQuery("");
+        setDate(null);
+        setSelectedSubs(null)
+        setFilteredUsers(users);
+    }
+
+    useEffect(() => {
+        filterUsersFunction();
+    }, [selectedRole, searchColumn, date, searchQuery, selectedSubs ]);
+
+    useEffect(() => { 
+        setSearchQuery("");
+    }, [searchColumn]);
+
+
+    const handleSearchColumnChange = (e) => {
+        setSearchColumn(e.target.value);
+        setSelectedUsers([]);
+    };
+
+    const handleSearchQueryChange = (e) => {
+        setSearchQuery(e.target.value);
+        setSelectedUsers([]);
+    };
+
+    const handleCheckboxChange = (userId) => {
+        setSelectedUsers(prevSelectedUsers => {
+            if (prevSelectedUsers.includes(userId)) {
+                return prevSelectedUsers.filter(id => id !== userId);
+            } else {
+                return [...prevSelectedUsers, userId];
+            }
+        });
+    };
+
+    const checkAll = () => {
+        if (selectedUsers.length === filteredUsers.length) {
+            setSelectedUsers([]);
+        } else {
+            const allUserIds = filteredUsers.map(user => user._id);
+            setSelectedUsers(allUserIds);
+        }
+    };
+   
+    const handleRadioInputChange = (e) => {
+        const value = e.target.value;
+        setSelectedRole(value);
+    }
+    const handleRadioInputChangeSubs = (e) => {
+        const value = e.target.value;
+        setSelectedSubs(value);
+    }
     const filterUsersByOrder = (str) => {
         let sortedUsers = [];
         if (str === "username") {
@@ -143,74 +223,12 @@ export default function Users() {
         }
         setFilteredUsers(sortedUsers);
     };
-
-    useEffect(() => {
-        setSearchQuery("");
-        filterUsersFunction();
-    }, [searchColumn]);
-    
-    useEffect(() => { 
-        filterUsersFunction();
-    },[date]);
-
-    const handleSearchColumnChange = (e) => {
-        setSearchColumn(e.target.value);
-        setSelectedUsers([]);
-    };
-
-    const handleSearchQueryChange = (e) => {
-        setSearchQuery(e.target.value);
-        setSelectedUsers([]);
-    };
-    useEffect(()=>{ 
-        filterUsersFunction();
-    },[searchQuery])
-
-    const handleCheckboxChange = (userId) => {
-        setSelectedUsers(prevSelectedUsers => {
-            if (prevSelectedUsers.includes(userId)) {
-                return prevSelectedUsers.filter(id => id !== userId);
-            } else {
-                return [...prevSelectedUsers, userId];
-            }
-        });
-    };
-
-    const checkAll = () => {
-        if (selectedUsers.length === filteredUsers.length) {
-            setSelectedUsers([]);
-        } else {
-            const allUserIds = filteredUsers.map(user => user._id);
-            setSelectedUsers(allUserIds);
-        }
-    };
   return (
 	<div className="flex flex-col">
     <ToastContainer />
-    <div className='py-5 flex items-center justify-between'>
-        <div className='w-48 mr-2'>
-            <select
-                id="searchColumn"
-                className="bg-gray-50 border border-gray-300 py-3 text-gray-900 text-sm rounded-lg outline-none  block w-full p-2.5"
-                value={searchColumn}
-                onChange={handleSearchColumnChange}
-            >
-                <option value="default">Search By</option>
-                <option value="username" selected={true}>Full Name</option>
-                <option value="email">Email</option>
-            </select>
-        </div>
-            <div className='w-48 mr-2'>
-                <input
-                    type="text"
-                    className='w-full py-2 rounded outline-none border-2 border-gray-300 text-md'
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChange={handleSearchQueryChange}
-                />
-            </div>
-       <div >
-      <Popover>
+    <div className="flex w-full items-center justify-between pt-5">
+        <h4 className='text-4xl font-semibold text-[#141414]'>Our Users</h4>
+        <Popover>
         <PopoverTrigger asChild>
           <button
             id="date"
@@ -247,20 +265,132 @@ export default function Users() {
         </PopoverContent>
       </Popover>
     </div>
-    </div>
-    {  selectedUsers.length !== 0
-        && 
-        <div className='flex items-center justify-end mb-3'>
-            <div>
-                <button className='bg-red-700 rounded py-2 px-5 text-white'>Delete</button>
+    <div className={`pt-16 flex items-end pr-3 mb-3 justify-start `}>
+    <div className='flex items-center justify-between w-full'>
+        <div className='flex'>
+            <div className='w-62 mr-2'>
+                <select
+                    id="searchColumn"
+                    className="border-2 border-gray-300  py-3 text-gray-900 text-sm rounded-lg outline-none  block w-full p-2.5"
+                    value={searchColumn}
+                    onChange={handleSearchColumnChange}
+                >
+                    <option value="default" className='py-2 px-5'>filter By</option>
+                    <option value="username" >Full Name</option>
+                    <option value="email">Email</option>
+                </select>
+            </div>
+            <div className='w-62 mr-2'>
+                <input
+                    type="text"
+                    className='w-full py-2 rounded outline-none border-2 border-gray-300 text-md pl-5'
+                    placeholder="Search"
+                    value={searchQuery}
+                    onChange={handleSearchQueryChange}
+                    disabled={searchColumn == "default"}
+                />
             </div>
         </div>
+            {  selectedUsers.length >= 2
+            && 
+            <div className='flex items-center justify-start mb-1 ml-3 mt-2'>
+                <button className='cursor-pointer flex gap-3 items-center bg-red-50 rounded py-2 px-5 text-red-600 font-semibold'>
+                    delete
+                    <Trash2 color='#ff2f2f' size={20}/>
+                </button>
+            </div>
+        }
+        </div>
+  
+       
+    </div>
+   <div className='flex items-center justify-start gap-6'>
+       
+        { !filterComponents && 
+            <div className='cursor-pointer ml-3' onClick={()=>setFilterComponents(!filterComponents)}>
+                <Filter size={20}/> 
+            </div>
+        }
+        { filterComponents && 
+            <div className='cursor-pointer ml-3' onClick={resetFilters}>      
+                <FilterX  size={20}/> 
+            </div>
+        }
+       {
+        filterComponents ?  
+            <div className='flex items-center gap_2'> 
+                <div className="flex items-center mr-3">
+                    <input 
+                        id="host" 
+                        type="radio" 
+                        onChange={(e) => handleRadioInputChange(e)}
+                        value={"host"}
+                        name='role'
+                        className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 mr-1"
+                    />
+                    <label htmlFor="host">host</label>
+                </div>
+                <div className="flex items-center">
+                    <input 
+                        id="guest" 
+                        type="radio" 
+                        value={"guest"}
+                        name='role'
+                        onChange={(e) => handleRadioInputChange(e)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 mr-1"
+                    />
+                    <label htmlFor="guest">guest</label>
+                </div>
+            </div> 
+        : ""
+       }
+       
+   </div>
+    {
+        selectedRole  === "host" 
+         && 
+            <div className='flex gap-4 items-center justify-start ml-3 mt-2'>
+                <div className="flex items-center">
+                    <input 
+                        id="free" 
+                        type="radio" 
+                        value={"free"}
+                        name='subs'
+                        onChange={(e) => handleRadioInputChangeSubs(e)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 mr-1"
+                    />
+                    <label htmlFor="free">free</label>
+                </div>
+                <div className="flex items-center">
+                    <input 
+                        id="premium" 
+                        type="radio" 
+                        value={"premium"}
+                        name='subs'
+                        onChange={(e) => handleRadioInputChangeSubs(e)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 mr-1"
+                    />
+                    <label htmlFor="premium">premium</label>
+                </div>
+                <div className="flex items-center">
+                    <input 
+                        id="business" 
+                        type="radio" 
+                        value={"business"}
+                        name='subs'
+                        onChange={(e) => handleRadioInputChangeSubs(e)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 mr-1"
+                    />
+                    <label htmlFor="business">business</label>
+                </div>
+            </div>
     }
+  
     <div className="overflow-x-auto  sm:rounded-lg">
         <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden ">
                 <table className="min-w-full divide-y divide-gray-200  ">
-                    <thead className="bg-[#7065F0] ">
+                    <thead className="">
                         <tr>
                             <th className="p-4">
                                 <div className="flex items-center">
@@ -268,49 +398,54 @@ export default function Users() {
                                         id="checkbox-all" 
                                         type="checkbox" 
                                         className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300"
-                                        checked={selectedUsers.length === filteredUsers.length}
-                                        onChange={checkAll}
+                                        checked={selectedUsers.length === filteredUsers.length && selectedUsers.length >= 2}
+                                        onChange={checkAll} 
                                     />
                                     <label for="checkbox-all" className="sr-only">checkbox</label>
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-gray-700">
-                               <div className='flex items-center cursor-pointer'> 
-                                    <p className='mr-2 text-[#ffffff] sr-only'>Profile Image</p> 
-                                </div>
-                            </th>
-                            <th className="py-3 px-6 text-sm font-small  text-gray-700">
                                <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("username")}> 
-                                    <p className='mr-2 text-[#ffffff] '>UserName</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                    <p className='mr-2  '>UserName</p> 
+                                    <ArrowDownUp  size={18} color='#000000' />
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                 <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("email")}> 
-                                    <p className='mr-2 text-[#ffffff] '>Email</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                    <p className='mr-2  '>Email</p> 
+                                    <ArrowDownUp  size={18} color='#000000' />
                                 </div>
                             </th>
+                            {
+                                selectedRole  === "host" && 
+                                <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
+                                    <div className='flex items-center cursor-pointer' > 
+                                        <p className='mr-2  '>subscription Type</p> 
+                                    </div>
+                                </th>
+                            }
                             <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("role")}> 
-                                    <p className='mr-2 text-[#ffffff]' >role</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                <div className='flex items-center cursor-pointer' > 
+                                    <p className='mr-2 ' >role</p> 
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                 <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("joinDate")}> 
-                                    <p className='mr-2 text-[#ffffff] '>join at</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                    <p className='mr-2  '>join at</p> 
+                                    <ArrowDownUp  size={18} color='#000000' />
                                 </div>
                             </th>
                             <th className="p-4">
-                                <span className="sr-only">Edit</span>
+                                <div className='flex items-center cursor-pointer' > 
+                                    <p className='' >action</p> 
+                                </div>
                             </th>
                         </tr>
                     </thead>
+
                     <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
                         {filteredUsers.map(user => (
-                       <tr className="hover:bg-[#cfcce6] dark:hover:bg-gray-700" key={user._id}>
+                       <tr className="hover:bg-[#f7f6f6] " key={user._id}>
                        <td className="p-3 w-4">
                            <div className="flex items-center">
                                <input
@@ -323,27 +458,39 @@ export default function Users() {
                                <label for="checkbox-table-1" className="sr-only"></label>
                            </div>
                        </td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                       <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
                             <Avatar className="w-10 h-10 cursor-pointer">
                                 <AvatarImage src={user.image?.url} alt="@shadcn"  />
-                                <AvatarFallback className="bg-[#bdbbdb]">{user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
+                                <AvatarFallback className="bg-[#e0eb4c]">{user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
+                            <p>{user.firstName} {user.lastName}</p>
                        </td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.firstName} {user.lastName}</td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.email}</td>
+                        {
+                            selectedRole  === "host" && 
+                            <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.subscriptionType}</td>
+                        }
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <span className={`py-2 px-3 ${(user.role === "host") ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800" }  rounded-lg`}>
+                            <span className={`py-2 px-3  ${(user.role === "host") ? "bg-red-100 text-red-800 " : "bg-green-100 text-green-800" }  rounded-lg`}>
                                 {user.role}
                             </span>
                         </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.createdAt}</td>
-                       <td className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12">
-                           Delete
+                       <td className="py-3 px-6 text-sm font-medium text-center whitespace-nowrap cursor-pointer ">
+                           <Trash2 color='red' size={20}/>
                        </td>
                    </tr>
                     ))}
                     </tbody>
                 </table>
+                {
+                    filteredUsers.length === 0 && 
+                    <div className="flex items-center justify-center w-full min-h-80 ">
+                         <div className='flex items-end justify-center'>
+                            <User size={50}  fontWeight={2} /> <p className='text-3xl ml-3 font-medium '>no users found</p>
+                         </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

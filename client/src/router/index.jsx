@@ -6,6 +6,7 @@ import {
 import AuthLayout from '../layouts/AuthLayout';
 import GuestLayout from '../layouts/GuestLayout';
 import AdminLayout from '../layouts/AdminLayout';
+import HostLayout from '../layouts/HostLayout';
 
 // pages
 import SignUp from '../pages/auth/signup';
@@ -24,11 +25,14 @@ import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"
 import Property from '@/pages/guest/property';
 
+import List from "../pages/host/listg"
+
 import PropertyReviews from '@/pages/host/property-reviews';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
+import AdminAuthRoute from './protectors/AdminAuthRoute';
 import BookingSucces from '@/pages/guest/booking-success';
 import Bookings from '@/pages/guest/bookings';
 import Reports from '@/pages/admin/reports';
@@ -40,6 +44,7 @@ export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
 export const HOME_LINK = '/home';
+export const HOST_LINK = '/host';
 
 
 // Guest 
@@ -140,7 +145,16 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        element: <AuthRoute><AdminLayout /></AuthRoute>,
+        element: <AuthRoute><HostLayout /></AuthRoute>,
+        children: [
+            {
+                path: HOST_LINK,
+                element: <List />
+            }
+        ]
+    },
+    {
+        element: <AdminAuthRoute><AdminLayout /></AdminAuthRoute>,
         children: [
             {
                 path: ADMIN_DASHBOARD_LINK,
