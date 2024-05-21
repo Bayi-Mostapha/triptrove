@@ -44,6 +44,7 @@ export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
 export const HOME_LINK = '/home';
+export const HOST_LINK = '/host';
 
 
 // Guest 
