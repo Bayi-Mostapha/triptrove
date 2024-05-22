@@ -28,15 +28,15 @@ import Property from '@/pages/guest/property';
 import List from "../pages/host/listg"
 
 import PropertyReviews from '@/pages/host/property-reviews';
+import BookingSucces from '@/pages/guest/booking-success';
+import Bookings from '@/pages/guest/bookings';
+import Reports from '@/pages/admin/reports';
+import HostBookings from '@/pages/host/bookings';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
-import BookingSucces from '@/pages/guest/booking-success';
-import Bookings from '@/pages/guest/bookings';
-import Reports from '@/pages/admin/reports';
-import AdminBookings from '@/pages/admin/bookings';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -133,14 +133,14 @@ export const router = createBrowserRouter([
                 path: REVIEWS,
                 element: <PropertyReviews />
             },
+            {
+                path: '/listings/bookings',
+                element: <HostBookings />
+            },
             // for admin 
             {
                 path: '/reports/:id',
                 element: <Reports />
-            },
-            {
-                path: '/admin/bookings',
-                element: <AdminBookings />
             },
         ]
     },

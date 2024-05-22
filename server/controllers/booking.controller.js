@@ -3,18 +3,22 @@ import Property from "../models/property.model.js";
 import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
 
-export const getAllBookings = async (req, res) => {
+export const getHostBookings = async (req, res) => {
+    const userId = req.userId;
     try {
-        const bookings = await Booking.find()
+        const properties = await Property.find({ owner: userId }).select('_id');
+        const propertyIds = properties.map(property => property._id);
+        const bookings = await Booking.find({ property: { $in: propertyIds } })
             .populate([
                 { path: 'guest', select: 'fullName email image' },
-                { path: 'property', select: 'title owner', populate: { path: 'owner', select: 'fullName' } }
+                { path: 'property', select: 'title' }
             ]);
         res.json(bookings);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 export const getBookings = async (req, res) => {
     try {
