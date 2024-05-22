@@ -66,9 +66,18 @@ export const propertyReportsColumns = [
         header: "Action",
         cell: ({ row }) => {
             const id = row.original._id;
+            const pid = row.original.property._id;
             return <Button
                 variant='ghost'
-                onClick={() => { console.log(id); }}
+                onClick={async () => {
+                    try {
+                        await axiosClient.delete('/property-reports/' + id);
+                        await axiosClient.delete('/properties/' + pid);
+                        toast.success('Property and report deleted successfully');
+                    } catch (error) {
+                        toast.error('Something went wrong');
+                    }
+                }}
             >
                 <Trash size={16} color="red" />
             </Button>

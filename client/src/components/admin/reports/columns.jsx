@@ -1,8 +1,10 @@
+import { axiosClient } from "@/api/axios";
 import StarRating from "@/components/guest/property-reservation/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
 import { ArrowUpDown, Trash } from "lucide-react"
+import { toast } from "react-toastify";
 
 export const reportColumns = [
     {
@@ -76,10 +78,19 @@ export const reportColumns = [
     {
         header: "Action",
         cell: ({ row }) => {
-            const id = row.original.review._id;
+            const id = row.original._id;
+            const rid = row.original.review._id;
             return <Button
                 variant='ghost'
-                onClick={() => { console.log(id); }}
+                onClick={async () => {
+                    try {
+                        await axiosClient.delete('/review-reports/' + id);
+                        await axiosClient.delete('/reviews/' + rid);
+                        toast.success('Review and report deleted successfully');
+                    } catch (error) {
+                        toast.error('Something went wrong');
+                    }
+                }}
             >
                 <Trash size={16} color="red" />
             </Button>
