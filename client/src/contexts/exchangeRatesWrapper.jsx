@@ -9,8 +9,8 @@ const ExchangeRateContext = createContext({
 });
 
 const ExchangeRateProvider = ({ children }) => {
-    const [exchangeRates, setExchangeRates] = useState(0);
-    const [selectedCurrency, setSelectedCurrency] = useState('USD');
+    const [exchangeRates, setExchangeRates] = useState(1);
+    const [selectedCurrency, setSelectedCurrency] = useState('MAD');
     const [loading, setLoading] = useState(true);
 
     const fetchExchangeRates = useCallback(async () => {
@@ -18,8 +18,8 @@ const ExchangeRateProvider = ({ children }) => {
             try {
                 const response = await axios
                     .get(`https://v6.exchangerate-api.com/v6/28cc78d068c2f63f4f0847ee/pair/MAD/${selectedCurrency}`);
-                // setExchangeRates(response.data.results);
-                console.log(response.data.conversion_rate)
+                    console.log(response)
+                setExchangeRates(response.data.conversion_rate);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching exchange rates:', error);

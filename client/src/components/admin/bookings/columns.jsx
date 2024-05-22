@@ -2,6 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Trash } from "lucide-react";
 import { format, isValid } from 'date-fns';
+import { useContext } from "react";
+import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
 
 export const bookingsColumns = [
     {
@@ -63,8 +65,9 @@ export const bookingsColumns = [
         accessorKey: "fullPrice",
         header: "Amount",
         cell: ({ row }) => {
+            const { convert, selectedCurrency } = useContext(ExchangeRateContext)
             const price = row.original.fullPrice;
-            return <p>{price} MAD</p>;
+            return <p>{convert(price)} {selectedCurrency}</p>;
         },
     },
     {

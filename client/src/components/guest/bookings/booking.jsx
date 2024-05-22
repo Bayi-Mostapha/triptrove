@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import fullStar from '/public/assets/full_star.svg';
 import halfStar from '/public/assets/half_star.svg';
 import emptyStar from '/public/assets/empty_star.svg';
@@ -21,6 +21,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { axiosClient } from '@/api/axios';
 import { toast } from 'react-toastify';
+import { ExchangeRateContext } from '@/contexts/exchangeRatesWrapper';
 
 function Booking({ booking }) {
     const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -78,6 +79,7 @@ function Booking({ booking }) {
     const checkOutDate = parseISO(booking.checkOut);
     const nightsBooked = differenceInDays(checkOutDate, checkInDate);
 
+    const { convert, selectedCurrency } = useContext(ExchangeRateContext)
     return (
         <div className="mb-4 p-4 border shadow-sm rounded-lg flex justify-between items-start">
             <div className="md:flex md:gap-3 md:items-start">
@@ -100,7 +102,7 @@ function Booking({ booking }) {
                         Nights Booked: {nightsBooked}
                     </p>
                     <p className='text-sm'>
-                        Total Price: {booking.totalPrice} MAD
+                        Total Price: {convert(booking.totalPrice)} {selectedCurrency}
                     </p>
                 </div>
             </div>

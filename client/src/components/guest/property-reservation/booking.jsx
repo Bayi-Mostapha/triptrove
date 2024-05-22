@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { cn } from "@/lib/utils";
 import { addDays, differenceInDays, format, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -12,8 +12,10 @@ import {
 import { toast } from "react-toastify";
 import GeustsInput from "@/components/guest/property-reservation/guests-input";
 import { axiosClient } from "@/api/axios";
+import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
 
 function Booking({ place, disabledDates, maxInfants, maxPets }) {
+    const { convert, selectedCurrency } = useContext(ExchangeRateContext)
     // date range 
     const [date, setDate] = useState({
         from: startOfDay(new Date()),
@@ -68,7 +70,7 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
     return (
         <div className="md:px-3 md:py-5 md:shadow-md md:rounded md:bg-[#FDFDFD]">
             <h2 className="mb-2 text-2xl font-semibold md:hidden">Book it now!</h2>
-            <h3 className="text-xl font-medium">{place.price} MAD/Per Night</h3>
+            <h3 className="text-xl font-medium">{convert(place.price)} {selectedCurrency}/Per Night</h3>
             <h4 className="mt-3">Check-in, check-out days</h4>
             <div className="grid gap-2">
                 <Popover>
@@ -124,23 +126,19 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
             </Button>
 
             <div className="flex justify-between items-center text-sm font-thin">
-                <p>{place.price} MAD  * {nNights} nights</p>
-                <p>{place.price * nNights} MAD</p>
+                <p>{convert(place.price)} {selectedCurrency}  * {nNights} nights</p>
+                <p>{convert(place.price) * nNights} {selectedCurrency}</p>
             </div>
             <div className="mt-1 flex justify-between items-center text-sm font-thin">
                 <p>Cleaning fee</p>
-                <p>500 MAD</p>
-            </div>
-            <div className="mt-1 flex justify-between items-center text-sm font-thin">
-                <p>Service fee</p>
-                <p>150 MAD</p>
+                <p>{convert(500)} {selectedCurrency}</p>
             </div>
 
             <div className="my-5 bg-gray-200 w-full h-[1px]"></div>
 
             <div className="flex justify-between items-center text-xl">
                 <p className="font-meduium">Total</p>
-                <p>{(place.price * nNights) + 500 + 150} MAD</p>
+                <p>{convert((place.price * nNights + 500))} {selectedCurrency}</p>
             </div>
         </div>
     );
