@@ -37,6 +37,7 @@ import HostBookings from '@/pages/host/bookings';
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
+import BookingFail from '@/pages/guest/booking-fail';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -51,6 +52,7 @@ export const HOST_LINK = '/host';
 export const PROFILE_LINK = '/profile';
 export const PROPERTY_LINK = '/property/:id';
 export const BOOKING_SUCCESS = '/booking-success';
+export const BOOKING_FAIL = '/booking-fail';
 export const BOOKINGS = '/bookings';
 
 // Host
@@ -123,6 +125,10 @@ export const router = createBrowserRouter([
             {
                 path: BOOKING_SUCCESS,
                 element: <BookingSucces />
+            },
+            {
+                path: BOOKING_FAIL,
+                element: <BookingFail />
             },
             {
                 path: BOOKINGS,
