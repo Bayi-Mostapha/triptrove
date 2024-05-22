@@ -18,7 +18,7 @@ const ExchangeRateProvider = ({ children }) => {
             try {
                 const response = await axios
                     .get(`https://v6.exchangerate-api.com/v6/28cc78d068c2f63f4f0847ee/pair/MAD/${selectedCurrency}`);
-                    console.log(response)
+                console.log(response)
                 setExchangeRates(response.data.conversion_rate);
                 setLoading(false);
             } catch (error) {
@@ -30,8 +30,9 @@ const ExchangeRateProvider = ({ children }) => {
         fetchExchangeRates();
     }, [fetchExchangeRates]);
 
-    function convert(ammount) {
-        return ammount * exchangeRates;
+    function convert(amount) {
+        const result = amount * exchangeRates;
+        return parseFloat(result.toFixed(2));
     }
 
     return (
