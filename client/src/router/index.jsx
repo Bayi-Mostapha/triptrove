@@ -25,7 +25,8 @@ import Home from "../pages/guest/home"
 import Profile from "../pages/guest/profile"
 import Property from '@/pages/guest/property';
 
-import List from "../pages/host/listg"
+// import List from "../pages/host/listg"
+import List from "../pages/host/listing"
 
 import PropertyReviews from '@/pages/host/property-reviews';
 
