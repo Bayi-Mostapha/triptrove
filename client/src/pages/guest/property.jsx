@@ -1,5 +1,5 @@
-import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, NavLink, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import Booking from "@/components/guest/property-reservation/booking";
 import { axiosClient } from "@/api/axios";
 import AddressLink from "@/components/guest/property-reservation/address-link";
@@ -8,6 +8,18 @@ import MapContainer from "@/components/guest/property-reservation/map";
 import StarRating from "@/components/guest/property-reservation/star-rating";
 import Reviews from "@/components/guest/property-reservation/reviews";
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { toast } from "react-toastify";
 
 function Property() {
     const dummyPlace = {
@@ -69,21 +81,35 @@ function Property() {
     // guests input 
     const maxInfants = 5;
     const maxPets = 3;
+    // report 
+    const [reason, setReason] = useState('');
+    const handleReasonChange = (event) => {
+        setReason(event.target.value);
+    };
+    // favortie 
+    const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
         // if (!id) {
         //     return;
         // }
         // axiosClient.get(`/properties/${id}`).then(response => {
-        //     setPlace(response.data);
-        // });
-        setPlace(dummyPlace)
+        //     setPlace(response.data.property);
+        //     setReviews(response.data.reviews);
+        //     setDisabledDates(response.data.reservations)
 
+        //     const starsArray = response.data.reviews.map(rating => rating.stars);
+        //     const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
+        //     setRating(avgRating)
+        // });
+        // const res = await axiosClient.get('/favorites/' + place._id)
+        // setIsFavorite(res.data)
+
+        setPlace(dummyPlace)
         setReviews(dummyRatings)
         const starsArray = dummyRatings.map(rating => rating.stars);
         const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
         setRating(avgRating)
-
         setDisabledDates(dummyReservations)
     }, [id]);
 
@@ -95,8 +121,68 @@ function Property() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="stroke-primary" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6" /></svg>
                 Back to home
             </Link>
-            <h1 className="mt-1 text-3xl font-medium">{place.title}</h1>
-            <AddressLink className='mb-5 text-sm w-fit'>{place.city}, {place.streetAddress}</AddressLink>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="mt-1 text-3xl font-medium">{place.title}</h1>
+                    <AddressLink className='mb-5 text-sm w-fit'>{place.city}, {place.streetAddress}</AddressLink>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Dialog>
+                        <DialogTrigger>
+                            <svg className="stroke-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Confirm Property Report</DialogTitle>
+                                <DialogDescription>
+                                    Reporting this property will trigger an investigation by our support team. Once reported, this action cannot be undone. The property may be deleted or retained based on the investigation results.
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <textarea
+                                name="reason"
+                                id="reason"
+                                value={reason}
+                                onChange={handleReasonChange}
+                                className="w-full p-2 border rounded-md"
+                                placeholder="Enter the reason for reporting"
+                            ></textarea>
+
+                            <DialogFooter className="sm:justify-end">
+                                <DialogClose asChild>
+                                    <Button type="button" variant="outline">
+                                        Close
+                                    </Button>
+                                </DialogClose>
+                                <Button
+                                    variant="destructive"
+                                // onClick={async () => {
+                                //     try {
+                                //         const res = await axiosClient.post('/property-reports/' + place._id, { reason })
+                                //         toast.success(res.data.message)
+                                //     } catch (error) {
+                                //         toast.error('something went wrong')
+                                //     }
+                                // }}
+                                >
+                                    Report
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    <button onClick={async () => {
+                        // try {
+                        //     const res = await axiosClient.post('/favorites/' + place._id)
+                        //     setIsFavorite(res.data)
+                        // } catch (error) {
+                        //     toast.error('something went wrong')
+                        // }
+                    }}>
+                        <svg className={`stroke-primary ${isFavorite ? 'fill-primary' : 'fill-none'}`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg>
+                    </button>
+                </div>
+            </div>
             <PlaceGallery place={place} />
             <div className="mt-8 mb-8 grid gap-8 grid-cols-1 md:grid-cols-[2fr_1fr]">
                 <div>

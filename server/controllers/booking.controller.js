@@ -1,13 +1,17 @@
 import Booking from "../models/booking.model.js";
 import Property from "../models/property.model.js";
+import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
 
-export const getAllBookings = async (req, res) => {
+export const getHostBookings = async (req, res) => {
+    const userId = req.userId;
     try {
-        const bookings = await Booking.find()
+        const properties = await Property.find({ owner: userId }).select('_id');
+        const propertyIds = properties.map(property => property._id);
+        const bookings = await Booking.find({ property: { $in: propertyIds } })
             .populate([
                 { path: 'guest', select: 'fullName email image' },
-                { path: 'property', select: 'title owner', populate: { path: 'owner', select: 'fullName' } }
+                { path: 'property', select: 'title' }
             ]);
         res.json(bookings);
     } catch (error) {
@@ -15,10 +19,13 @@ export const getAllBookings = async (req, res) => {
     }
 };
 
+
 export const getBookings = async (req, res) => {
     try {
         const { userId } = req;
-        const bookings = await Booking.find({ guest: userId, status: 'paid' }).populate('property', '_id title photos');
+        const bookings = await Booking
+            .find({ guest: userId, status: 'paid' })
+            .populate('property', '_id title photos');
         res.json(bookings);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -68,7 +75,7 @@ export const createBookingSession = async (req, res) => {
         const property = await Property.findOne({ _id: pid });
 
         const stripe = new Stripe(process.env.MostaphaStripe);
-        const frontend = process.env.FRONTEND_URL || 'http://localhost:5173/'
+        const frontend = process.env.FRONTEND_URL || 'http://localhost:5173'
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
@@ -82,8 +89,8 @@ export const createBookingSession = async (req, res) => {
                 },
                 quantity: nights
             }],
-            success_url: frontend + `booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
-            cancel_url: frontend + 'booking-fail',
+            success_url: frontend + `/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
+            cancel_url: frontend + '/booking-fail',
         })
         res.json({ url: session.url })
     } catch (error) {
@@ -104,6 +111,22 @@ export const createBooking = async (req, res) => {
             checkOut: new Date(checkOut),
             totalPrice: totalPrice,
         });
+
+        const property = await Property.findById(pid).populate('owner');
+        const hostId = property.owner._id;
+        const hostWallet = await Wallet.findOne({ host: hostId });
+
+        const hostEarnings = totalPrice * 0.90;
+
+        if (hostWallet) {
+            hostWallet.balance += hostEarnings;
+            await hostWallet.save();
+        } else {
+            await Wallet.create({
+                host: hostId,
+                balance: hostEarnings,
+            });
+        }
 
         res.status(201).json(booking);
     } catch (error) {

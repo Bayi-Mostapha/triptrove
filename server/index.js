@@ -10,6 +10,7 @@ import adminRoutes from "./routes/admin.route.js"
 // mostafa
 import bookingRoutes from "./routes/booking.route.js"
 import reviewRoutes from "./routes/review.route.js"
+import propertyReportsRoutes from "./routes/property_report.route.js"
 import reviewReportsRoutes from "./routes/review_report.route.js"
 import problemRoutes from "./routes/problem.route.js"
 // hakim
@@ -43,6 +44,7 @@ app.use('/problem', problemRoutes);
 app.use('/book', bookingRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/review-reports', reviewReportsRoutes);
+app.use('/property-reports', propertyReportsRoutes);
 // hakim 
 app.use('/properties', propertyRoutes);
 app.use('/favorites', favoriteRoutes);

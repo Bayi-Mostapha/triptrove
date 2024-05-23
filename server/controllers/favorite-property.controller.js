@@ -36,14 +36,14 @@ export const toggleFav = async (req, res) => {
 
         if (existingFavorite) {
             await Favorite.findOneAndDelete({ user: userId, property: pid });
-            return res.json({ message: 'Property removed from favorites' });
+            return res.json(false);
         } else {
             const newFavorite = new Favorite({
                 user: userId,
                 property: pid
             });
             await newFavorite.save();
-            return res.json({ message: 'Property added to favorites' });
+            return res.json(true);
         }
     } catch (error) {
         console.error(error);

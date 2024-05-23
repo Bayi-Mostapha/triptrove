@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { toast } from "react-toastify";
 
 const data = [
     {
@@ -30,6 +31,8 @@ const data = [
         },
         status: 'paid',
         fullPrice: 1000,
+        checkIn: "2024-06-23T00:00:00.000Z",
+        checkOut: "2024-06-29T00:00:00.000Z",
         createdAt: "2024-05-17T00:00:00.000Z",
     },
     {
@@ -49,21 +52,30 @@ const data = [
         },
         status: 'canceled',
         fullPrice: 550,
+        checkIn: "2024-05-15T00:00:00.000Z",
+        checkOut: "2024-05-20T00:00:00.000Z",
         createdAt: "2024-05-19T00:00:00.000Z",
     },
 ]
 
-function AdminBookings() {
+function HostBookings() {
+    const [bookings, setBookings] = useState([]);
     const [filter, setFilter] = useState("all");
 
-    const filteredData = data.filter(booking =>
+    const filteredData = bookings.filter(booking =>
         filter === "all" || booking.status === filter
     );
 
+    function getBookings() {
+        axiosClient.get(`/book/host`).then(response => {
+            setBookings(response.data);
+        }).catch(err => {
+            toast.error('something went wrong, please refresh the page')
+        });
+    }
     useEffect(() => {
-        //     axiosClient.get(`/properties/${id}`).then(response => {
-        //         setReviews(response.data);
-        //     });
+        // getBookings()
+        setBookings(data)
     }, [])
 
     return (
@@ -88,4 +100,4 @@ function AdminBookings() {
     );
 }
 
-export default AdminBookings;
+export default HostBookings;

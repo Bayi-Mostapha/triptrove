@@ -1,12 +1,12 @@
 import { axiosClient } from '@/api/axios';
-import { BOOKINGS } from '@/router';
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { CheckCircle } from 'lucide-react';
 
-function BookingSucces() {
+function BookingSuccess() {
     const location = useLocation();
-    const navigate = useNavigate()
+    const [paymentSaved, setPaymentSaved] = useState(false);
     const searchParams = new URLSearchParams(location.search);
     const pid = searchParams.get('pid');
     const checkIn = searchParams.get('checkIn');
@@ -18,22 +18,36 @@ function BookingSucces() {
             try {
                 await axiosClient.post('/book/' + pid, {
                     checkIn, checkOut, totalPrice
-                })
-                toast.success('Payment saved!')
-                navigate(BOOKINGS)
+                });
+                setPaymentSaved(true);
+                toast.success('Payment saved!');
             } catch (error) {
-                console.error(error)
-                toast.error('Something went wrong! please refresh the page')
+                console.error(error);
+                toast.error('Something went wrong! Please refresh the page');
             }
         }
-        savePayment()
-    }, [])
+        savePayment();
+    }, [pid, checkIn, checkOut, totalPrice]);
 
     return (
-        <div>
-            Please hold while we save the payment
+        <div className='flex flex-col items-center justify-center w-full h-96'>
+            {paymentSaved ? (
+                <>
+                    <CheckCircle className='w-16 h-16 text-green-600' />
+                    <h1 className='text-xl font-semibold text-green-600'>
+                        Payment Saved
+                    </h1>
+                    <p className='mt-1 text-gray-600'>
+                        Your payment has been successfully saved.
+                    </p>
+                </>
+            ) : (
+                <h1 className='text-lg font-medium'>
+                    Please hold while we save the payment
+                </h1>
+            )}
         </div>
     );
 }
 
-export default BookingSucces;
+export default BookingSuccess;
