@@ -127,18 +127,18 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
 
             <div className="flex justify-between items-center text-sm font-thin">
                 <p>{convert(place.price)} {selectedCurrency}  * {nNights} nights</p>
-                <p>{convert(place.price) * nNights} {selectedCurrency}</p>
+                <p>{convert(place.price * nNights)} {selectedCurrency}</p>
             </div>
             <div className="mt-1 flex justify-between items-center text-sm font-thin">
                 <p>Cleaning fee</p>
-                <p>{convert(500)} {selectedCurrency}</p>
+                <p>{convert(place.cleaningFee)} {selectedCurrency}</p>
             </div>
 
             <div className="my-5 bg-gray-200 w-full h-[1px]"></div>
 
             <div className="flex justify-between items-center text-xl">
                 <p className="font-meduium">Total</p>
-                <p>{convert((place.price * nNights + 500))} {selectedCurrency}</p>
+                <p>{convert((place.price * nNights + place.cleaningFee))} {selectedCurrency}</p>
             </div>
         </div>
     );
