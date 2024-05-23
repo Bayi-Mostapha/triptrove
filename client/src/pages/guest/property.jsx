@@ -41,7 +41,7 @@ function Property() {
         bedrooms: 3,
         bathrooms: 2,
         beds: 5,
-        cleaningFee: 50
+        cleaningFees: 50
     }
     const dummyRatings = [
         {
