@@ -1,15 +1,19 @@
 import Wallet from '../models/wallet.model.js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); 
+const stripe = new Stripe(process.env.MostaphaStripe);
 
 export const createStripeAccountLink = async (req, res) => {
     const { userId } = req;
 
     try {
-        // Create a new Stripe account for the user
         const account = await stripe.accounts.create({
             type: 'express',
+            country: 'US',
+            capabilities: {
+                card_payments: { requested: true },
+                transfers: { requested: true },
+            },
         });
 
         let wallet = await Wallet.findOne({ host: userId });
@@ -27,7 +31,7 @@ export const createStripeAccountLink = async (req, res) => {
 
         const accountLink = await stripe.accountLinks.create({
             account: account.id,
-            refresh_url: `${process.env.FRONTEND_URL}/reauth`, 
+            refresh_url: `${process.env.FRONTEND_URL}/reauth`,
             return_url: `${process.env.FRONTEND_URL}/success`,
             type: 'account_onboarding',
         });
@@ -44,6 +48,10 @@ export const checkoutWallet = async (req, res) => {
         const { amount } = req.body;
         const hostId = req.userId;
 
+        if (isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ message: 'Invalid amount' });
+        }
+
         let hostWallet = await Wallet.findOne({ host: hostId });
         if (!hostWallet || hostWallet.balance < amount) {
             return res.status(400).json({ message: 'Insufficient balance' });
@@ -54,7 +62,7 @@ export const checkoutWallet = async (req, res) => {
         }
 
         const payout = await stripe.transfers.create({
-            amount: amount * 100,
+            amount: Math.round(amount * 100), 
             currency: 'mad',
             destination: hostWallet.stripeAccountId,
         });
@@ -65,6 +73,6 @@ export const checkoutWallet = async (req, res) => {
         res.status(200).json({ message: 'Payout successful', payout });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'An error occurred during the payout process', error: error.message });
     }
 };
