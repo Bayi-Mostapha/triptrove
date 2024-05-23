@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express, { response } from "express";
-import mongoose from "mongoose";   
-import cors from "cors"; 
-import authRoutes from "./routes/auth.route.js"        
+import mongoose from "mongoose";
+import cors from "cors";
+import authRoutes from "./routes/auth.route.js"
 import userRoutes from "./routes/user.route.js"
 import paymentRoutes from "./routes/payment.route.js"
 import adminRoutes from "./routes/admin.route.js"
@@ -13,6 +13,7 @@ import reviewRoutes from "./routes/review.route.js"
 import propertyReportsRoutes from "./routes/property_report.route.js"
 import reviewReportsRoutes from "./routes/review_report.route.js"
 import problemRoutes from "./routes/problem.route.js"
+import walletRoutes from "./routes/checkout.route.js"
 // hakim
 import propertyRoutes from "./routes/property.route.js"
 import favoriteRoutes from "./routes/favorite-property.route.js"
@@ -45,6 +46,7 @@ app.use('/book', bookingRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/review-reports', reviewReportsRoutes);
 app.use('/property-reports', propertyReportsRoutes);
+app.use('/wallet', walletRoutes);
 // hakim 
 app.use('/properties', propertyRoutes);
 app.use('/favorites', favoriteRoutes);

@@ -4,7 +4,7 @@ const walletSchema = new mongoose.Schema(
     {
         host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
         balance: { type: Number, default: 0 },
-        stripeId: { type: String, required: true },
+        stripeAccountId: { type: String, required: true },
     },
     {
         timestamps: true,
