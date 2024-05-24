@@ -4,7 +4,9 @@ export const getFavorites = async (req, res) => {
     try {
         const userId = req.userId;
 
-        const favorites = await Favorite.find({ user: userId }).populate('property', 'title photos');
+        const favorites = await Favorite
+            .find({ user: userId })
+            .populate('property', 'title photos location city streetAddress price');
         const properties = favorites.map((favorite) => favorite.property);
 
         res.json(properties);

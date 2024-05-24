@@ -41,6 +41,7 @@ import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
 import BookingFail from '@/pages/guest/booking-fail';
+import Favorites from '@/pages/guest/favorites';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -59,6 +60,7 @@ export const PROPERTY_LINK = '/property/:id';
 export const BOOKING_SUCCESS = '/booking-success';
 export const BOOKING_FAIL = '/booking-fail';
 export const BOOKINGS = '/bookings';
+export const FAVORITES = '/favorites';
 
 // Host
 export const REVIEWS = '/listing-reviews/:id';
@@ -143,6 +145,10 @@ export const router = createBrowserRouter([
                 path: BOOKINGS,
                 element: <Bookings />
             },
+            {
+                path: FAVORITES,
+                element: <Favorites />
+            },
             // for host 
             {
                 path: REVIEWS,
@@ -166,7 +172,7 @@ export const router = createBrowserRouter([
                 path: HOST_LINK,
                 element: <List />
             },
-          
+
         ]
     },
     {
@@ -201,7 +207,7 @@ export const router = createBrowserRouter([
                 path: HOME_LINK,
                 element: <Home />
             },
-            
+
         ]
     },
     {

@@ -70,7 +70,9 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
     return (
         <div className="md:px-3 md:py-5 md:shadow-md md:rounded md:bg-[#FDFDFD]">
             <h2 className="mb-2 text-2xl font-semibold md:hidden">Book it now!</h2>
-            <h3 className="text-xl font-medium">{convert(place.price)} {selectedCurrency}/Per Night</h3>
+            <h4 className="text-gray-500">
+                <span className="text-xl font-medium text-primary">{convert(place.price)} {selectedCurrency}</span>/night
+            </h4>
             <h4 className="mt-3">Check-in, check-out days</h4>
             <div className="grid gap-2">
                 <Popover>
