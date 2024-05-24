@@ -90,21 +90,24 @@ function Property() {
     // favortie 
     const [isFavorite, setIsFavorite] = useState(false);
 
-    useEffect(() => {
-        // if (!id) {
-        //     return;
-        // }
-        // axiosClient.get(`/properties/${id}`).then(response => {
-        //     setPlace(response.data.property);
-        //     setReviews(response.data.reviews);
-        //     setDisabledDates(response.data.reservations)
+    async function getData() {
+        if (!id) {
+            return;
+        }
+        axiosClient.get(`/properties/${id}`).then(response => {
+            setPlace(response.data.property);
+            setReviews(response.data.reviews);
+            setDisabledDates(response.data.reservations)
 
-        //     const starsArray = response.data.reviews.map(rating => rating.stars);
-        //     const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
-        //     setRating(avgRating)
-        // });
-        // const res = await axiosClient.get('/favorites/' + place._id)
-        // setIsFavorite(res.data)
+            const starsArray = response.data.reviews.map(rating => rating.stars);
+            const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
+            setRating(avgRating)
+        });
+        const res = await axiosClient.get('/favorites/' + place._id)
+        setIsFavorite(res.data)
+    }
+    useEffect(() => {
+        // getData()
 
         setPlace(dummyPlace)
         setReviews(dummyRatings)
