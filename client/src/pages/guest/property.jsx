@@ -1,5 +1,5 @@
-import { Link, NavLink, useParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Booking from "@/components/guest/property-reservation/booking";
 import { axiosClient } from "@/api/axios";
 import AddressLink from "@/components/guest/property-reservation/address-link";
@@ -41,6 +41,7 @@ function Property() {
         bedrooms: 3,
         bathrooms: 2,
         beds: 5,
+        cleaningFees: 50
     }
     const dummyRatings = [
         {

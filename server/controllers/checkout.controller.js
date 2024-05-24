@@ -1,108 +1,78 @@
-// import Wallet from '../models/wallet.model.js';
-
-// const Wallet = require('../models/Wallet');
-
-// export async function createWallet(req, res) {
-//     const { userId } = req
-//     const { stripeAccountId } = req.body;
-
-//     try {
-//         const wallet = await Wallet.create({
-//             host: userId,
-//             balance: 0,
-//             stripeId: stripeAccountId,
-//         });
-
-//         return res.status(201).json(wallet);
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ error: 'Failed to create wallet' });
-//     }
-// }
-
-// export const checkoutWallet = async (req, res) => {
-//     try {
-//         const { amount } = req.body;
-//         const hostId = req.userId;
-
-//         const hostWallet = await Wallet.findOne({ host: hostId });
-//         if (!hostWallet || hostWallet.balance < amount) {
-//             return res.status(400).json({ message: 'Insufficient balance' });
-//         }
-
-//         const host = await User.findById(hostId);
-//         if (!host.stripeAccountId) {
-//             return res.status(400).json({ message: 'Host does not have a connected Stripe account' });
-//         }
-
-//         const payout = await stripe.transfers.create({
-//             amount: amount,
-//             currency: 'mad',
-//             destination: host.stripeAccountId,
-//         });
-
-//         hostWallet.balance -= amount;
-//         await hostWallet.save();
-
-//         res.status(200).json({ message: 'Payout successful', payout });
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// };
-
-import querystring from 'querystring';
-import Stripe from 'stripe';
 import Wallet from '../models/wallet.model.js';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.MostaphaStripe);
 
-export async function initiateConnection(req, res) {
-    const state = 'some_random_string';
-    const params = {
-        client_id: 'acct_1PGLIdP62uniVTox',
-        state: state,
-        response_type: 'code',
-        scope: 'read_write',
-        redirect_uri: `${process.env.FRONTEND_URL}/stripe/callback`,
-    };
-    const url = `https://connect.stripe.com/oauth/authorize?${querystring.stringify(params)}`;
-    res.json({ url });
-}
-
-export async function connectStripe(req, res) {
-    const { code, state } = req.query;
+export const createStripeAccountLink = async (req, res) => {
+    const { userId } = req;
 
     try {
-        const response = await stripe.oauth.token({
-            grant_type: 'authorization_code',
-            code: code,
+        const account = await stripe.accounts.create({
+            type: 'express',
+            country: 'US',
+            capabilities: {
+                card_payments: { requested: true },
+                transfers: { requested: true },
+            },
         });
-
-        const stripeAccountId = response.stripe_user_id;
-
-        const { userId } = req;
 
         let wallet = await Wallet.findOne({ host: userId });
         if (!wallet) {
-            wallet = await Wallet.create({
+            wallet = new Wallet({
                 host: userId,
-                stripeId: stripeAccountId,
+                balance: 0,
+                stripeAccountId: account.id,
             });
+            await wallet.save();
+        } else {
+            wallet.stripeAccountId = account.id;
+            await wallet.save();
         }
 
-        await wallet.save();
+        const accountLink = await stripe.accountLinks.create({
+            account: account.id,
+            refresh_url: `${process.env.FRONTEND_URL}/reauth`,
+            return_url: `${process.env.FRONTEND_URL}/success`,
+            type: 'account_onboarding',
+        });
 
-        res.json({ message: 'success' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('An error occurred');
+        res.status(200).json({ url: accountLink.url });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to create account link' });
     }
-}
+};
 
-export const transferFunds = async (hostStripeAccountId, amount) => {
-    await stripe.transfers.create({
-        amount: amount,
-        currency: 'mad',
-        destination: hostStripeAccountId,
-    });
+export const checkoutWallet = async (req, res) => {
+    try {
+        const { amount } = req.body;
+        const hostId = req.userId;
+
+        if (isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ message: 'Invalid amount' });
+        }
+
+        let hostWallet = await Wallet.findOne({ host: hostId });
+        if (!hostWallet || hostWallet.balance < amount) {
+            return res.status(400).json({ message: 'Insufficient balance' });
+        }
+
+        if (!hostWallet.stripeAccountId) {
+            return res.status(400).json({ message: 'Host does not have a connected Stripe account' });
+        }
+
+        const payout = await stripe.transfers.create({
+            amount: Math.round(amount * 100), 
+            currency: 'mad',
+            destination: hostWallet.stripeAccountId,
+        });
+
+        hostWallet.balance -= amount;
+        await hostWallet.save();
+
+        res.status(200).json({ message: 'Payout successful', payout });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred during the payout process', error: error.message });
+    }
 };

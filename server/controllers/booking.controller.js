@@ -19,7 +19,6 @@ export const getHostBookings = async (req, res) => {
     }
 };
 
-
 export const getBookings = async (req, res) => {
     try {
         const { userId } = req;
