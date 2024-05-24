@@ -2,31 +2,24 @@ import React, { useContext } from 'react';
 import { StepperContext } from '@/contexts/StepperContext';
 
 const Additionalinfo = () => {
-  const { userData, setUserData } = useContext(StepperContext);
+  const { userData, updateUserData } = useContext(StepperContext);
 
   const increment = (field) => {
-    setUserData(prevData => ({
-      ...prevData,
-      [field]: (prevData[field] || 0) + 1
-    }));
+    updateUserData({ [field]: (userData[field] || 0) + 1 });
   };
 
   const decrement = (field) => {
-    setUserData(prevData => ({
-      ...prevData,
-      [field]: prevData[field] > 0 ? prevData[field] - 1 : 0
-    }));
+    updateUserData({ [field]: userData[field] > 0 ? userData[field] - 1 : 0 });
   };
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    setUserData(prevData => ({
-      ...prevData,
+    updateUserData({
       amenities: {
-        ...prevData.amenities,
+        ...userData.amenities,
         [name]: checked
       }
-    }));
+    });
   };
 
   return (
@@ -91,7 +84,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="wifi"
-              checked={userData.amenities?.wifi || false}
+              checked={userData.amenities.wifi}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -101,7 +94,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="pool"
-              checked={userData.amenities?.pool || false}
+              checked={userData.amenities.pool}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -111,7 +104,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="tv"
-              checked={userData.amenities?.tv || false}
+              checked={userData.amenities.tv}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -121,7 +114,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="washer"
-              checked={userData.amenities?.washer || false}
+              checked={userData.amenities.washer}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -133,7 +126,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="kitchen"
-              checked={userData.amenities?.kitchen || false}
+              checked={userData.amenities.kitchen}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -143,7 +136,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="park"
-              checked={userData.amenities?.park || false}
+              checked={userData.amenities.park}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -153,7 +146,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="desk"
-              checked={userData.amenities?.desk || false}
+              checked={userData.amenities.desk}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 
@@ -163,7 +156,7 @@ const Additionalinfo = () => {
             <input
               type="checkbox"
               name="pets"
-              checked={userData.amenities?.pets || false}
+              checked={userData.amenities.pets}
               onChange={handleCheckboxChange}
               className='cursor-pointer'
             /> 

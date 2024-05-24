@@ -22,6 +22,8 @@ import Support from "../pages/admin/support"
 import Properties from "../pages/admin/properties"
 
 import Home from "../pages/guest/home"
+import Explore from "../pages/guest/explore"
+
 import Profile from "../pages/guest/profile"
 import Property from '@/pages/guest/property';
 
@@ -46,6 +48,8 @@ export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
 export const HOME_LINK = '/home';
+export const EXPLORE_LINK = '/explore';
+
 export const HOST_LINK = '/host';
 
 
@@ -120,6 +124,10 @@ export const router = createBrowserRouter([
                 element: <Profile />
             },
             {
+                path: EXPLORE_LINK,
+                element: <Explore />
+            },
+            {
                 path: PROPERTY_LINK,
                 element: <Property />
             },
@@ -157,7 +165,8 @@ export const router = createBrowserRouter([
             {
                 path: HOST_LINK,
                 element: <List />
-            }
+            },
+          
         ]
     },
     {
@@ -192,6 +201,7 @@ export const router = createBrowserRouter([
                 path: HOME_LINK,
                 element: <Home />
             },
+            
         ]
     },
     {
