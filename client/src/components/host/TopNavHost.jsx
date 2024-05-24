@@ -224,7 +224,7 @@ export default function TopNav() {
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Listing</Link></li>
+                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/host">Listing</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Reservations</Link></li>
                 </ul>
             </div>

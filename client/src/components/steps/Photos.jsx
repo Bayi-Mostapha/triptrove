@@ -3,13 +3,13 @@ import { axiosClient } from '@/api/axios';
 import { StepperContext } from '@/contexts/StepperContext';
 
 export default function Photos() {
-  const { userData, setUserData } = useContext(StepperContext);
+  const { userData, updateUserData } = useContext(StepperContext);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFiles = (files) => {
     if (files.length >= 3) {
       const fileURLs = files.map(file => URL.createObjectURL(file));
-      setUserData({ ...userData, photos: fileURLs });
+      updateUserData({ photos: fileURLs });
       // Perform the upload here
       uploadFiles(files);
     } else {

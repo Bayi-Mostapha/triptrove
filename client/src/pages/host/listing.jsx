@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Stepper from '@/components/host/Stepper';
 import StepperControl from '@/components/host/StepperControl';
-import { StepperProvider, StepperContext } from '@/contexts/StepperContext';
+import { StepperProvider } from '@/contexts/StepperContext';
 import Details from '@/components/steps/Details';
 import Photos from '@/components/steps/Photos';
 import Price from '@/components/steps/Price';
@@ -20,21 +20,21 @@ export default function Listing() {
   ];
 
   const displayStep = (step) => {
-    switch(step) {
-      case 1: 
+    switch (step) {
+      case 1:
         return <Details />;
-      case 2: 
+      case 2:
         return <Photos />;
-      case 3: 
+      case 3:
         return <Price />;
-      case 4: 
+      case 4:
         return <Additionalinfo />;
-      case 5: 
+      case 5:
         return <Publish />;
       default:
         return null;
     }
-  }
+  };
 
   const handleClick = (direction) => {
     let newStep = currentStep;
@@ -44,7 +44,7 @@ export default function Listing() {
 
   return (
     <StepperProvider>
-      <h1 className='text-2xl mt-6 font-medium'> List your property</h1>
+      <h1 className='text-2xl mt-6 font-medium'>List your property</h1>
       <div className='md:w-1/2 mx-auto rounded-2xl pb-2 bg-white'>
         <div className='container horizontal'>
           <Stepper steps={steps} currentStep={currentStep} />
@@ -52,7 +52,7 @@ export default function Listing() {
             {displayStep(currentStep)}
           </div>
         </div>
-        <StepperControl 
+        <StepperControl
           handleClick={handleClick}
           currentStep={currentStep}
           steps={steps}

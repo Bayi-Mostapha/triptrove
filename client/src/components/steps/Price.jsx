@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 import { StepperContext } from '@/contexts/StepperContext';
 
 function Price() {
-    const { userData, setUserData } = useContext(StepperContext);
+    const { userData, updateUserData } = useContext(StepperContext);
 
     const handleChange = (event) => {
-        const newPrice = event.target.value;
-        setUserData({ ...userData, price: newPrice });
+        const newPrice = parseFloat(event.target.value) || 0;
+        updateUserData({ price: newPrice });
     };
 
     const feePercentage = 5; // Fee percentage
@@ -31,12 +31,14 @@ function Price() {
                         value={userData.price}
                         onChange={handleChange}
                         className='text-4xl font-medium w-24 text-center border-b-2 border-gray-400 focus:outline-none'
+                        min="0"
+                        step="0.01"
                     />
                 </div>
                 <div className='flex flex-col items-center border rounded p-4 mt-4 w-80'>
                     <div className='flex justify-between w-full mb-2'>
                         <span className='text-gray-500'>Base price</span>
-                        <span className='font-medium'>MAD {userData.price}</span>
+                        <span className='font-medium'>MAD {userData.price.toFixed(2)}</span>
                     </div>
                     <div className='flex justify-between w-full mb-2'>
                         <span className='text-gray-500'>Our fees</span>
