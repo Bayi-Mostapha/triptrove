@@ -1,5 +1,6 @@
 import Booking from "../models/booking.model.js";
 import Property from "../models/property.model.js";
+import User from "../models/user.model.js";
 import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
 
@@ -98,37 +99,70 @@ export const createBookingSession = async (req, res) => {
 }
 
 export const createBooking = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const { pid } = req.params;
         const { checkIn, checkOut, totalPrice } = req.body;
         const guest = req.userId;
 
-        const booking = await Booking.create({
+        if (!checkIn || !checkOut || !totalPrice) {
+            throw new Error('Missing required fields');
+        }
+
+        const booking = await Booking.create([{
             guest,
             property: pid,
             checkIn: new Date(checkIn),
             checkOut: new Date(checkOut),
             totalPrice: totalPrice,
-        });
+        }], { session });
 
-        const property = await Property.findById(pid).populate('owner');
+        const property = await Property.findById(pid).populate('owner').session(session);
+        if (!property) {
+            throw new Error('Property not found');
+        }
+
         const hostId = property.owner._id;
-        const hostWallet = await Wallet.findOne({ host: hostId });
+        const host = await User.findById(hostId).session(session);
+        if (!host) {
+            throw new Error('Host not found');
+        }
 
-        const hostEarnings = totalPrice * 0.90;
+        const hostWallet = await Wallet.findOne({ host: hostId }).session(session);
+
+        const getHostEarnings = (subscriptionType) => {
+            switch (subscriptionType) {
+                case 'premium':
+                    return totalPrice * 0.95;
+                case 'business':
+                    return totalPrice;
+                case 'free':
+                default:
+                    return totalPrice * 0.90;
+            }
+        };
+
+        const hostEarnings = getHostEarnings(host.subscriptionType);
 
         if (hostWallet) {
             hostWallet.balance += hostEarnings;
-            await hostWallet.save();
+            await hostWallet.save({ session });
         } else {
-            await Wallet.create({
+            await Wallet.create([{
                 host: hostId,
                 balance: hostEarnings,
-            });
+            }], { session });
         }
 
-        res.status(201).json(booking);
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).json(booking[0]);
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
         res.status(400).json({ message: error.message });
     }
 };
