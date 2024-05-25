@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import fullStar from '/public/assets/full_star.svg';
 import halfStar from '/public/assets/half_star.svg';
 import emptyStar from '/public/assets/empty_star.svg';
@@ -11,32 +11,52 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
-
+import { axiosClient } from '@/api/axios';
+import { toast } from 'react-toastify';
+import { ExchangeRateContext } from '@/contexts/exchangeRatesWrapper';
 
 function Booking({ booking }) {
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [showReviewDialog, setShowReviewDialog] = useState(false);
     const [rating, setRating] = useState(0);
     const [content, setContent] = useState('');
 
-    const handleReviewSubmit = () => {
+    const handleReviewSubmit = async () => {
         const review = {
             stars: rating,
             content,
             property: booking.property._id
         };
-        console.log(review);
+        try {
+            await axiosClient.post('/reviews/' + booking.property._id, review)
+            toast.success('property reviewed successfully')
+        } catch (error) {
+            toast.error('something went wrong')
+        }
+        setShowReviewDialog(false);
     };
 
-    const cancelBooking = () => {
-
-    }
+    const cancelBooking = async () => {
+        try {
+            await axiosClient.put('/book/' + booking.property._id)
+            toast.success('Booking successfully')
+        } catch (error) {
+            toast.error('something went wrong')
+        }
+        setShowCancelDialog(false);
+    };
 
     const renderStars = () => {
         let starsToRender = (!rating || rating < 0) ? 0 : rating;
         starsToRender = starsToRender > 5 ? 5 : starsToRender;
-        console.log(starsToRender)
 
         const fullStars = Math.floor(starsToRender);
         const halfStarFlag = starsToRender % 1 >= 0.5;
@@ -56,88 +76,99 @@ function Booking({ booking }) {
     };
 
     const checkInDate = parseISO(booking.checkIn);
-    const canReview = isAfter(new Date(), checkInDate);
-    const nightsBooked = differenceInDays(parseISO(booking.checkOut), checkInDate);
+    const checkOutDate = parseISO(booking.checkOut);
+    const nightsBooked = differenceInDays(checkOutDate, checkInDate);
 
+    const { convert, selectedCurrency } = useContext(ExchangeRateContext)
     return (
-        <div className="mb-4 p-4 border shadow-sm rounded-lg">
-            <div className="md:flex md:gap-6">
-                <div className="mb-2">
+        <div className="mb-4 p-4 border shadow-sm rounded-lg flex justify-between items-start">
+            <div className="md:flex md:gap-3 md:items-start">
+                <div>
                     <img
                         src={booking.property.photos[0]}
                         alt={booking.property.title}
-                        className="w-full h-64 md:h-36 object-cover rounded"
+                        className="w-full h-64 md:h-36 object-cover rounded aspect-video"
                     />
                 </div>
-                <div>
-                    <h2 className="text-lg font-medium">{booking.property.title}</h2>
-                    <p><span className="text-gray-700">Check-in:</span> {format(booking.checkIn, 'eeee, dd MMMM')}</p>
-                    <p><span className="text-gray-700">Check-out:</span> {format(booking.checkOut, 'eeee, dd MMMM')}</p>
-                    <p><span className="text-gray-700">Nights Booked:</span> {nightsBooked}</p>
-                    <p><span className="text-gray-700">Total Price:</span> {booking.totalPrice} MAD</p>
+                <div className='-mt-1.5'>
+                    <h2 className="text-xl font-medium">{booking.property.title}</h2>
+                    <p className='text-sm'>
+                        Check-in: {format(checkInDate, 'eeee, dd MMMM')}
+                    </p>
+                    <p className='text-sm'>
+                        Check-out: {format(checkOutDate, 'eeee, dd MMMM')}
+                    </p>
+                    <p className='text-sm'>
+                        Nights Booked: {nightsBooked}
+                    </p>
+                    <p className='text-sm'>
+                        Total Price: {convert(booking.totalPrice)} {selectedCurrency}
+                    </p>
                 </div>
             </div>
-            <div className='flex gap-4 items-center justify-end'>
-                <Dialog>
-                    <DialogTrigger className='px-4 py-2 bg-red-500 rounded text-white font-medium'>
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <Button className='p-0 h-fit' variant='ghost'>
+                        <svg className='text-gray-600' xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => setShowCancelDialog(true)}>
                         Cancel Booking
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Are you sure you want to cancel this booking?</DialogTitle>
-                            <DialogDescription>
-                                This action cannot be undone. You will receive a refund within 15 days.
-                            </DialogDescription>
-                            <DialogFooter>
-                                <DialogClose>
-                                    <Button variant='outline'>
-                                        Close
-                                    </Button>
-                                </DialogClose>
-                                <Button
-                                    onclick={cancelBooking} variant='destructive'>
-                                    Confirm Cancel
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowReviewDialog(true)}>
+                        Leave a review
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Are you sure you want to cancel this booking?</DialogTitle>
+                        <DialogDescription>
+                            This action cannot be undone. You will receive a refund within 15 days.
+                        </DialogDescription>
+                        <DialogFooter>
+                            <DialogClose>
+                                <Button variant='outline'>
+                                    Close
                                 </Button>
-                            </DialogFooter>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog>
-
-                {canReview && (
-                    <Dialog>
-                        <DialogTrigger className='px-4 py-2 bg-primary rounded text-white font-medium'>
-                            Leave a review
-                        </DialogTrigger>
-                        <DialogContent>
-                            <h3 className="text-lg font-medium">Leave a Review</h3>
-                            <div className="flex justify-between items-center gap-4">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max="5"
-                                    className="w-28 p-2 border rounded"
-                                    placeholder="Rating (0-5)"
-                                    value={rating}
-                                    onChange={(e) => setRating(parseFloat(e.target.value))}
-                                />
-                                {renderStars()}
-                            </div>
-                            <textarea
-                                className="w-full p-2 border rounded"
-                                placeholder="Write your review here..."
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                            />
-                            <Button
-                                className='block my-3 ml-auto'
-                                onClick={handleReviewSubmit}
-                            >
-                                Submit Review
+                            </DialogClose>
+                            <Button onClick={cancelBooking} variant='destructive'>
+                                Confirm Cancel
                             </Button>
-                        </DialogContent>
-                    </Dialog>
-                )}
-            </div>
+                        </DialogFooter>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Leave a Review</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex justify-between items-center gap-4">
+                        <input
+                            type="number"
+                            min="0"
+                            max="5"
+                            className="w-28 p-2 border rounded"
+                            placeholder="Rating (0-5)"
+                            value={rating}
+                            onChange={(e) => setRating(parseFloat(e.target.value))}
+                        />
+                        {renderStars()}
+                    </div>
+                    <textarea
+                        className="w-full p-2 border rounded"
+                        placeholder="Write your review here..."
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
+                    <Button className='block my-3 ml-auto' onClick={handleReviewSubmit}>
+                        Submit Review
+                    </Button>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

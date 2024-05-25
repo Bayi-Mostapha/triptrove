@@ -23,11 +23,7 @@ export const getAllReports = async (req, res) => {
                 ]
             });
 
-        const response = {
-            reports: reportedReviews
-        };
-
-        res.json(response);
+        res.json(reportedReviews);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
@@ -63,11 +59,7 @@ export const getReports = async (req, res) => {
                 ]
             });
 
-        const response = {
-            reports: reportedReviews
-        };
-
-        res.json(response);
+        res.json(reportedReviews);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

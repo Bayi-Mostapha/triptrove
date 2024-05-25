@@ -1,47 +1,34 @@
-import { axiosClient } from "@/api/axios";
 import StarRating from "@/components/guest/property-reservation/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
 import { ArrowUpDown, Trash } from "lucide-react"
-import { toast } from "react-toastify";
 
-export const reportColumns = [
+export const propertyReportsColumns = [
     {
-        accessorKey: "review.author",
-        header: "Review Author",
+        accessorKey: "reporter",
+        header: "Reporter",
         cell: ({ row }) => {
-            const author = row.original.review.author;
+            const reporter = row.original.reporter;
             return (
                 <div className="flex gap-2 items-center">
                     <Avatar>
-                        <AvatarImage src={author.image} />
-                        <AvatarFallback>{author.fullName[0]}</AvatarFallback>
+                        <AvatarImage src={reporter.image} />
+                        <AvatarFallback>{reporter.fullName[0]}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-medium">{author.fullName}</p>
-                        <p className="text-xs text-gray-700">{author.email}</p>
+                        <p className="font-medium">{reporter.fullName}</p>
+                        <p className="text-xs text-gray-700">{reporter.email}</p>
                     </div>
                 </div>
             );
         },
     },
     {
-        accessorKey: "review",
-        header: "Review",
-        cell: ({ row }) => {
-            const review = row.original.review;
-            return <div>
-                <StarRating size={10} gap={0} rating={review.stars} />
-                <p className="text-xs text-gray-700">{review.content}</p>
-            </div>
-        },
-    },
-    {
-        accessorKey: "review.property",
+        accessorKey: "property",
         header: "Property",
         cell: ({ row }) => {
-            const property = row.original.review.property;
+            const property = row.original.property;
             return <div>
                 <p className="font-medium">{property.title}</p>
                 <p className="text-xs text-gray-700">By: {property.owner.fullName}</p>
@@ -79,14 +66,14 @@ export const reportColumns = [
         header: "Action",
         cell: ({ row }) => {
             const id = row.original._id;
-            const rid = row.original.review._id;
+            const pid = row.original.property._id;
             return <Button
                 variant='ghost'
                 onClick={async () => {
                     try {
-                        await axiosClient.delete('/review-reports/' + id);
-                        await axiosClient.delete('/reviews/' + rid);
-                        toast.success('Review and report deleted successfully');
+                        await axiosClient.delete('/property-reports/' + id);
+                        await axiosClient.delete('/properties/' + pid);
+                        toast.success('Property and report deleted successfully');
                     } catch (error) {
                         toast.error('Something went wrong');
                     }

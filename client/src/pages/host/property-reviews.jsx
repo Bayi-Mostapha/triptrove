@@ -30,15 +30,16 @@ function PropertyReviews() {
     const { id } = useParams();
     const [reviews, setReviews] = useState([]);
 
+    async function getReviews() {
+        axiosClient.get(`/reviews/${id}`).then(response => {
+            setReviews(response.data);
+        });
+    }
     useEffect(() => {
         // if (!id) {
         //     return;
         // }
-        // make this async and stuff :) 
-        //     axiosClient.get(`/properties/${id}`).then(response => {
-        //         setReviews(response.data);
-        //     });
-        // }
+        // getReviews()
 
         setReviews(dummyRatings)
     }, [id]);

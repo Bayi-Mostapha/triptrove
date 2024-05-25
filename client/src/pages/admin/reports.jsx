@@ -1,7 +1,9 @@
 import { reportColumns } from "@/components/admin/reports/columns";
+import { propertyReportsColumns } from "@/components/admin/reports/propertyColumns";
 import MyTable from "@/components/admin/table";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const data = [
     {
@@ -57,27 +59,83 @@ const data = [
         updatedAt: "2024-05-17T00:00:00.000Z"
     }
 ]
+const data2 = [
+    {
+        _id: "reviewReportId1",
+        property: {
+            _id: "propertyId2",
+            title: "Cozy Cabin",
+            owner: {
+                fullName: "Mohammed Ali",
+            }
+        },
+        reporter: {
+            fullName: "Khalid Zado",
+            email: "test@gmail.com"
+        },
+        reason: "Fake property",
+        createdAt: "2024-05-18T00:00:00.000Z",
+        updatedAt: "2024-05-18T00:00:00.000Z"
+    },
+]
 
 function Reports() {
+    const [propertyReports, setPropertyReports] = useState([]);
+    const [reviewReports, setReviewReports] = useState([]);
     const { id } = useParams()
+
+    async function getPropertyReports() {
+        if (!id) {
+            return;
+        }
+        if (id == 'all') {
+            axiosClient.get(`/review-reports`).then(response => {
+                setPropertyReports(response.data);
+            });
+        } else {
+            axiosClient.get(`/review-reports/${id}`).then(response => {
+                setPropertyReports(response.data);
+            });
+        }
+    }
+    async function getReviewReports() {
+        if (!id) {
+            return;
+        }
+        if (id == 'all') {
+            axiosClient.get(`/property-reports`).then(response => {
+                setReviewReports(response.data);
+            });
+        } else {
+            axiosClient.get(`/property-reports/${id}`).then(response => {
+                setReviewReports(response.data);
+            });
+        }
+    }
     useEffect(() => {
-        // if (!id) {
-        //     return;
-        // }
-        // if (id == 'all') {
-        //     axiosClient.get(`/properties/${id}`).then(response => {
-        //         setReviews(response.data);
-        //     });
-        // } else {
-        //     axiosClient.get(`/properties/${id}`).then(response => {
-        //         setReviews(response.data);
-        //     });
-        // }
+        // getPropertyReports()
+        // getReviewReports()
+
+        setReviewReports(data)
+        setPropertyReports(data2)
     }, [])
     return (
         <div className="mt-5">
-            <h1 className="mb-4 text-xl font-medium">Review reports</h1>
-            <MyTable columns={reportColumns} data={data} />
+            <h1 className="mb-5 text-2xl font-semibold">Reports</h1>
+            <Tabs defaultValue="reviews" className="w-full">
+                <TabsList>
+                    <TabsTrigger value="reviews">Review reports</TabsTrigger>
+                    <TabsTrigger value="properties">Property reports</TabsTrigger>
+                </TabsList>
+                <TabsContent value="reviews">
+                    <h2 className="mb-4 text-lg font-medium">Review reports</h2>
+                    <MyTable columns={reportColumns} data={reviewReports} />
+                </TabsContent>
+                <TabsContent value="properties">
+                    <h2 className="mb-4 text-lg font-medium">Property reports</h2>
+                    <MyTable columns={propertyReportsColumns} data={propertyReports} />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

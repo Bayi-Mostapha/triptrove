@@ -23,21 +23,26 @@ import Properties from "../pages/admin/properties"
 import Settings from "../pages/admin/settings"
 
 import Home from "../pages/guest/home"
+import Explore from "../pages/guest/explore"
+
 import Profile from "../pages/guest/profile"
 import Property from '@/pages/guest/property';
 
-import List from "../pages/host/listg"
+// import List from "../pages/host/listg"
+import List from "../pages/host/listing"
 
 import PropertyReviews from '@/pages/host/property-reviews';
+import BookingSucces from '@/pages/guest/booking-success';
+import Bookings from '@/pages/guest/bookings';
+import Reports from '@/pages/admin/reports';
+import HostBookings from '@/pages/host/bookings';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
-import BookingSucces from '@/pages/guest/booking-success';
-import Bookings from '@/pages/guest/bookings';
-import Reports from '@/pages/admin/reports';
-import AdminBookings from '@/pages/admin/bookings';
+import BookingFail from '@/pages/guest/booking-fail';
+import Favorites from '@/pages/guest/favorites';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -45,6 +50,8 @@ export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
 export const HOME_LINK = '/home';
+export const EXPLORE_LINK = '/explore';
+
 export const HOST_LINK = '/host';
 
 
@@ -52,7 +59,9 @@ export const HOST_LINK = '/host';
 export const PROFILE_LINK = '/profile';
 export const PROPERTY_LINK = '/property/:id';
 export const BOOKING_SUCCESS = '/booking-success';
+export const BOOKING_FAIL = '/booking-fail';
 export const BOOKINGS = '/bookings';
+export const FAVORITES = '/favorites';
 
 // Host
 export const REVIEWS = '/listing-reviews/:id';
@@ -119,6 +128,10 @@ export const router = createBrowserRouter([
                 element: <Profile />
             },
             {
+                path: EXPLORE_LINK,
+                element: <Explore />
+            },
+            {
                 path: PROPERTY_LINK,
                 element: <Property />
             },
@@ -127,22 +140,30 @@ export const router = createBrowserRouter([
                 element: <BookingSucces />
             },
             {
+                path: BOOKING_FAIL,
+                element: <BookingFail />
+            },
+            {
                 path: BOOKINGS,
                 element: <Bookings />
+            },
+            {
+                path: FAVORITES,
+                element: <Favorites />
             },
             // for host 
             {
                 path: REVIEWS,
                 element: <PropertyReviews />
             },
+            {
+                path: '/listings/bookings',
+                element: <HostBookings />
+            },
             // for admin 
             {
                 path: '/reports/:id',
                 element: <Reports />
-            },
-            {
-                path: '/admin/bookings',
-                element: <AdminBookings />
             },
         ]
     },
@@ -152,7 +173,8 @@ export const router = createBrowserRouter([
             {
                 path: HOST_LINK,
                 element: <List />
-            }
+            },
+
         ]
     },
     {
@@ -191,6 +213,7 @@ export const router = createBrowserRouter([
                 path: HOME_LINK,
                 element: <Home />
             },
+
         ]
     },
     {

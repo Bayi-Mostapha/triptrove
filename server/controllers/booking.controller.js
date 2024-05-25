@@ -1,13 +1,18 @@
 import Booking from "../models/booking.model.js";
 import Property from "../models/property.model.js";
+import User from "../models/user.model.js";
+import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
 
-export const getAllBookings = async (req, res) => {
+export const getHostBookings = async (req, res) => {
+    const userId = req.userId;
     try {
-        const bookings = await Booking.find()
+        const properties = await Property.find({ owner: userId }).select('_id');
+        const propertyIds = properties.map(property => property._id);
+        const bookings = await Booking.find({ property: { $in: propertyIds } })
             .populate([
                 { path: 'guest', select: 'fullName email image' },
-                { path: 'property', select: 'title owner', populate: { path: 'owner', select: 'fullName' } }
+                { path: 'property', select: 'title' }
             ]);
         res.json(bookings);
     } catch (error) {
@@ -18,7 +23,9 @@ export const getAllBookings = async (req, res) => {
 export const getBookings = async (req, res) => {
     try {
         const { userId } = req;
-        const bookings = await Booking.find({ guest: userId, status: 'paid' }).populate('property', '_id title photos');
+        const bookings = await Booking
+            .find({ guest: userId, status: 'paid' })
+            .populate('property', '_id title photos');
         res.json(bookings);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -68,7 +75,7 @@ export const createBookingSession = async (req, res) => {
         const property = await Property.findOne({ _id: pid });
 
         const stripe = new Stripe(process.env.MostaphaStripe);
-        const frontend = process.env.FRONTEND_URL || 'http://localhost:5173/'
+        const frontend = process.env.FRONTEND_URL || 'http://localhost:5173'
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
@@ -82,8 +89,8 @@ export const createBookingSession = async (req, res) => {
                 },
                 quantity: nights
             }],
-            success_url: frontend + `booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
-            cancel_url: frontend + 'booking-fail',
+            success_url: frontend + `/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
+            cancel_url: frontend + '/booking-fail',
         })
         res.json({ url: session.url })
     } catch (error) {
@@ -92,21 +99,70 @@ export const createBookingSession = async (req, res) => {
 }
 
 export const createBooking = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const { pid } = req.params;
         const { checkIn, checkOut, totalPrice } = req.body;
         const guest = req.userId;
 
-        const booking = await Booking.create({
+        if (!checkIn || !checkOut || !totalPrice) {
+            throw new Error('Missing required fields');
+        }
+
+        const booking = await Booking.create([{
             guest,
             property: pid,
             checkIn: new Date(checkIn),
             checkOut: new Date(checkOut),
             totalPrice: totalPrice,
-        });
+        }], { session });
 
-        res.status(201).json(booking);
+        const property = await Property.findById(pid).populate('owner').session(session);
+        if (!property) {
+            throw new Error('Property not found');
+        }
+
+        const hostId = property.owner._id;
+        const host = await User.findById(hostId).session(session);
+        if (!host) {
+            throw new Error('Host not found');
+        }
+
+        const hostWallet = await Wallet.findOne({ host: hostId }).session(session);
+
+        const getHostEarnings = (subscriptionType) => {
+            switch (subscriptionType) {
+                case 'premium':
+                    return totalPrice * 0.95;
+                case 'business':
+                    return totalPrice;
+                case 'free':
+                default:
+                    return totalPrice * 0.90;
+            }
+        };
+
+        const hostEarnings = getHostEarnings(host.subscriptionType);
+
+        if (hostWallet) {
+            hostWallet.balance += hostEarnings;
+            await hostWallet.save({ session });
+        } else {
+            await Wallet.create([{
+                host: hostId,
+                balance: hostEarnings,
+            }], { session });
+        }
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).json(booking[0]);
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
         res.status(400).json({ message: error.message });
     }
 };
