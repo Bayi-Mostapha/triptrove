@@ -8,7 +8,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
@@ -56,9 +56,9 @@ const data = [
         checkOut: "2024-05-20T00:00:00.000Z",
         createdAt: "2024-05-19T00:00:00.000Z",
     },
-]
+];
 
-function HostBookings() {
+function HostBookings({ limit }) {
     const [bookings, setBookings] = useState([]);
     const [filter, setFilter] = useState("all");
 
@@ -66,17 +66,20 @@ function HostBookings() {
         filter === "all" || booking.status === filter
     );
 
+    const displayedData = limit ? filteredData.slice(0, 3) : filteredData;
+
     function getBookings() {
         axiosClient.get(`/book/host`).then(response => {
             setBookings(response.data);
         }).catch(err => {
-            toast.error('something went wrong, please refresh the page')
+            toast.error('something went wrong, please refresh the page');
         });
     }
+
     useEffect(() => {
-        // getBookings()
-        setBookings(data)
-    }, [])
+        // getBookings();
+        setBookings(data);
+    }, []);
 
     return (
         <div className="mt-5">
@@ -84,7 +87,7 @@ function HostBookings() {
                 <h1 className="text-xl font-medium">Bookings</h1>
                 <DropdownMenu>
                     <DropdownMenuTrigger className="ml-auto block">
-                        <Button className="my-4 flex items-center gap-1" variant='outline'>
+                        <Button className="my-4 flex items-center gap-1" variant="outline">
                             Filter <ChevronDown size={16} color="gray" />
                         </Button>
                     </DropdownMenuTrigger>
@@ -97,7 +100,7 @@ function HostBookings() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <MyTable columns={bookingsColumns} data={filteredData} />
+            <MyTable columns={bookingsColumns} data={displayedData} />
         </div>
     );
 }

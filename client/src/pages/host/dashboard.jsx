@@ -4,7 +4,7 @@ import { CheckIcon, HandCoinsIcon, Home, Wallet } from "lucide-react";
 import { FaCreditCard } from "react-icons/fa";
 import { TiDocumentText } from "react-icons/ti";
 import HostBookings from "./bookings";
-import { useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -13,31 +13,50 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 
 function HostDashboard() {
+    const { selectedCurrency, convert } = useContext(ExchangeRateContext);
+    const [loading, setLoading] = useState(false);
     const [amount, setAmount] = useState(0);
     const [properties, setProperties] = useState(0);
-    const [bookings, setBookings] = useState(0);
-    const [revenue, setRevenue] = useState(0);
+    const [bookings, setBookings] = useState({});
+    const [revenue, setRevenue] = useState({});
+    const [balance, setBalance] = useState(0);
+    const [selectedPeriod, setSelectedPeriod] = useState('lastDay');
 
     async function getStats() {
         try {
-            const res = await axiosClient.get('/host-stats')
-            console.log(res);
+            setLoading(true);
+            const res = await axiosClient.get('/host-stats');
+            setProperties(res.data.properties);
+            setBookings(res.data.bookings);
+            setRevenue(res.data.revenue);
+            setBalance(res.data.balance);
+            setLoading(false);
         } catch (error) {
             console.log(error);
+            setLoading(false);
         }
     }
-    useState(() => {
-        getStats()
-    }, [])
+
+    useEffect(() => {
+        getStats();
+    }, []);
 
     const handleChange = (e) => {
-        setAmount(e.target.value)
-    }
+        setAmount(e.target.value);
+    };
 
     const handleCheckout = async () => {
         try {
@@ -57,66 +76,85 @@ function HostDashboard() {
         }
     };
 
+    const handlePeriodChange = (val) => {
+        setSelectedPeriod(val);
+    };
+
     return (
         <div>
-            <div className="mt-6 grid grid-cols-[3fr_1fr] gap-5">
-                <div className="border px-5 pt-4 pb-5 rounded-md">
-                    <h2 className="mb-4 text-xl font-medium">Stats</h2>
-                    <div className="flex gap-4">
-                        <div className="flex-1 p-3 rounded-lg bg-yellow-50 text-yellow-500">
-                            <HandCoinsIcon
-                                size={26}
-                            />
-                            <p className="mt-3 text-xl font-semibold text-gray-800">{revenue} MAD</p>
-                            <p className="text-sm text-gray-600 font-medium">Total revenue</p>
+            {loading ? (
+                <div>Loading</div>
+            ) : (
+                <>
+                    <div className="mt-6 grid grid-cols-[3fr_1fr] gap-5">
+                        <div className="border px-5 py-4 rounded-md">
+                            <div className="mb-4 flex items-center justify-between">
+                                <h2 className="text-xl font-medium">Stats</h2>
+                                <Select onValueChange={handlePeriodChange} defaultValue={selectedPeriod}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Theme" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="lastDay">Today</SelectItem>
+                                        <SelectItem value="lastWeek">Last week</SelectItem>
+                                        <SelectItem value="lastMonth">Last month</SelectItem>
+                                        <SelectItem value="lastYear">Last year</SelectItem>
+                                        <SelectItem value="allTime">All time</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="flex-1 p-3 rounded-lg bg-yellow-50 text-yellow-500">
+                                    <HandCoinsIcon size={26} />
+                                    <p className="mt-3 text-xl font-semibold text-gray-800">
+                                        {convert(revenue[selectedPeriod])} {selectedCurrency}
+                                    </p>
+                                    <p className="text-sm text-gray-600 font-medium">Total revenue</p>
+                                </div>
+                                <div className="flex-1 p-3 rounded-lg bg-green-50 text-green-500">
+                                    <Home size={25} />
+                                    <p className="mt-3 text-xl font-semibold text-gray-800">{properties}</p>
+                                    <p className="text-sm text-gray-600 font-medium">Total properties</p>
+                                </div>
+                                <div className="flex-1 p-3 rounded-lg bg-pink-50 text-pink-500">
+                                    <TiDocumentText size={26} />
+                                    <p className="mt-3 text-xl font-semibold text-gray-800">
+                                        {bookings[selectedPeriod]}
+                                    </p>
+                                    <p className="text-sm text-gray-600 font-medium">Total Bookings</p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex-1 p-3 rounded-lg bg-green-50 text-green-500">
-                            <Home
-                                size={25}
-                            />
-                            <p className="mt-3 text-xl font-semibold text-gray-800">{properties}</p>
-                            <p className="text-sm text-gray-600 font-medium">Total properties</p>
-                        </div>
-                        <div className="flex-1 p-3 rounded-lg bg-pink-50 text-pink-500">
-                            <TiDocumentText
-                                size={26}
-                            />
-                            <p className="mt-3 text-xl font-semibold text-gray-800">{bookings}</p>
-                            <p className="text-sm text-gray-600 font-medium">Total Bookings</p>
+                        <div className="border px-5 pt-4 pb-5 rounded-md flex flex-col items-center">
+                            <Wallet size={80} className="stroke-primary" />
+                            <p className="text-xs text-primary">Wallet balance</p>
+                            <p className="mt-2 font-semibold text-xl text-gray-900">{convert(balance)} {selectedCurrency}</p>
+                            <Dialog>
+                                <DialogTrigger>
+                                    <Button variant="outline" className="text-primary flex items-center gap-2 font-semibold">
+                                        Checkout <FaCreditCard />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Enter the Amount You Would Like to Checkout</DialogTitle>
+                                        <DialogDescription className="mb-4">
+                                            If you don't have a connected Stripe account, you will be prompted to connect one, and the money will then be sent to you.
+                                            <Input className="my-4" type="number" onChange={handleChange} value={amount} />
+                                        </DialogDescription>
+                                        <DialogFooter>
+                                            <Button onClick={handleCheckout} className="flex items-center gap-1 font-semibold">
+                                                Submit <CheckIcon size={18} />
+                                            </Button>
+                                        </DialogFooter>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     </div>
-                </div>
-                <div className="border px-5 pt-4 pb-5 rounded-md flex flex-col items-center">
-                    <Wallet size={80} className="stroke-primary" />
-                    <p className="text-xs text-primary">Wallet ballence</p>
-                    <p className="mt-2 font-semibold text-xl text-gray-900">1000 MAD</p>
-                    <Dialog>
-                        <DialogTrigger>
-                            <Button variant='outline' className='text-primary flex items-center gap-2 font-semibold'>
-                                Checkout <FaCreditCard />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Enter the Amount You Would Like to Checkout</DialogTitle>
-                                <DialogDescription className='mb-4'>
-                                    If you don't have a connected Stripe account, you will be prompted to connect one, and the money will then be sent to you.
-                                    <Input className='my-4' type='number' onChange={handleChange} value={amount} />
-                                </DialogDescription>
-                                <DialogFooter>
-                                    <Button
-                                        onClick={handleCheckout}
-                                        className='flex items-center gap-1 font-semibold'
-                                    >
-                                        Submit <CheckIcon size={18} />
-                                    </Button>
-                                </DialogFooter>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-            </div>
-            <HostBookings />
+                    <HostBookings limit={true} />
+                </>
+            )}
         </div>
     );
 }
