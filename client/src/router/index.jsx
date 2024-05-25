@@ -43,6 +43,7 @@ import AdminAuthRoute from './protectors/AdminAuthRoute';
 import BookingFail from '@/pages/guest/booking-fail';
 import Favorites from '@/pages/guest/favorites';
 import HostDashboard from '@/pages/host/dashboard';
+import HostBookings from '@/pages/host/bookings';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -159,6 +160,10 @@ export const router = createBrowserRouter([
             {
                 path: '/host/dashboard',
                 element: <HostDashboard />
+            },
+            {
+                path: '/host/bookings',
+                element: <HostBookings limit={false} />
             },
             // for admin 
             {

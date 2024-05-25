@@ -1,7 +1,7 @@
 import { axiosClient } from "@/api/axios";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, HandCoinsIcon, Home, Wallet } from "lucide-react";
-import { FaCreditCard } from "react-icons/fa";
+import { FaChartArea, FaCreditCard } from "react-icons/fa";
 import { TiDocumentText } from "react-icons/ti";
 import HostBookings from "./bookings";
 import { useContext, useState, useEffect } from "react";
@@ -81,12 +81,12 @@ function HostDashboard() {
     };
 
     return (
-        <div>
+        <div className="p-4">
             {loading ? (
-                <div>Loading</div>
+                <div className="h-40 flex justify-center items-center gap-1 text-primary text-xl">Loading data <FaChartArea /> ...</div>
             ) : (
                 <>
-                    <div className="mt-6 grid grid-cols-[3fr_1fr] gap-5">
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-5">
                         <div className="border px-5 py-4 rounded-md">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="text-xl font-medium">Stats</h2>
@@ -103,20 +103,20 @@ function HostDashboard() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="flex gap-4">
-                                <div className="flex-1 p-3 rounded-lg bg-yellow-50 text-yellow-500">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="p-3 rounded-lg bg-yellow-50 text-yellow-500">
                                     <HandCoinsIcon size={26} />
                                     <p className="mt-3 text-xl font-semibold text-gray-800">
                                         {convert(revenue[selectedPeriod])} {selectedCurrency}
                                     </p>
                                     <p className="text-sm text-gray-600 font-medium">Total revenue</p>
                                 </div>
-                                <div className="flex-1 p-3 rounded-lg bg-green-50 text-green-500">
+                                <div className="p-3 rounded-lg bg-green-50 text-green-500">
                                     <Home size={25} />
                                     <p className="mt-3 text-xl font-semibold text-gray-800">{properties}</p>
                                     <p className="text-sm text-gray-600 font-medium">Total properties</p>
                                 </div>
-                                <div className="flex-1 p-3 rounded-lg bg-pink-50 text-pink-500">
+                                <div className="p-3 rounded-lg bg-pink-50 text-pink-500">
                                     <TiDocumentText size={26} />
                                     <p className="mt-3 text-xl font-semibold text-gray-800">
                                         {bookings[selectedPeriod]}
