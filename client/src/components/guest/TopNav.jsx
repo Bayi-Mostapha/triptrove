@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { axiosClient } from "../../api/axios";
 import { Link, useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
-import { LOGIN_LINK } from "../../router/index"
+import { FAVORITES, LOGIN_LINK } from "../../router/index"
 import Loading from "../../pages/loading"
 import {
   Pencil,
@@ -82,7 +82,7 @@ export default function TopNav() {
       firstName: userContext.user.firstName,
       email: userContext.user.email
     });
-      getAllNotifications();
+    getAllNotifications();
   }, [userContext.user]);
 
   useEffect(() => {
@@ -211,7 +211,7 @@ export default function TopNav() {
     const value = e.target.value;
     setPasswords({ ...passwords, [field]: value });
   };
-  const [ notifications , setNotifications ] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const getAllNotifications = async () => {
     try {
       const response = await axiosClient.get('/notification/admin');
@@ -222,33 +222,33 @@ export default function TopNav() {
       toast.error('Error getting notifications. Please try again later.');
     }
   };
-  
-  useEffect(() => {
-      getAllNotifications();
-      socket.emit('joinRoom', userContext.user._id); 
-      socket.on('notification', (notification) => {
-          setNotifications((prevNotifications) => [...prevNotifications, notification.message]);
-          toast(notification.message.message);
-          viewNotification(notification.message);
-      });
-      return () => {
-        socket.off('notification');
-        socket.emit('leaveRoom', userContext.user._id);
-      };
-    }, [userContext.user]);
- 
 
- const viewNotification =  async (notification) =>{
-  try {
-    const response = await axiosClient.post('/notification/read',{notification});
+  useEffect(() => {
     getAllNotifications();
-    if(notification.link !== null){
-      navigate(notification.link)
+    socket.emit('joinRoom', userContext.user._id);
+    socket.on('notification', (notification) => {
+      setNotifications((prevNotifications) => [...prevNotifications, notification.message]);
+      toast(notification.message.message);
+      viewNotification(notification.message);
+    });
+    return () => {
+      socket.off('notification');
+      socket.emit('leaveRoom', userContext.user._id);
+    };
+  }, [userContext.user]);
+
+
+  const viewNotification = async (notification) => {
+    try {
+      const response = await axiosClient.post('/notification/read', { notification });
+      getAllNotifications();
+      if (notification.link !== null) {
+        navigate(notification.link)
+      }
+    } catch (error) {
+      toast.error('Error reading notifications. Please try again later.');
     }
-  } catch (error) {
-    toast.error('Error reading notifications. Please try again later.');
   }
- }
 
 
   return (
@@ -281,43 +281,43 @@ export default function TopNav() {
                       }
                       <div className='text-green-800 cursor-pointer mr-5'>
                         <DropdownMenu >
-                            <DropdownMenuTrigger asChild >
-                             <div className="relative flex items-center justify-between "> 
-                                {
-                                  notifications.length != 0 
-                                    && 
-                                  <div className="w-2 h-2 rounded-full bg-red-600 absolute top-0 right-0"></div>} 
-                            <Bell color='#7065F0' size={23} />  
-                             </div>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56 bg-white">
-                               {
-                                notifications && 
-                                  notifications?.map((notification)=>(
-                                    <DropdownMenuItem >
-                                    <div className='flex items-center justify-between w-full' onClick={()=>viewNotification(notification)}>
-                                     <p>{notification.message}</p>
-                                     <div className="cursor-pointer"><X /></div>
-                                    </div>
-                                 </DropdownMenuItem>
-                                  ))
-                               }
-                               {
-                                notifications.length == 0 && 
-                                  
-                                    <DropdownMenuItem >
-                                    <div className='flex items-center justify-between w-full'>
-                                      <p>no notifications yet </p>
-                                    </div>
-                                 </DropdownMenuItem>
-                                 
-                               }
-                            </DropdownMenuContent>
+                          <DropdownMenuTrigger asChild >
+                            <div className="relative flex items-center justify-between ">
+                              {
+                                notifications.length != 0
+                                &&
+                                <div className="w-2 h-2 rounded-full bg-red-600 absolute top-0 right-0"></div>}
+                              <Bell color='#7065F0' size={23} />
+                            </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-56 bg-white">
+                            {
+                              notifications &&
+                              notifications?.map((notification) => (
+                                <DropdownMenuItem >
+                                  <div className='flex items-center justify-between w-full' onClick={() => viewNotification(notification)}>
+                                    <p>{notification.message}</p>
+                                    <div className="cursor-pointer"><X /></div>
+                                  </div>
+                                </DropdownMenuItem>
+                              ))
+                            }
+                            {
+                              notifications.length == 0 &&
+
+                              <DropdownMenuItem >
+                                <div className='flex items-center justify-between w-full'>
+                                  <p>no notifications yet </p>
+                                </div>
+                              </DropdownMenuItem>
+
+                            }
+                          </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <div className='text-green-800 cursor-pointer mr-5'>
+                      <Link to={FAVORITES} className='cursor-pointer mr-5'>
                         <Heart color='#7065F0' size={23} />
-                      </div>
+                      </Link>
                       <div className='w-0 h-7 border-[1px] border-[#A7A3A3] mr-3'></div>
                       <div>
                         <DropdownMenu>
