@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { authContext } from "@/contexts/AuthWrapper";
  import { 
-    ChevronsUpDown,
+    ArrowDownUp,
     CalendarDays,
     ChevronDown,
+    Filter ,
+    FilterX ,
     EllipsisVertical ,
     SquareArrowLeft, 
   } from 'lucide-react';
@@ -23,7 +25,8 @@ import {
     AvatarImage,
   } from "@/components/ui/avatar"
 import { axiosClient } from "../../api/axios"
-import {  toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { addDays, format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
@@ -41,6 +44,7 @@ export default function Properties() {
     const [selectedProperties, setSelectedProperties] = useState([]);
     const [ actualTicket, setActualTicket] = useState(null);
     const [ messages, setMessages] = useState([]);
+    const [ filterComponents, setFilterComponents] = useState(false);
 
     const checkAll = () => {
         if (selectedProperties.length === filteredProperties.length) {
@@ -335,6 +339,7 @@ export default function Properties() {
       setFilteredProperties(filtered);
     }
     const resetFilters = (id) =>{
+        setFilterComponents(!filterComponents)
         setFilteredProperties(properties);
         setFilter("null");
         setSelectedCity('null');
@@ -345,16 +350,13 @@ export default function Properties() {
     useEffect(() => {
         filterProps();
     }, [filter, date, selectedCity, selectedType, selectedOwner]);
-    
+     
+
   return (
-    <div className='flex w-full'>
-    {
-        actualTicket == null ? 
-            <div className="flex flex-col w-full">
-                <div className={`flex items-center pt-12 pb-5 w-full mr-3  ${(filter === "custom") ? "justify-between" : "justify-end"}`}>
-                    {  
-                        filter === "custom" &&
-                        <div className='mr-3'>
+    <div className='flex flex-col w-full pt-16 pl-24 p-3 pr-5'>
+       <div className="flex w-full items-center justify-between pt-12">
+        <h4 className='text-4xl font-semibold text-[#141414]'>Properties</h4>
+                        <div className='mr-3 '>
                             <Popover>
                                 <PopoverTrigger asChild>
                                 <button
@@ -392,47 +394,68 @@ export default function Properties() {
                                 </PopoverContent>
                             </Popover>
                         </div>
-                    }
-                    <div  className='mr-3'>
-                        <select name="city" id="" onChange={handleSelectChange} value={selectedCity}>
-                            <option value="null">choose city</option>
-                            <option value="agadir">agadir</option>
-                            <option value="casa">casa</option>
-                        </select>
+    </div>
+            <div className="flex flex-col w-full">
+                <div className={`flex items-center pt-5 pb-5 w-full mr-3  ${(filterComponents) ? "justify-between" : "justify-end"}`}>
+                {
+                    filterComponents && 
+                    <div className='flex items-center justify-end gap-2'>
+                        <div  className='mr-3'>
+                            <select name="city" id="" onChange={handleSelectChange} value={selectedCity} className='text-[#222222] rounded border-2 border-[#dbd9d9]   lg:py-2  '>
+                                <option value="null">choose city</option>
+                                <option value="agadir">agadir</option>
+                                <option value="casa">casa</option>
+                            </select>
+                        </div>
+                        <div  className='mr-3'>
+                            <select name="type" id="" onChange={handleTypeChange} value={selectedType} className='text-[#222222] rounded border-2 border-[#dbd9d9]   lg:py-2  '>
+                                <option value="null">choose a Type</option>
+                                <option value="villa">villa</option>
+                                <option value="appertement">appertement</option>
+                            </select>
+                        </div>
                     </div>
-                    <div><button onClick={resetFilters}>reset</button></div>
-                    <div  className='mr-3'>
-                        <select name="type" id="" onChange={handleTypeChange} value={selectedType}>
-                            <option value="null">choose a Type</option>
-                            <option value="villa">villa</option>
-                            <option value="appertement">appertement</option>
-                        </select>
-                    </div>
+                }
+                    <div className='flex items-center '>
                     <div className='w-24 mr-3'>
-                        <DropdownMenu >
-                            <DropdownMenuTrigger asChild >
-                                <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
-                                    <p className='text-sm'>filter by</p> 
-                                    <ChevronDown color='#222222' size={18}/>
-                                </div>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56 bg-white">
-                                <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
-                                <DropdownMenuRadioItem value="all">all</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="today">today</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="lastw">last week</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="custom">custem range</DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                            <DropdownMenu >
+                                                <DropdownMenuTrigger asChild >
+                                                    <div className='flex items-center gap-1 text-[#222222] rounded border-2 border-[#dbd9d9]  pl-4 lg:py-2 pr-0 '>
+                                                        <p className='text-sm'>filter by</p> 
+                                                        <ChevronDown color='#222222' size={18}/>
+                                                    </div>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent className="w-56 bg-white">
+                                                    <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
+                                                    <DropdownMenuRadioItem value="all">all</DropdownMenuRadioItem>
+                                                    <DropdownMenuRadioItem value="today">today</DropdownMenuRadioItem>
+                                                    <DropdownMenuRadioItem value="lastw">last week</DropdownMenuRadioItem>
+                                                    <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
+                                                    </DropdownMenuRadioGroup>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                        <div className="flex items-center justify-end mr-3">
+                                        { !filterComponents && 
+                                            <div className='cursor-pointer ml-3' onClick={()=>setFilterComponents(!filterComponents)}>
+                                                <Filter size={20}/> 
+                                            </div>
+                                        }
+                                        { filterComponents && 
+                                            <div className='cursor-pointer ml-3' onClick={resetFilters}>      
+                                                <FilterX  size={20}/> 
+                                            </div>
+                                        }
+                                    </div>
                     </div>
                 </div>
+                
+             
                 <div className="overflow-x-auto  sm:rounded-lg">
                     <div className="inline-block min-w-full align-middle">
                         <div className="overflow-hidden ">
                             <table className="min-w-full divide-y divide-gray-200  ">
-                                <thead className="bg-[#7065F0] ">
+                                <thead className=" ">
                                     <tr>
                                         <th className="p-4">
                                             <div className="flex items-center">
@@ -448,44 +471,44 @@ export default function Properties() {
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("title")}> 
-                                                <p className='mr-2 text-[#ffffff] '>title </p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>title </p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("category")}> 
-                                                <p className='mr-2 text-[#ffffff] '>category</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>category</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("owner")}> 
-                                                <p className='mr-2 text-[#ffffff] '>owner</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>owner</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("city")}> 
-                                                <p className='mr-2 text-[#ffffff]' >city</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2 ' >city</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("status")}> 
-                                                <p className='mr-2 text-[#ffffff]' >rented times</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2 ' >rented times</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("status")}> 
-                                                <p className='mr-2 text-[#ffffff]' >rating</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2 ' >rating</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("createdAt")} > 
-                                                <p className='mr-2 text-[#ffffff] '>listed at</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>listed at</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="p-4">
@@ -552,46 +575,6 @@ export default function Properties() {
                     </div>
                     </div>
             </div>
-:
-    <div className='w-full pt-4'>
-        <div className='pb-2 c'>
-            <div className='cursor-pointer' onClick={()=> setActualTicket(null)}>
-                <SquareArrowLeft size={30} />
-            </div>
-        </div>
-        <div className='flex flex-col rounded bg-violet-100 w-full py-5 px-7 mb-4 min-h-screen'> 
-          <div className="flex item-center justify-between">
-            <h3 className='text-3xl font-medium  mb-3 text-violet-950'>Ticket: {actualTicket.title}</h3>
-            {
-                actualTicket.status === "open" && 
-                <button className='rounded py-1 px-4 bg-[#371250] text-white text-md' onClick={()=>{closeTicket(actualTicket._id)}}>Close ticket</button>
-            }
-            </div>
-          <p className='text-sm text-gray-700 mb-1'>Description: {actualTicket.description}</p>
-          <p className='text-sm text-gray-700 mb-1'>Submitted By:{actualTicket.user.fullName}</p>
-          <p className='text-sm text-gray-700 mb-1'>Date: {actualTicket.createdAt}</p>
-           <div className="border-b-[1px] border-[#e0e0e0] w-full mt-6"></div>
-           <div className='flex flex-col gap-4 py-5  w-full '>
-              {
-                messages.map((msg, index)=>(
-                <div className='flex flex-col w-full' key={index}>
-                    <p className='ml-3'>{msg.content }</p>
-                </div>
-                ))
-              }
-           </div>
-            {
-                actualTicket.status === "open" &&
-                <div className="w-full  p-3">
-                    <div className='relative '>
-                        <textarea  id="messageArea" onChange={(e)=>handleMessageChange(e)}  className="rounded w-full py-4 px-5 pr-24 outline-none border-[1px] border-gray-300 min-h-24" placeholder='answer ticket'></textarea>
-                        <button className='absolute top-2 right-3 py-2 px-5 bg-black text-white rounded' onClick={submitMessage}>send</button>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-    }
      </div>
   )
 }

@@ -6,7 +6,7 @@ const data = [
   { name: 'Premium', value: 300 },
   { name: 'Business', value: 300 }
 ];
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+const COLORS = ['#0088FE', '#FFBB28', '#FFBB28'];
 
 export default class Example extends PureComponent {
   static demoUrl = 'https://codesandbox.io/s/pie-chart-with-padding-angle-7ux0o';

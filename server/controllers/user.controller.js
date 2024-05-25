@@ -102,3 +102,18 @@ export const updateUserPassword = async (req, res, next) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const deleteUser = async (req, res, next) => {
+  const { UserIds } = req.body; 
+  console.log(UserIds)
+  try {
+    for (const userid of UserIds) {
+        await User.findByIdAndDelete(userid);
+    }
+
+    res.status(200).json({ message: 'users deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting users:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+}; 

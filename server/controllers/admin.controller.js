@@ -3,6 +3,8 @@ dotenv.config();
 import Admin from "../models/admin.model.js";
 import bcryptjs from "bcryptjs"; 
 import jwt from "jsonwebtoken";
+import { getSocket } from '../services/socket.js';
+import Notification from "../models/notification.model.js"
 
 export const signin = async (request, response, next) => {
   const { email, password } = request.body;
@@ -91,7 +93,10 @@ export const deleteAdmin = async (req, res, next) => {
 
 export const changeAdminRole = async (req, res, next) => {
   const { id } = req.body; 
+  const adminId = req.userId;
+
   try {
+    const admin =    await Admin.findById(adminId);
     const user =    await Admin.findById(id);
     if(user.role === "admin"){
       user.role = "superAdmin";
@@ -99,9 +104,61 @@ export const changeAdminRole = async (req, res, next) => {
       user.role = "admin";
     }
     user.save();
+
+    const notification = new Notification({
+      user_id: user._id,
+      message: `${admin.fullName} changed your role to ${user.role}`,
+      link: null
+    });
+    await notification.save();
+
+    const io = getSocket();
+    io.to(user._id.toString()).emit('notification', {
+      message: notification,
+    });
+
     res.status(200).json({ message: 'admin role updated successfulyy' });
   } catch (error) {
       console.error('Error updating admin role', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+}; 
+
+export const updateAdmin = async (req, res, next) => {
+  const {
+       firstName,
+       lastName,
+       email,
+       currentPassword,
+       newPassword
+     } = req.body; 
+  try {
+    const updatedAdmin = await Admin.findById(req.userId);
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: "admin not found." });
+    }
+
+    const isPasswordCorrect = await bcryptjs.compare(currentPassword, updatedAdmin.password);
+    if (!isPasswordCorrect){
+      return response.status(401).json({ message: "Incorrect credentials" });
+    }
+    
+    const hashedPassword = bcryptjs.hashSync(newPassword, 10);
+
+    updatedAdmin.password = hashedPassword;
+    if(firstName !== ""){
+      updatedAdmin.firstName = firstName;
+    }
+    if(lastName !== ""){
+      updatedAdmin.lastName = lastName;
+    }
+    if(email !== ""){
+      updatedAdmin.email = email;
+    }
+    await updatedAdmin.save();
+    res.status(200).json({ message: 'admin data updated successfulyy' });
+  } catch (error) {
+      console.error('Error updating admin data', error);
       res.status(500).json({ message: 'Internal server error' });
   }
 }; 
