@@ -49,10 +49,10 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="custom-tooltip p-2 border-[2px] border-green-400 bg-green-100">
-        <p className="intro text-green-600">{`Total: ${data.total}`}</p>
-        <p className="desc">{`Platform Fee: ${data.platformFee}`}</p>
-        <p className="desc">{`Subscription: ${data.subscription}`}</p>
+      <div className="custom-tooltip p-2 border-[2px] border-violet-400 bg-violet-100">
+        <p className="intro text-violet-700">{`Total: ${data.total}`}</p>
+        <p className="desc text-black">{`Platform Fee: ${data.platformFee}`}</p>
+        <p className="desc text-black">{`Subscription: ${data.subscription}`}</p>
       </div>
     );
   }
@@ -81,7 +81,7 @@ export default class Example extends PureComponent {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="total" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+          <Area type="monotone" dataKey="total" stroke="#7065F0" fill="#7065F0" fillOpacity={0.3} />
         </AreaChart>
       </ResponsiveContainer>
     );

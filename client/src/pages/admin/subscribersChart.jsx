@@ -7,7 +7,7 @@ const data01 = [
 
   
 ];
-const COLORS = ['#92DE8C', '#5AB4FE'];
+const COLORS = ['#92DE8C', '#FFBB28'];
 
 
 export default class Example extends PureComponent {

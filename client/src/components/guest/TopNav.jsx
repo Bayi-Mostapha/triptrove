@@ -13,6 +13,7 @@ import {
   ChevronDown,
   LogOut,
   LogIn,
+  X,
 } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -47,9 +48,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import io from 'socket.io-client';
+const socket = io('http://localhost:5555');
 import CurrencyInput from './currency-input';
-
-
 
 export default function TopNav() {
   const userContext = useContext(authContext);
@@ -81,6 +82,7 @@ export default function TopNav() {
       firstName: userContext.user.firstName,
       email: userContext.user.email
     });
+      getAllNotifications();
   }, [userContext.user]);
 
   useEffect(() => {
@@ -209,7 +211,44 @@ export default function TopNav() {
     const value = e.target.value;
     setPasswords({ ...passwords, [field]: value });
   };
+  const [ notifications , setNotifications ] = useState([]);
+  const getAllNotifications = async () => {
+    try {
+      const response = await axiosClient.get('/notification/admin');
+      setNotifications(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error)
+      toast.error('Error getting notifications. Please try again later.');
+    }
+  };
+  
+  useEffect(() => {
+      getAllNotifications();
+      socket.emit('joinRoom', userContext.user._id); 
+      socket.on('notification', (notification) => {
+          setNotifications((prevNotifications) => [...prevNotifications, notification.message]);
+          toast(notification.message.message);
+          viewNotification(notification.message);
+      });
+      return () => {
+        socket.off('notification');
+        socket.emit('leaveRoom', userContext.user._id);
+      };
+    }, [userContext.user]);
+ 
 
+ const viewNotification =  async (notification) =>{
+  try {
+    const response = await axiosClient.post('/notification/read',{notification});
+    getAllNotifications();
+    if(notification.link !== null){
+      navigate(notification.link)
+    }
+  } catch (error) {
+    toast.error('Error reading notifications. Please try again later.');
+  }
+ }
 
 
   return (
@@ -241,7 +280,40 @@ export default function TopNav() {
                         </div>
                       }
                       <div className='text-green-800 cursor-pointer mr-5'>
-                        <Bell color='#7065F0' size={23} />
+                        <DropdownMenu >
+                            <DropdownMenuTrigger asChild >
+                             <div className="relative flex items-center justify-between "> 
+                                {
+                                  notifications.length != 0 
+                                    && 
+                                  <div className="w-2 h-2 rounded-full bg-red-600 absolute top-0 right-0"></div>} 
+                            <Bell color='#7065F0' size={23} />  
+                             </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 bg-white">
+                               {
+                                notifications && 
+                                  notifications?.map((notification)=>(
+                                    <DropdownMenuItem >
+                                    <div className='flex items-center justify-between w-full' onClick={()=>viewNotification(notification)}>
+                                     <p>{notification.message}</p>
+                                     <div className="cursor-pointer"><X /></div>
+                                    </div>
+                                 </DropdownMenuItem>
+                                  ))
+                               }
+                               {
+                                notifications.length == 0 && 
+                                  
+                                    <DropdownMenuItem >
+                                    <div className='flex items-center justify-between w-full'>
+                                      <p>no notifications yet </p>
+                                    </div>
+                                 </DropdownMenuItem>
+                                 
+                               }
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                       <div className='text-green-800 cursor-pointer mr-5'>
                         <Heart color='#7065F0' size={23} />

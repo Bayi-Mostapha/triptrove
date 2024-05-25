@@ -20,6 +20,7 @@ import Users from "../pages/admin/users"
 import Admins from "../pages/admin/admins-page"
 import Support from "../pages/admin/support"
 import Properties from "../pages/admin/properties"
+import Settings from "../pages/admin/settings"
 
 import Home from "../pages/guest/home"
 import Explore from "../pages/guest/explore"
@@ -73,6 +74,7 @@ export const ADMIN_USERS_LINK = '/admin/users';
 export const ADMIN_ADMINS_LINK = '/admin/admins';
 export const ADMIN_SUPPORT_LINK = '/admin/support';
 export const ADMIN_PROPERTIES_LINK = '/admin/properties';
+export const ADMIN_SETTINGS_LINK = '/admin/settings';
 
 
 
@@ -197,6 +199,10 @@ export const router = createBrowserRouter([
             {
                 path: ADMIN_PROPERTIES_LINK,
                 element: <Properties />
+            },
+            {
+                path: ADMIN_SETTINGS_LINK,
+                element: <Settings />
             },
         ]
     },

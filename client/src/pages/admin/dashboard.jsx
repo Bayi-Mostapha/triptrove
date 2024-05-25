@@ -1,10 +1,11 @@
-import React , { useState } from 'react'
+import React , { useState, useEffect , useContext } from 'react'
 import {
    Ellipsis ,
    DollarSign  ,
    BedDouble ,
    MessageSquareMore ,
    OctagonAlert  ,
+   ChevronDown,
    CalendarDays ,
    MessageSquareWarning  ,
    UserRoundPlus ,
@@ -12,6 +13,11 @@ import {
    Home ,
    Users ,
    } from 'lucide-react';
+   import {
+    Avatar ,
+    AvatarFallback ,
+    AvatarImage ,
+  } from "@/components/ui/avatar"
    import {
     DropdownMenu,
     DropdownMenuContent,
@@ -35,15 +41,38 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
+  import { authContext } from "../../contexts/AuthWrapper"
+  import io from 'socket.io-client';
+import { axiosClient } from '../../api/axios'; // Assuming you're using axios for API requests
+const socket = io('http://localhost:5555');
+
 
 export default function Dashboard() {
   const [date, setDate] = useState();
+  const [ filter1, setFilter1 ] = useState("lastw");
+  const [ filter2, setFilter2 ] = useState("lastw");
+  const [notifications, setNotifications] = useState([]);
+  const userContext = useContext(authContext)
+  // useEffect(() => {
+  //   socket.emit('joinRoom', userContext.user._id); 
+  //   socket.on('notification', (notification) => {
+  //     setNotifications((prevNotifications) => [...prevNotifications, notification]);
+  //   });
+  //   return () => {
+  //     socket.off('notification');
+  //     socket.emit('leaveRoom', userContext.user._id);
+  //   };
+  // }, [userContext.user]);
+
+  // useEffect(() => {
+  //   console.log(notifications);
+  // }, [notifications]);
   return (
-    <div className='bg-[#e2e0fa79]  px-5'>
+    <div className='bg-[#f8f7ff79]  px-5 pt-16 pl-24 p-3 pr-5'>
       <div className='flex justify-between items-center pt-10 pb-8 px-5'>
        <div className='flex justify-start items-center '>
         <h4 className='text-4xl font-medium'>Hi, Welcome Back </h4>
-          <img src="/assets/hand.png" alt="" className='w-10 ml-3'/>
+          <img src="/assets/waving-hand.svg" alt="" className='w-10 ml-3'/>
        </div>
         <Popover>
         <PopoverTrigger asChild>
@@ -158,8 +187,25 @@ export default function Dashboard() {
     </div>
     
   <div className='p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
-  <div>
-    <h3 className='text-xl font-medium text-[#141414]'>reservation:</h3>
+  <div className='flex items-center justify-between py-3 px-3 pb-8'>
+    <h3 className='text-2xl font-medium text-[#141414]'>reservation:</h3>
+    <div className='w-24 mr-3'>
+      <DropdownMenu >
+          <DropdownMenuTrigger asChild >
+              <div className='flex items-center gap-2 text-[#222222] rounded border-2 border-[#dbd9d9]  pl-4 lg:py-2 pr-0 '>
+                  <p className='text-sm'>filter</p> 
+                  <ChevronDown color='#222222' size={18}/>
+              </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-36 bg-white">
+              <DropdownMenuRadioGroup value={filter1} onValueChange={setFilter1}>
+              <DropdownMenuRadioItem value="lastw" selected>last week</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lasty">last year</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+      </DropdownMenu>
+      </div>
   </div>
  <div className="flex items-center ">
   <div className='flex items-center justify-center basis-1/1 w-full h-72 '>
@@ -169,8 +215,25 @@ export default function Dashboard() {
  </div>
   </div> 
   <div className='basis-2/3 p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
-  <div>
-    <h3 className='text-xl font-medium text-[#141414]'>revenue:</h3>
+  <div className='flex items-center justify-between py-3 px-3 pb-8'>
+    <h3 className='text-2xl font-medium text-[#141414]'>revenue:</h3>
+    <div className='w-24 mr-3'>
+      <DropdownMenu >
+          <DropdownMenuTrigger asChild >
+              <div className='flex items-center gap-2 text-[#222222] rounded border-2 border-[#dbd9d9]  pl-4 lg:py-2 pr-0 '>
+                  <p className='text-sm'>filter</p> 
+                  <ChevronDown color='#222222' size={18}/>
+              </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-36 bg-white">
+              <DropdownMenuRadioGroup value={filter2} onValueChange={setFilter2}>
+              <DropdownMenuRadioItem value="lastw">last week</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lasty">last year</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+      </DropdownMenu>
+      </div>
   </div>
  <div className="flex items-center ">
   <div className='flex items-center justify-center basis-1/1 w-full h-72 '>
@@ -184,7 +247,7 @@ export default function Dashboard() {
 <div className="basis-1/3 flex flex-col gap-3">
       <div className=' px-5 py-2 rounded-xl  border-[2px] border-gray-100   w-full flex-col flex bg-white'>
         <div>
-        <h3 className='text-xl font-medium text-[#141414]'>Users:</h3>
+        <h3 className='text-2xl font-medium text-[#141414] mt-2'>Users:</h3>
         </div>
       <div className="flex items-center ">
         <div className='flex items-center justify-center basis-1/1 w-2/3 h-64 '>
@@ -204,10 +267,10 @@ export default function Dashboard() {
         </div> 
         <div className='basis-1/3 p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
   <div>
-    <h3 className='text-xl font-medium text-[#141414]'>Subscribers:</h3>
+    <h3 className='text-2xl font-medium text-[#141414] mt-2'>Subscribers:</h3>
   </div>
  <div className="flex items-center ">
-  <div className='flex items-center justify-center basis-1/1 w-2/3 h-72 '>
+  <div className='flex items-center justify-center basis-1/1 w-2/3 h-64 '>
       <PieChart />
     </div>
     <div className='flex flex-col  gap-5'>
@@ -226,7 +289,84 @@ export default function Dashboard() {
     </div>
  </div>
   </div>
-
+  <div className='basis-1/3 p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
+  <div>
+    <h3 className='text-2xl font-medium text-[#141414] mt-2'>Last ransaction:</h3>
+  </div>
+ <div className="flex items-center ">
+ <table className="min-w-full divide-y divide-gray-200  ">
+                    <thead className="">
+                        <tr> 
+                            <th className="py-3  text-sm font-small  text-gray-700">
+                               <div className='flex items-center cursor-pointer'> 
+                                    <p className='mr-2  text-center'>user</p> 
+                                </div>
+                            </th>
+                            <th className="py-3  text-sm font-small  text-gray-700">
+                               <div className='flex items-center cursor-pointer'> 
+                                    <p className='mr-2  '>purpose</p> 
+                                </div>
+                            </th>
+                            <th className="py-3  text-sm font-small  text-gray-700">
+                               <div className='flex items-center cursor-pointer'> 
+                                    <p className='mr-2  '>amount</p> 
+                                </div>
+                            </th>
+                          </tr>
+                      </thead>
+                      <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
+                       <tr>
+                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage   alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
+                            </Avatar>
+                            <p>reda gggh</p>
+                       </td>
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
+        
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
+                       </tr>
+                       <tr>
+                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage   alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
+                            </Avatar>
+                            <p>reda gggh</p>
+                       </td>
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
+        
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
+                       </tr>
+                       <tr>
+                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage   alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
+                            </Avatar>
+                            <p>reda gggh</p>
+                       </td>
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
+        
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
+                       </tr>
+                       <tr>
+                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
+                            <Avatar className="w-10 h-10 cursor-pointer">
+                                <AvatarImage   alt="@shadcn"  />
+                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
+                            </Avatar>
+                            <p>reda gggh</p>
+                       </td>
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
+        
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
+                       </tr>
+                      </tbody>
+</table>
+ </div>
+  </div>
 </div>
 </div>
 
