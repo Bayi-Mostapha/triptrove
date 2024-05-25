@@ -14,6 +14,7 @@ import propertyReportsRoutes from "./routes/property_report.route.js"
 import reviewReportsRoutes from "./routes/review_report.route.js"
 import problemRoutes from "./routes/problem.route.js"
 import walletRoutes from "./routes/checkout.route.js"
+import hostRoutes from "./routes/host-stats.route.js"
 // hakim
 import propertyRoutes from "./routes/property.route.js"
 import favoriteRoutes from "./routes/favorite-property.route.js"
@@ -47,6 +48,7 @@ app.use('/reviews', reviewRoutes);
 app.use('/review-reports', reviewReportsRoutes);
 app.use('/property-reports', propertyReportsRoutes);
 app.use('/wallet', walletRoutes);
+app.use('/host-stats', hostRoutes);
 // hakim 
 app.use('/properties', propertyRoutes);
 app.use('/favorites', favoriteRoutes);

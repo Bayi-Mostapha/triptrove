@@ -80,21 +80,23 @@ function HostBookings() {
 
     return (
         <div className="mt-5">
-            <h1 className="text-xl font-medium">Bookings</h1>
-            <DropdownMenu>
-                <DropdownMenuTrigger className="ml-auto block">
-                    <Button className="my-4 flex items-center gap-1" variant='outline'>
-                        Filter <ChevronDown size={16} color="gray" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setFilter("all")}>All</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setFilter("paid")}>Paid</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setFilter("canceled")}>Canceled</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center justify-between">
+                <h1 className="text-xl font-medium">Bookings</h1>
+                <DropdownMenu>
+                    <DropdownMenuTrigger className="ml-auto block">
+                        <Button className="my-4 flex items-center gap-1" variant='outline'>
+                            Filter <ChevronDown size={16} color="gray" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setFilter("all")}>All</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setFilter("paid")}>Paid</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setFilter("canceled")}>Canceled</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
             <MyTable columns={bookingsColumns} data={filteredData} />
         </div>
     );

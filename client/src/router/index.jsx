@@ -34,7 +34,6 @@ import PropertyReviews from '@/pages/host/property-reviews';
 import BookingSucces from '@/pages/guest/booking-success';
 import Bookings from '@/pages/guest/bookings';
 import Reports from '@/pages/admin/reports';
-import HostBookings from '@/pages/host/bookings';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
@@ -42,6 +41,7 @@ import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
 import BookingFail from '@/pages/guest/booking-fail';
 import Favorites from '@/pages/guest/favorites';
+import HostDashboard from '@/pages/host/dashboard';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -155,8 +155,8 @@ export const router = createBrowserRouter([
                 element: <PropertyReviews />
             },
             {
-                path: '/listings/bookings',
-                element: <HostBookings />
+                path: '/host/dashboard',
+                element: <HostDashboard />
             },
             // for admin 
             {
