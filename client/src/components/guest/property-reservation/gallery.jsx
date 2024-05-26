@@ -28,7 +28,7 @@ export default function PlaceGallery({ place }) {
 
     return (
         <div className="relative">
-            <div className="grid gap-1 grid-cols-[2fr_1fr] rounded-2xl overflow-hidden">
+            <div className="grid gap-1 grid-cols-[2fr_1fr] rounded-lg overflow-hidden">
                 {place.photos?.[0] && (
                     <div>
                         <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover" src={place.photos[0]} alt="" />
