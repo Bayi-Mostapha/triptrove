@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Stepper from '@/components/host/Stepper';
 import StepperControl from '@/components/host/StepperControl';
-import { StepperProvider } from '@/contexts/StepperContext';
+import { StepperProvider, StepperContext } from '@/contexts/StepperContext';
 import Details from '@/components/steps/Details';
 import Photos from '@/components/steps/Photos';
 import Price from '@/components/steps/Price';
 import Additionalinfo from '@/components/steps/Additionalinfo';
 import Publish from '@/components/steps/Publish';
+import { axiosClient } from "../../api/axios"; // Adjust the path as needed
 
-export default function Listing() {
+function ListingComponent() {
   const [currentStep, setCurrentStep] = useState(1);
+  const { userData } = useContext(StepperContext); // Access userData from StepperContext
 
   const steps = [
     "General Details",
@@ -42,8 +44,19 @@ export default function Listing() {
     newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
   };
 
+  const handlePublish = async () => {
+    try {
+      const response = await axiosClient.post('/properties', userData);
+      console.log('Property created successfully:', response.data);
+      // Add any additional actions on success
+    } catch (error) {
+      console.error('Error creating property:', error);
+      // Add any error handling
+    }
+  };
+
   return (
-    <StepperProvider>
+    <>
       <h1 className='text-2xl mt-6 font-medium'>List your property</h1>
       <div className='md:w-1/2 mx-auto rounded-2xl pb-2 bg-white'>
         <div className='container horizontal'>
@@ -54,10 +67,19 @@ export default function Listing() {
         </div>
         <StepperControl
           handleClick={handleClick}
+          handlePublish={handlePublish}
           currentStep={currentStep}
           steps={steps}
         />
       </div>
+    </>
+  );
+}
+
+export default function Listing() {
+  return (
+    <StepperProvider>
+      <ListingComponent />
     </StepperProvider>
   );
 }

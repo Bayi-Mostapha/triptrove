@@ -1,18 +1,8 @@
 import React, { useContext } from 'react';
 import { StepperContext } from '@/contexts/StepperContext';
-import axios from 'axios';
 
 const Publish = () => {
   const { userData } = useContext(StepperContext);
-
-  const handlePublish = async () => {
-    try {
-      const response = await axios.post('/api/properties', userData);
-      console.log('Property created successfully:', response.data);
-    } catch (error) {
-      console.error('Error creating property:', error);
-    }
-  };
 
   return (
     <div className='p-6'>
@@ -33,12 +23,6 @@ const Publish = () => {
             <img key={index} src={photo} alt={`Photo ${index + 1}`} className='w-24 h-24 object-cover rounded-md border border-gray-300' />
           ))}
         </div>
-
-   
-
-        {/* <button onClick={handlePublish} className='mt-6 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'>
-          Publish
-        </button> */}
       </div>
     </div>
   );

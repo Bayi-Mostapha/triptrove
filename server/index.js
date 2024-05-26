@@ -1,54 +1,53 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
-import express, { response } from "express";
+import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import authRoutes from "./routes/auth.route.js"
-import userRoutes from "./routes/user.route.js"
-import paymentRoutes from "./routes/payment.route.js"
-import adminRoutes from "./routes/admin.route.js"
-// mostafa
-import bookingRoutes from "./routes/booking.route.js"
-import reviewRoutes from "./routes/review.route.js"
-import propertyReportsRoutes from "./routes/property_report.route.js"
-import reviewReportsRoutes from "./routes/review_report.route.js"
-import problemRoutes from "./routes/problem.route.js"
-import walletRoutes from "./routes/checkout.route.js"
-// hakim
-import propertyRoutes from "./routes/property.route.js"
-import favoriteRoutes from "./routes/favorite-property.route.js"
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+import paymentRoutes from "./routes/payment.route.js";
+import adminRoutes from "./routes/admin.route.js";
+import bookingRoutes from "./routes/booking.route.js";
+import reviewRoutes from "./routes/review.route.js";
+import propertyReportsRoutes from "./routes/property_report.route.js";
+import reviewReportsRoutes from "./routes/review_report.route.js";
+import problemRoutes from "./routes/problem.route.js";
+import walletRoutes from "./routes/checkout.route.js";
+import propertyRoutes from "./routes/property.route.js"; // Import property routes
+import favoriteRoutes from "./routes/favorite-property.route.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'DELETE', 'PUT'],
-    allowedHeaders: ['content-type', 'Authorization'],
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    allowedHeaders: ["content-type", "Authorization"],
     credentials: true,
-}));
+  })
+);
 
-mongoose.connect(process.env.MONGODB_URL).then(() => {
-    console.log('connected to database successfully');
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    console.log("connected to database successfully");
     app.listen(process.env.PORT, () => {
-        console.log(`server is running on the port ${process.env.PORT}`);
+      console.log(`server is running on the port ${process.env.PORT}`);
     });
-}).catch((error) => {
+  })
+  .catch((error) => {
     console.log(`something went wrong while connecting to databse : ${error}`);
-});
+  });
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-app.use('/payment', paymentRoutes);
-app.use('/admin', adminRoutes);
-app.use('/problem', problemRoutes);
-// mostafa
-app.use('/book', bookingRoutes);
-app.use('/reviews', reviewRoutes);
-app.use('/review-reports', reviewReportsRoutes);
-app.use('/property-reports', propertyReportsRoutes);
-app.use('/wallet', walletRoutes);
-// hakim 
-app.use('/properties', propertyRoutes);
-app.use('/favorites', favoriteRoutes);
-
-
+app.use("/payment", paymentRoutes);
+app.use("/admin", adminRoutes);
+app.use("/problem", problemRoutes);
+app.use("/book", bookingRoutes);
+app.use("/reviews", reviewRoutes);
+app.use("/review-reports", reviewReportsRoutes);
+app.use("/property-reports", propertyReportsRoutes);
+app.use("/wallet", walletRoutes);
+app.use("/properties", propertyRoutes); // Mount property CRUD routes
+app.use("/favorites", favoriteRoutes);

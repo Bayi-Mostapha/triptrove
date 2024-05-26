@@ -226,7 +226,7 @@ export default function TopNav() {
                 <ul className='items-center hidden lg:flex text-md font-small'>
 
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/host">Listing</Link></li>
+                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/listings">Listing</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Reservations</Link></li>
 
                 </ul>
@@ -331,7 +331,7 @@ export default function TopNav() {
                       <SheetDescription >
                         <div className='flex flex-col  text-md font-small mt-6'>
                           <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Home</Link></div>
-                          <div className='mr-5 text-[#222222] text-lg cursor-pointer  py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Explore</Link></div>
+                          <div className='mr-5 text-[#222222] text-lg cursor-pointer  py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="/explore">Explore</Link></div>
                           <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Nearbly</Link></div>
                           <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Become a host </Link></div>
                           {
