@@ -1,58 +1,76 @@
-// src/Explore.js
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// Explore.jsx
+import React, { useEffect, useState, useContext } from 'react';
+import { axiosClient } from '@/api/axios';
+import PropertyCard from '@/components/guest/PropertyCard';
+import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
 
 export default function Explore() {
-  const [listings, setListings] = useState([]);
+    const { convert, selectedCurrency } = useContext(ExchangeRateContext);
+    const [properties, setProperties] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios.get('http://localhost:5000/listings');
-      setListings(result.data);
-    };
+    // Dummy data for properties
+    const dummyProperties = [
+        {
+            _id: '1',
+            title: 'Luxurious Villa',
+            photos: ['/img1.webp'],
+            city: 'Marrakech',
+            streetAddress: 'Gueliz',
+            price: 250,
+            amenities: ['WiFi', 'Swimming Pool', 'Air Conditioning']
+        },
+        {
+            _id: '2',
+            title: 'Modern Apartment',
+            photos: ['/img2.webp'],
+            city: 'Casablanca',
+            streetAddress: 'Maarif',
+            price: 150,
+            amenities: ['WiFi', 'Gym', 'Parking']
+        },
+        // Add more dummy properties here
+    ];
 
-    fetchData();
-  }, []);
+    useEffect(() => {
+        // Fetch properties data
+        // async function fetchProperties() {
+        //     try {
+        //         const res = await axiosClient.get('/properties');
+        //         setProperties(res.data);
+        //     } catch (error) {
+        //         console.error('Failed to fetch properties');
+        //     }
+        // }
+        // fetchProperties();
 
-  return (
-    <div className="p-8">
-      <div className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="Marrakech, Morocco"
-          className="border rounded-md p-2 mr-2"
-        />
-        <input type="date" className="border rounded-md p-2 mr-2" />
-        <input type="date" className="border rounded-md p-2 mr-2" />
-        <select className="border rounded-md p-2 mr-2">
-          <option>Guests</option>
-          <option>1 Guest</option>
-          <option>2 Guests</option>
-          <option>3 Guests</option>
-          <option>4 Guests</option>
-        </select>
-        <button className="bg-purple-600 text-white rounded-md px-4 py-2">Search</button>
-      </div>
+        // Use dummy data for now
+        setProperties(dummyProperties);
+    }, []);
 
-      <div className="flex justify-center mb-6">
-        <button className="bg-gray-200 rounded-full px-4 py-2 mx-1">House</button>
-        <button className="bg-gray-200 rounded-full px-4 py-2 mx-1">Villa</button>
-        <button className="bg-gray-200 rounded-full px-4 py-2 mx-1">Apartment</button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {listings.map((listing) => (
-          <div key={listing._id} className="border rounded-lg overflow-hidden shadow-lg">
-            <img src={listing.image} alt={listing.name} className="w-full h-48 object-cover" />
-            <div className="p-4">
-              <h3 className="text-xl font-semibold">{listing.name}</h3>
-              <p className="text-gray-600">{listing.location}</p>
-              <p className="text-purple-600">{listing.price} Mad/night</p>
-              <p className="text-gray-600">{listing.beds} Beds, {listing.baths} Bathrooms</p>
+    return (
+        <div className=''>
+            <div className='search-bar flex gap-4 mt-8 mx-[150px] p-4 rounded-xl bg-[#F8F8F8]'>
+                <input type="text" className='p-[6px] rounded-md pl-4' placeholder='Marrakech, Morocco' />
+                <input type="date" className='p-[6px] rounded-md pl-4 text-[#4B4949]' placeholder='Check in' />
+                <input type="date" className='p-[6px] rounded-md pl-4 text-[#4B4949]' placeholder='Check out' />
+                <input type="text" className='w-[90px] rounded-md pl-4' placeholder='Guests' />
+                <button className='bg-[#7065F0] px-8 text-white rounded-md'>Search</button>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
+            <div className='category mt-8'>
+                {/* Add category filters if needed */}
+            </div>
+
+            <div className='properties grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
+                {properties.map(property => (
+                    <PropertyCard 
+                        key={property._id} 
+                        property={property} 
+                        convert={convert} 
+                        selectedCurrency={selectedCurrency} 
+                    />
+                ))}
+            </div>
+        </div>
+    );
 }

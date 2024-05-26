@@ -30,6 +30,7 @@ import Property from '@/pages/guest/property';
 
 // import List from "../pages/host/listg"
 import List from "../pages/host/listing"
+import AllListings from "../pages/host/AllListings"
 
 import PropertyReviews from '@/pages/host/property-reviews';
 import BookingSucces from '@/pages/guest/booking-success';
@@ -54,6 +55,7 @@ export const HOME_LINK = '/home';
 export const EXPLORE_LINK = '/explore';
 
 export const HOST_LINK = '/host';
+export const LISTINGS_LINK = '/listings';
 
 
 // Guest 
@@ -179,6 +181,12 @@ export const router = createBrowserRouter([
                 path: HOST_LINK,
                 element: <List />
             },
+
+            {
+                path: LISTINGS_LINK,
+                element: <AllListings />
+            },
+          
 
         ]
     },

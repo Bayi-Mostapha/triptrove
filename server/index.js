@@ -1,9 +1,23 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
-import express, { response } from "express";
+import express from "express";
 import mongoose from "mongoose";
 import Stripe from 'stripe'
 import cors from "cors";
+<<<<<<< HEAD
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+import paymentRoutes from "./routes/payment.route.js";
+import adminRoutes from "./routes/admin.route.js";
+import bookingRoutes from "./routes/booking.route.js";
+import reviewRoutes from "./routes/review.route.js";
+import propertyReportsRoutes from "./routes/property_report.route.js";
+import reviewReportsRoutes from "./routes/review_report.route.js";
+import problemRoutes from "./routes/problem.route.js";
+import walletRoutes from "./routes/checkout.route.js";
+import propertyRoutes from "./routes/property.route.js"; // Import property routes
+import favoriteRoutes from "./routes/favorite-property.route.js";
+=======
 import
 { 
     handleSubscriptionDeleted,
@@ -29,6 +43,7 @@ import hostRoutes from "./routes/host-stats.route.js"
 import propertyRoutes from "./routes/property.route.js"
 import favoriteRoutes from "./routes/favorite-property.route.js"
 import { initSocket } from './services/socket.js';
+>>>>>>> 6847a927ea6b6758ab83df1dc0125fb3154efde5
 
 const app = express();
 const server = http.Server(app);
@@ -36,13 +51,23 @@ const io = initSocket(server);
 
  
 app.use(express.json());
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'DELETE', 'PUT'],
-    allowedHeaders: ['content-type', 'Authorization'],
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    allowedHeaders: ["content-type", "Authorization"],
     credentials: true,
-}));
+  })
+);
 
+<<<<<<< HEAD
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    console.log("connected to database successfully");
+    app.listen(process.env.PORT, () => {
+      console.log(`server is running on the port ${process.env.PORT}`);
+=======
 
 
 mongoose.connect(process.env.MONGODB_URL).then(() => {
@@ -50,13 +75,27 @@ mongoose.connect(process.env.MONGODB_URL).then(() => {
     server.listen(process.env.PORT, () => {
         console.log(`server is running on the port ${process.env.PORT}`);
         
+>>>>>>> 6847a927ea6b6758ab83df1dc0125fb3154efde5
     });
-}).catch((error) => {
+  })
+  .catch((error) => {
     console.log(`something went wrong while connecting to databse : ${error}`);
-});
+  });
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+<<<<<<< HEAD
+app.use("/payment", paymentRoutes);
+app.use("/admin", adminRoutes);
+app.use("/problem", problemRoutes);
+app.use("/book", bookingRoutes);
+app.use("/reviews", reviewRoutes);
+app.use("/review-reports", reviewReportsRoutes);
+app.use("/property-reports", propertyReportsRoutes);
+app.use("/wallet", walletRoutes);
+app.use("/properties", propertyRoutes); // Mount property CRUD routes
+app.use("/favorites", favoriteRoutes);
+=======
 app.use('/payment', paymentRoutes);
 app.use('/admin', adminRoutes);
 app.use('/problem', problemRoutes);
@@ -118,3 +157,4 @@ app.post('/rent', (req, res) => {
     });
     res.status(200).send('House rented successfully');
 });
+>>>>>>> 6847a927ea6b6758ab83df1dc0125fb3154efde5

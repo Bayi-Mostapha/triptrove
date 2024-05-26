@@ -15,16 +15,14 @@ export const StepperProvider = ({ children }) => {
     bedrooms: 0,
     bathrooms: 0,
     beds: 0,
-    amenities: {
-      wifi: false,
-      pool: false,
-      tv: false,
-      washer: false,
-      park: false,
-      kitchen: false,
-      desk: false,
-      pets: false,
-    },
+    wifi: false,
+    pool: false,
+    tv: false,
+    washer: false,
+    park: false,
+    kitchen: false,
+    desk: false,
+    pets: false,
   });
 
   const updateUserData = (data) => {
