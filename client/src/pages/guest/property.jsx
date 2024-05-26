@@ -20,6 +20,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "react-toastify";
+import PlaceFeatures from "@/components/guest/property-reservation/place-features";
 
 function Property() {
     const dummyPlace = {
@@ -41,7 +42,15 @@ function Property() {
         bedrooms: 3,
         bathrooms: 2,
         beds: 5,
-        cleaningFees: 50
+        cleaningFees: 50,
+        hasWifi: true,
+        hasPool: true,
+        hasTv: true,
+        hasWasher: true,
+        hasPark: true,
+        hasKitchen: true,
+        hasDesk: true,
+        allowsPets: true
     }
     const dummyRatings = [
         {
@@ -242,11 +251,8 @@ function Property() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7065F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-3"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16.5 12" /></svg>
                         Check-out: <span className="font-medium">{place.checkOut}</span>
                     </p>
-
                     <h2 className="mt-3 font-medium text-xl">What this place offers</h2>
-                    <div>
-
-                    </div>
+                    <PlaceFeatures place={place} />
                 </div>
                 <Booking
                     place={place}
