@@ -96,3 +96,6 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 5000s;
 }
+.side-nav .active {
+  @apply bg-violet-100 text-primary;
+}

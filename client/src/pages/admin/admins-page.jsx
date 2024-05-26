@@ -5,12 +5,14 @@ import React, { useState, useEffect } from 'react'
     EyeOff, 
     Heart, 
     Bell, 
+    User,
     ChevronDown,
     LogOut ,
     LogIn ,
-    ChevronsUpDown,
+    ArrowDownUp,
     CalendarDays,
     EllipsisVertical ,
+    Trash2,
   } from 'lucide-react';
   import {
     DropdownMenu,
@@ -50,7 +52,7 @@ import {
     DialogTrigger,
     DialogDescription,
   } from "@/components/ui/dialog"
-import { Axios } from 'axios';
+
 
 
 export default function Admins() {
@@ -82,9 +84,10 @@ export default function Admins() {
         fetchUsers();
     }, []);
     const filterUsersFunction = () => {
+        let filtered = users.slice();
         if(date && date.from !== undefined  && date.to !== undefined){
             if (searchColumn === 'username') {
-                const newUsers = users.filter(user => {
+                filtered = filtered.filter(user => {
                     const joinDate = new Date(user.createdAt);
                     const startDate = new Date(date.from);
                     const endDate = new Date(date.to);
@@ -92,41 +95,23 @@ export default function Admins() {
                     console.log(searchQuery.toLowerCase())
                     return joinDate >= startDate && joinDate <= endDate && (user.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
                 });
-                setFilteredUsers(newUsers);
-                return ;
-            }
-            if (searchColumn === 'firstName') {
-                const newUsers = users.filter(user => {
-                    const joinDate = new Date(user.createdAt);
-                    const startDate = new Date(date.from);
-                    const endDate = new Date(date.to);
-                    return joinDate >= startDate && joinDate <= endDate && user.firstName.toLowerCase().includes(searchQuery.toLowerCase());
-                });
-                setFilteredUsers(newUsers);
-                return ;
-            }
-            if (searchColumn === 'lastName') {
-                const newUsers = users.filter(user => {
-                    const joinDate = new Date(user.createdAt);
-                    const startDate = new Date(date.from);
-                    const endDate = new Date(date.to);
-                    return joinDate >= startDate && joinDate <= endDate &&  user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
-                });
-                setFilteredUsers(newUsers);
-                return ;
-            }
-            if (searchColumn === 'email') {
-                const newUsers = users.filter(user => {
+            } else  if  (searchColumn === 'email') {
+                filtered = filtered.filter(user => {
                     const joinDate = new Date(user.createdAt);
                     const startDate = new Date(date.from);
                     const endDate = new Date(date.to);
                     return joinDate >= startDate && joinDate <= endDate && (user.email.toLowerCase().includes(searchQuery.toLowerCase()));
                 });
-                setFilteredUsers(newUsers);
-                return ;
+            }else{
+                filtered = filtered.filter(user => {
+                    const joinDate = new Date(user.createdAt);
+                    const startDate = new Date(date.from);
+                    const endDate = new Date(date.to);
+                    return joinDate >= startDate && joinDate <= endDate ;
+                });
             }
         }else{
-            const newUsers = users.filter(user => {
+            filtered = filtered.filter(user => {
                 if (searchColumn === 'username') {
                     return (user.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
                 }
@@ -141,37 +126,25 @@ export default function Admins() {
                 }
                 return true;
             });
-            setFilteredUsers(newUsers);
         }
+        setFilteredUsers(filtered);
     }
 
     const filterUsersByOrder = (str) => {
         let sortedUsers = [];
-        if (str === "firstName") {
-            if (!order.firstName) {
-                setOrder({ ...order, firstName: true });
+        if (str === "fullName") {
+            if (!order.fullName) {
+                setOrder({ ...order, fullName: true });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
-                    return b.firstName.localeCompare(a.firstName); 
+                    return b.fullName.localeCompare(a.fullName); 
                 });
             } else {
-                setOrder({ ...order, firstName: false });
+                setOrder({ ...order, fullName: false });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
-                    return a.firstName.localeCompare(b.firstName); 
+                    return a.fullName.localeCompare(b.fullName); 
                 });
             }
-        } else  if (str === "lastName") {
-            if (!order.lastName) {
-                setOrder({ ...order, lastName: true });
-                sortedUsers = filteredUsers.slice().sort((a, b) => {
-                    return b.lastName.localeCompare(a.lastName); 
-                });
-            } else {
-                setOrder({ ...order, lastName: false });
-                sortedUsers = filteredUsers.slice().sort((a, b) => {
-                    return a.lastName.localeCompare(b.lastName); 
-                });
-            }
-        }else if (str === "email") {
+        } else if (str === "email") {
             if (!order.email) {
                 setOrder({ ...order, email: true });
                 sortedUsers = filteredUsers.slice().sort((a, b) => {
@@ -215,26 +188,19 @@ export default function Admins() {
     };
 
     useEffect(() => {
-        setSearchQuery("");
         filterUsersFunction();
-    }, [searchColumn]);
-    
-    useEffect(() => { 
-        filterUsersFunction();
-    },[date]);
-
+    }, [ searchColumn, date, searchQuery ]);
     const handleSearchColumnChange = (e) => {
         setSearchColumn(e.target.value);
         setSelectedUsers([]);
     };
-
+    useEffect(() => { 
+        setSearchQuery("");
+    }, [searchColumn]);
     const handleSearchQueryChange = (e) => {
         setSearchQuery(e.target.value);
         setSelectedUsers([]);
     };
-    useEffect(()=>{ 
-        filterUsersFunction();
-    },[searchQuery])
 
     const handleCheckboxChange = (userId) => {
         setSelectedUsers(prevSelectedUsers => {
@@ -325,11 +291,12 @@ const deleteAdminHandle = async (adminIds) => {
         return false;
     }
 };
-const handleDelete = (admins) =>{
-    if(deleteAdminHandle(admins)){
+const handleDelete = async (admins) =>{
+    const isDeleted = await deleteAdminHandle(admins); 
+    if (isDeleted) {
         toast.success("Admin is deleted");
         fetchUsers();
-    }else{
+    } else {
         toast.error('Error deleting admin');
     }
 }
@@ -343,9 +310,75 @@ const upgradeAdmin = async (id) => {
     }
 };
   return (
-	<div className="flex flex-col">
-    <ToastContainer />
-    <div className='mb-3'>
+	<div className="flex flex-col pt-16 pl-24 p-3 pr-5">
+   <ToastContainer />
+    <div className="flex w-full items-center justify-between pt-5">
+        <h4 className='text-4xl font-semibold text-[#141414]'>Admins</h4>
+        <Popover>
+        <PopoverTrigger asChild>
+          <button
+            id="date"
+            variant={"outline"}
+            className={cn(
+              "w-[300px] flex items-center justify-start text-left font-normal border-[1px] border-gray-300 rounded p-2.5 py-2",
+              !date && "text-muted-foreground"
+            )}
+          >
+            <CalendarDays className="mr-2 h-4 w-4" />
+            {date?.from ? (
+              date.to ? (
+                <>
+                  {format(date.from, "LLL dd, y")} -{" "}
+                  {format(date.to, "LLL dd, y")}
+                </>
+              ) : (
+                format(date.from, "LLL dd, y")
+              )
+            ) : (
+              <span>Pick a range</span>
+            )}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0 bg-white" align="start">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            numberOfMonths={2}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+    <div className={`pt-16 flex items-end pr-3 mb-3 justify-start `}>
+    <div className='flex items-center justify-between w-full'>
+        <div className='flex items-center justify-between w-full'>
+            <div className='flex'>
+                <div className='w-62 mr-2'>
+                    <select
+                        id="searchColumn"
+                        className="border-2 border-gray-300  py-3 text-gray-900 text-sm rounded-lg outline-none  block w-full p-2.5"
+                        value={searchColumn}
+                        onChange={handleSearchColumnChange}
+                    >
+                        <option value="default" className='py-2 px-5'>filter By</option>
+                        <option value="username" >Full Name</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
+                <div className='w-62 mr-2'>
+                    <input
+                        type="text"
+                        className='w-full py-2 rounded outline-none border-2 border-gray-300 text-md pl-5 bg-white'
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={handleSearchQueryChange}
+                        disabled={searchColumn == "default"}
+                    />
+                </div>
+            </div>
+            <div className='mb-3'>
         <button 
             onClick={
                 ()=>{setOpen(true);
@@ -512,69 +545,15 @@ const upgradeAdmin = async (id) => {
         </DialogContent>
         </Dialog>
     </div>
-    <div className='py-5 flex items-center justify-between'>
-        <div className='w-48 mr-2'>
-            <select
-                id="searchColumn"
-                className="bg-gray-50 border border-gray-300 py-3 text-gray-900 text-sm rounded-lg outline-none  block w-full p-2.5"
-                value={searchColumn}
-                onChange={handleSearchColumnChange}
-            >
-                <option value="default">Search By</option>
-                <option value="username" >Full Name</option>
-                <option value="firstName" >First Name</option>
-                <option value="lastName" >Last Name</option>
-                <option value="email">Email</option>
-            </select>
         </div>
-            <div className='w-48 mr-2'>
-                <input
-                    type="text"
-                    className='w-full py-2 rounded outline-none border-2 border-gray-300 text-md'
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChange={handleSearchQueryChange}
-                />
-            </div>
-       <div >
-      <Popover>
-        <PopoverTrigger asChild>
-          <button
-            id="date"
-            variant={"outline"}
-            className={cn(
-              "w-[300px] flex items-center justify-start text-left font-normal border-[1px] border-gray-300 rounded p-2.5 py-2",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarDays className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
-                </>
-              ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a range</span>
-            )}
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 bg-white" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={setDate}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
+        </div>
+  
+       
     </div>
-    </div>
+   
+    
+    
+   
     {  selectedUsers.length !== 0
         && 
         <div className='flex items-center justify-end mb-3'>
@@ -583,9 +562,9 @@ const upgradeAdmin = async (id) => {
                   <Dialog>
                     <DialogTrigger asChild>
                         <button
-                            className='bg-red-700 rounded py-2 px-5 text-white'
+                            className='bg-red-100 rounded py-2 px-5 text-[#ff2f2f] flex gap-2 items-center'
                         >
-                            Delete
+                            Delete  <Trash2 color='#ff2f2f' size={20}/>
                         </button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
@@ -620,8 +599,8 @@ const upgradeAdmin = async (id) => {
     <div className="overflow-x-auto  sm:rounded-lg">
         <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden ">
-                <table className="min-w-full divide-y divide-gray-200  ">
-                    <thead className="bg-[#7065F0] ">
+                <table className="min-w-full divide-y divide-gray-200 mt-4 ">
+                    <thead className="">
                         <tr>
                             <th className="p-4">
                                 <div className="flex items-center">
@@ -629,40 +608,34 @@ const upgradeAdmin = async (id) => {
                                         id="checkbox-all" 
                                         type="checkbox" 
                                         className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300"
-                                        checked={selectedUsers.length === filteredUsers.length}
+                                        checked={selectedUsers.length === filteredUsers.length && selectedUsers.length >= 1}
                                         onChange={checkAll}
                                     />
                                     <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-gray-700">
-                               <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("firstName")}> 
-                                    <p className='mr-2 text-[#ffffff] '>first Name</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
-                                </div>
-                            </th>
-                            <th className="py-3 px-6 text-sm font-small  text-gray-700">
-                               <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("lastName")}> 
-                                    <p className='mr-2 text-[#ffffff] '>last name</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                               <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("fullName")}> 
+                                    <p className='mr-2 '>Full Name</p> 
+                                    <ArrowDownUp size={18} color='#000000' />
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                 <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("email")}> 
-                                    <p className='mr-2 text-[#ffffff] '>Email</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                    <p className='mr-2 '>Email</p> 
+                                    <ArrowDownUp size={18} color='#000000' />
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                 <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("role")}> 
-                                    <p className='mr-2 text-[#ffffff]' >role</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                    <p className='mr-2 text-[#000000]' >role</p> 
+                                    <ArrowDownUp size={18} color='#000000' />
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                 <div className='flex items-center cursor-pointer' onClick={()=>filterUsersByOrder("joinDate")}> 
-                                    <p className='mr-2 text-[#ffffff] '>join at</p> 
-                                    <ChevronsUpDown size={18} color='#ffffff' />
+                                    <p className='mr-2 '>join at</p> 
+                                    <ArrowDownUp size={18} color='#000000' />
                                 </div>
                             </th>
                             <th className="p-4">
@@ -672,8 +645,8 @@ const upgradeAdmin = async (id) => {
                     </thead>
                     <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
                         {filteredUsers?.map(user => (
-                       <tr className="hover:bg-[#cfcce6] dark:hover:bg-gray-700" key={user._id}>
-                       <td className="p-3 w-4">
+                       <tr className="hover:bg-[#f7f6f6]" key={user._id}>
+                       <td className="p-4 w-4">
                            <div className="flex items-center">
                                <input
                                     id="checkbox-table-1" 
@@ -685,17 +658,16 @@ const upgradeAdmin = async (id) => {
                                <label htmlFor="checkbox-table-1" className="sr-only"></label>
                            </div>
                        </td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.firstName}</td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {user.lastName}</td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.email}</td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                       <td className="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.fullName}</td>
+                       <td className="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.email}</td>
+                       <td className="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             <span className={`py-2 px-3 ${(user.role === "admin") ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800" }  rounded-lg`}>
                                 {user.role}
                             </span>
                         </td>
-                       <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.createdAt}</td>
+                       <td className="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{user.createdAt}</td>
                        <td 
-                            className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"
+                            className="py-4  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"
                        >
                              <Dialog open={openD} onOpenChange={()=>{setOpenD(false)}}>
                                 <DialogContent className="sm:max-w-md">
@@ -730,13 +702,12 @@ const upgradeAdmin = async (id) => {
                                       <EllipsisVertical />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="w-56 bg-white">
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem className="p-0" >
+                                        <DropdownMenuItem className="p-0 mb-1" >
                                             <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>upgradeAdmin(user._id)}>
                                                {user.role === "admin" ? "upgrade to superAdmin": "downgrade to Admin" }
                                             </div>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className=""> 
+                                        <DropdownMenuItem className="p-0"> 
                                             <div className='w-full h-full bg-red-700 rounded py-2 px-5 text-white flex items-center justify-center'  onClick={()=>{setOpenD(true);}} >
                                             <p>Delete </p>
                                             </div>
@@ -748,6 +719,14 @@ const upgradeAdmin = async (id) => {
                     ))}
                     </tbody>
                 </table>
+                {
+                    filteredUsers.length === 0 && 
+                    <div className="flex items-center justify-center w-full min-h-80 ">
+                         <div className='flex items-end justify-center'>
+                            <User size={50}  fontWeight={2} /> <p className='text-3xl ml-3 font-medium '>no admins found</p>
+                         </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -1,14 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { axiosClient } from "../../api/axios";
+import io from 'socket.io-client';
+import { axiosClient } from '../../api/axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
-import { LOGIN_LINK } from "../../router/index"
+import { FAVORITES, LOGIN_LINK } from "../../router/index"
 import Loading from "../../pages/loading"
 import {
   Pencil,
   Eye,
   EyeOff,
   Heart,
+  X,
   Bell,
   ChevronDown,
   LogOut,
@@ -47,6 +49,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+const socket = io('http://localhost:5555');
 import CurrencyInput from '../guest/currency-input';
 
 
@@ -74,6 +77,7 @@ export default function TopNav() {
     if (window.location.pathname === "/home") {
       userContext.getUser();
     }
+
   }, []);
 
   useEffect(() => {
@@ -81,6 +85,7 @@ export default function TopNav() {
       firstName: userContext.user.firstName,
       email: userContext.user.email
     });
+    getAllNotifications();
   }, [userContext.user]);
 
   useEffect(() => {
@@ -209,8 +214,60 @@ export default function TopNav() {
     const value = e.target.value;
     setPasswords({ ...passwords, [field]: value });
   };
+  const upgradePlan = async (str) => {
+    try {
+      const response = await axiosClient.get('/user/subscription-update');
+      toast.success('update plan to ' + str);
+    } catch (error) {
+      toast.error('Error updating plan. Please try again later.');
+    }
+  };
+  const CancelPlan = async () => {
+    try {
+      const response = await axiosClient.get('/user/subscription-cancel');
+      toast.success('cancel plan ');
+    } catch (error) {
+      toast.error('Error updating plan. Please try again later.');
+    }
+  };
+  const [notifications, setNotifications] = useState([]);
+  const getAllNotifications = async () => {
+    try {
+      const response = await axiosClient.get('/notification/admin');
+      setNotifications(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error)
+      toast.error('Error getting notifications. Please try again later.');
+    }
+  };
+
+  useEffect(() => {
+    getAllNotifications();
+    socket.emit('joinRoom', userContext.user._id);
+    socket.on('notification', (notification) => {
+      setNotifications((prevNotifications) => [...prevNotifications, notification.message]);
+      toast(notification.message.message);
+      viewNotification(notification.message);
+    });
+    return () => {
+      socket.off('notification');
+      socket.emit('leaveRoom', userContext.user._id);
+    };
+  }, [userContext.user]);
 
 
+  const viewNotification = async (notification) => {
+    try {
+      const response = await axiosClient.post('/notification/read', { notification });
+      getAllNotifications();
+      if (notification.link !== null) {
+        navigate(notification.link)
+      }
+    } catch (error) {
+      toast.error('Error reading notifications. Please try again later.');
+    }
+  }
 
   return (
     <>
@@ -225,9 +282,11 @@ export default function TopNav() {
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
 
+
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/listings">Listing</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Reservations</Link></li>
+
 
                 </ul>
               </div>
@@ -243,11 +302,45 @@ export default function TopNav() {
                         </div>
                       }
                       <div className='text-green-800 cursor-pointer mr-5'>
-                        <Bell color='#7065F0' size={23} />
+
+                        <DropdownMenu >
+                          <DropdownMenuTrigger asChild >
+                            <div className="relative flex items-center justify-between ">
+                              {
+                                notifications.length != 0
+                                &&
+                                <div className="w-2 h-2 rounded-full bg-red-600 absolute top-0 right-0"></div>}
+                              <Bell color='#7065F0' size={23} />
+                            </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-56 bg-white">
+                            {
+                              notifications &&
+                              notifications?.map((notification) => (
+                                <DropdownMenuItem >
+                                  <div className='flex items-center justify-between w-full' onClick={() => viewNotification(notification)}>
+                                    <p>{notification.message}</p>
+                                    <div className="cursor-pointer"><X /></div>
+                                  </div>
+                                </DropdownMenuItem>
+                              ))
+                            }
+                            {
+                              notifications.length == 0 &&
+
+                              <DropdownMenuItem >
+                                <div className='flex items-center justify-between w-full'>
+                                  <p>no notifications yet </p>
+                                </div>
+                              </DropdownMenuItem>
+
+                            }
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                      <div className='text-green-800 cursor-pointer mr-5'>
+                      <Link to={FAVORITES} className='cursor-pointer mr-5'>
                         <Heart color='#7065F0' size={23} />
-                      </div>
+                      </Link>
                       <div className='w-0 h-7 border-[1px] border-[#A7A3A3] mr-3'></div>
                       <div>
                         <DropdownMenu>
@@ -265,6 +358,34 @@ export default function TopNav() {
                                 Profile
                               </div>
                             </DropdownMenuItem>
+                            {
+                              userContext.user.subscriptionType !== "free" ?
+                                <>{
+                                  userContext.user.subscriptionType === "premium" ?
+                                    <DropdownMenuItem className="p-0" >
+                                      <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("business")}>
+                                        upgrade to business
+                                      </div>
+                                    </DropdownMenuItem>
+                                    :
+                                    <DropdownMenuItem className="p-0" >
+                                      <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("premium")}>
+                                        downgeade premium
+                                      </div>
+                                    </DropdownMenuItem>
+                                }
+                                  <DropdownMenuItem className="p-0" >
+                                    <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => CancelPlan()}>
+                                      Cancel subscription
+                                    </div>
+                                  </DropdownMenuItem>
+                                </> :
+                                <DropdownMenuItem className="p-0" >
+                                  <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => navigate("/pay")}>
+                                    upgrade premium
+                                  </div>
+                                </DropdownMenuItem>
+                            }
                             <DropdownMenuItem className="">
                               <div className='w-full h-full bg-black text-white py-2 px-3 flex items-center justify-center gap-2 cursor-pointer' onClick={logOut}>
                                 <LogOut color='white' size={18} />

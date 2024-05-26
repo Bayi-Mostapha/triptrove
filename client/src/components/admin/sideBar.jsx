@@ -9,7 +9,7 @@ export default function SideBar({ children }) {
     const [expanded, setExpanded] = useState(false)
 
     return (
-        <aside className=" h-screen w-fit fixed top-0 left-0 z-50 shadow bg-white">
+        <aside className=" side-nav h-screen w-fit fixed top-0 left-0 z-50 shadow bg-white">
             <nav className="h-full flex flex-col bg-background">
                 <div className="p-4 flex justify-between items-center">
                     <h1
@@ -39,6 +39,7 @@ export function SidebarItem({ icon, text, location, alert }) {
     return (
         <NavLink
             to={location}
+            
             className={`
         relative flex items-center ${expanded ? 'justify-start' : 'justify-center'} p-2 
         font-medium rounded-md cursor-pointer

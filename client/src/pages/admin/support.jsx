@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { authContext } from "@/contexts/AuthWrapper";
  import { 
-    ChevronsUpDown,
+    ArrowDownUp,
     CalendarDays,
     ChevronDown,
     EllipsisVertical ,
+    MessageSquareWarning  ,
     ArrowLeft , 
+    Trash2,
     SquareX  ,
 X,
 } from 'lucide-react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
   import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,13 +23,22 @@ X,
     DropdownMenuTrigger,
     DropdownMenuItem,
   } from "@/components/ui/dropdown-menu";
+  import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogDescription,
+  } from "@/components/ui/dialog"
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
   } from "@/components/ui/avatar"
 import { axiosClient } from "../../api/axios"
-import {  toast } from 'react-toastify';
 import { addDays, format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
@@ -73,26 +86,6 @@ export default function Support() {
     useEffect(()=>{
         getAllProblems();
     },[]);
-   
-    const deleteProblemHandle = async (adminIds) => {
-        try {
-            const response = await axiosClient.delete('/admin', {
-                data: { adminIds } 
-            });
-            return true;
-        } catch (error) {
-            return false;
-        }
-    };
-
-    const handleDelete = (admins) =>{
-        if(deleteProblemHandle(admins)){
-            toast.success("tickets are deleted");
-            fetchUsers();
-        }else{
-            toast.error('Error deleting tickets');
-        }
-    }
  
     const handleSetTicket = (id) => {
         problems.forEach(pro => {
@@ -155,7 +148,7 @@ export default function Support() {
         handleSetTicket(actualTicket?._id);
     },[problems]);
    
-    const [ filter, setFilter ] = useState("filter by");
+    const [ filter, setFilter ] = useState();
     const [date, setDate] = useState();
     const [order, setOrder] = useState({
         category: false ,
@@ -167,21 +160,19 @@ export default function Support() {
     
     const filterTicketByDate = () => {
         const today = new Date(); 
+        if(date && date.from !== undefined  && date.to !== undefined){
+            const newTickets = problems.filter(problem => {
+                const joinDate = new Date(problem.createdAt);
+                const startDate = new Date(date.from);
+                const endDate = new Date(date.to);
+                return joinDate >= startDate && joinDate <= endDate ;
+            });
+            setFilteredProblems(newTickets);
+            return ;
+        }
         switch (filter) {
             case "all":
                 setFilteredProblems(problems);
-                break;
-            case "custom":
-                if(date && date.from !== undefined  && date.to !== undefined){
-                    const newTickets = problems.filter(problem => {
-                        const joinDate = new Date(problem.createdAt);
-                        const startDate = new Date(date.from);
-                        const endDate = new Date(date.to);
-                        return joinDate >= startDate && joinDate <= endDate ;
-                    });
-                    setFilteredProblems(newTickets);
-                    return ;
-                }
                 break;
             case "today":
                 const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -252,18 +243,6 @@ export default function Support() {
                     return a.title.localeCompare(b.title); 
                 });
             }
-        }else if (str === "status") {
-            if (!order.status) {
-                setOrder({ ...order, status: true });
-                sortedTickets = filteredProblems.slice().sort((a, b) => {
-                    return b.status.localeCompare(a.status); 
-                });
-            } else {
-                setOrder({ ...order, status: false });
-                sortedTickets = filteredProblems.slice().sort((a, b) => {
-                    return a.status.localeCompare(b.status); 
-                });
-            }
         }else if (str === "createdAt") {
             sortedTickets = filteredProblems.slice().sort((a, b) => {
                 const dateA = new Date(a.createdAt);
@@ -294,15 +273,37 @@ export default function Support() {
     useEffect(() => { 
         filterTicketByDate();
     },[date]);
+    const [probDelete , setProbDelete] = useState(null)
+    const [open, setOpen] = useState(false)
+    const deleteProbHandle = async (ProblemIds) => {
+        try {
+            console.log(ProblemIds)
+            const response = await axiosClient.delete('/support', {
+                data: { ProblemIds } 
+            });
+             return true;
+        } catch (error) {
+            console.log(error)
+        }
+    };
+    const deleteProblemHandle = async (tickets) => { 
+        const isDeleted = await deleteProbHandle(tickets); 
+        if (isDeleted) {
+            toast.success("ticket is deleted");
+            fetchUsers(); 
+        } else {
+            toast.error('Error deleting ticket');
+        }
+    };
+    const [openD, setOpenD] = useState(false);
   return (
-    <div className='flex w-full'>
+    <div className='flex w-full pt-16 pl-24 p-3 pr-5'>
     {
         actualTicket == null ? 
             <div className="flex flex-col w-full">
-                <div className={`flex items-center pt-12 pb-5 w-full mr-3  ${(filter === "custom") ? "justify-between" : "justify-end"}`}>
-                    {  
-                        filter === "custom" &&
-                        <div className='mr-3'>
+    <div className="flex w-full items-center justify-between pt-12">
+        <h4 className='text-4xl font-semibold text-[#141414]'>Tickets</h4>
+                        <div className='mr-3 '>
                             <Popover>
                                 <PopoverTrigger asChild>
                                 <button
@@ -340,12 +341,44 @@ export default function Support() {
                                 </PopoverContent>
                             </Popover>
                         </div>
-                    }
-                    <div className='w-24 mr-3'>
+    </div>
+                <div className={`flex items-center pt-5 pb-5 w-full mr-3 justify-end gap-2`}>
+                {  selectedProblems.length !== 0
+            && 
+            <div className='flex items-center justify-start mb-1 ml-3 mt-2'>
+                <button className='cursor-pointer flex gap-3 items-center bg-red-50 rounded py-2 px-5 text-[#ff2f2f] font-semibold' onClick={()=>setOpen(true)}>
+                    delete
+                    <Trash2 color='#ff2f2f' size={20}/>
+                </button>
+                <Dialog open={open} onOpenChange={()=>{setOpen(false)}}>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                <DialogTitle>Are You sure ? </DialogTitle>
+                                <DialogDescription>
+                                    Are you sure , you wanna delete those tickets 
+                                </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="sm:justify-start">
+                                <DialogClose asChild>
+                                    <div className='flex gap-4 w-full'>
+                                    <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                                Close
+                                        </button> 
+                                        <button onClick={()=>{deleteProblemHandle(selectedProblems)}} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                                Confirm 
+                                            </button>
+                                    </div>
+                                </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                </Dialog>
+            </div>
+        }
+                <div className='w-24 mr-3'>
                         <DropdownMenu >
                             <DropdownMenuTrigger asChild >
-                                <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
-                                    <p className='text-sm'>filter by</p> 
+                                <div className='flex items-center gap-2 text-[#222222] rounded border-2 border-[#dbd9d9]  pl-4 lg:py-2 pr-0 '>
+                                    <p className='text-sm'>filter</p> 
                                     <ChevronDown color='#222222' size={18}/>
                                 </div>
                             </DropdownMenuTrigger>
@@ -355,7 +388,6 @@ export default function Support() {
                                 <DropdownMenuRadioItem value="today">today</DropdownMenuRadioItem>
                                 <DropdownMenuRadioItem value="lastw">last week</DropdownMenuRadioItem>
                                 <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="custom">custem range</DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -365,7 +397,7 @@ export default function Support() {
                     <div className="inline-block min-w-full align-middle">
                         <div className="overflow-hidden ">
                             <table className="min-w-full divide-y divide-gray-200  ">
-                                <thead className="bg-[#7065F0] ">
+                                <thead className="">
                                     <tr>
                                         <th className="p-4">
                                             <div className="flex items-center">
@@ -381,32 +413,31 @@ export default function Support() {
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("email")}> 
-                                                <p className='mr-2 text-[#ffffff] '>reported By </p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>reported By </p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("category")}> 
-                                                <p className='mr-2 text-[#ffffff] '>category</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>category</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("title")}> 
-                                                <p className='mr-2 text-[#ffffff] '>title</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>title</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                            <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("status")}> 
-                                                <p className='mr-2 text-[#ffffff]' >status</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                            <div className='flex items-center cursor-pointer'> 
+                                                <p className='mr-2 ' >status</p> 
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("createdAt")} > 
-                                                <p className='mr-2 text-[#ffffff] '>created at</p> 
-                                                <ChevronsUpDown size={18} color='#ffffff' />
+                                                <p className='mr-2  '>created at</p> 
+                                                <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="p-4">
@@ -416,8 +447,8 @@ export default function Support() {
                                 </thead>
                                 <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
                                 {filteredProblems?.map(problem => (
-                                    <tr className="hover:bg-[#cfcce6] dark:hover:bg-gray-700   w-24 max-h-32 " key={problem._id}>
-                                        <td className="p-3 w-4">
+                                    <tr className="hover:bg-[#f7f6f6]" key={problem._id}>
+                                        <td className="p-4 w-4">
                                             <div className="flex items-center">
                                                 <input
                                                 id="checkbox-table-1" 
@@ -452,6 +483,14 @@ export default function Support() {
                                             </div>
                                             </DropdownMenuItem>
                                             {
+                                            problem.status === "close" && 
+                                            <DropdownMenuItem className="p-0" >
+                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>{setOpenD(true); setProbDelete(problem._id);}} >
+                                            delete
+                                            </div>
+                                            </DropdownMenuItem>
+                                            }
+                                            {
                                             problem.status === "open" && 
                                             <DropdownMenuItem className="p-0"> 
                                             <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer'  onClick={()=>{closeTicket(problem._id)}} >
@@ -462,10 +501,40 @@ export default function Support() {
                                             </DropdownMenuContent>
                                             </DropdownMenu>
                                         </td>
+                                        <Dialog open={openD} onOpenChange={()=>{setOpenD(false)}}>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                <DialogTitle>Are You sure ? </DialogTitle>
+                                <DialogDescription>
+                                    Are you sure , you wanna delete this ticket 
+                                </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="sm:justify-start">
+                                <DialogClose asChild>
+                                    <div className='flex gap-4 w-full'>
+                                    <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                                Close
+                                        </button> 
+                                        <button onClick={()=>{deleteProblemHandle([probDelete])}} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                                Confirm 
+                                            </button>
+                                    </div>
+                                </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                                     </tr>
                                 ))}
                                 </tbody>
                             </table>
+                            {
+                                    filteredProblems.length === 0 && 
+                                    <div className="flex items-center justify-center w-full min-h-80 ">
+                                        <div className='flex items-center justify-center'>
+                                            <MessageSquareWarning  size={50}  fontWeight={2} /> <p className='text-3xl ml-3 font-medium '>no Ticket found</p>
+                                        </div>
+                                    </div>
+                                }
                         </div>
                     </div>
                     </div>

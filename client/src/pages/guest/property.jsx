@@ -90,21 +90,24 @@ function Property() {
     // favortie 
     const [isFavorite, setIsFavorite] = useState(false);
 
-    useEffect(() => {
-        // if (!id) {
-        //     return;
-        // }
-        // axiosClient.get(`/properties/${id}`).then(response => {
-        //     setPlace(response.data.property);
-        //     setReviews(response.data.reviews);
-        //     setDisabledDates(response.data.reservations)
+    async function getData() {
+        if (!id) {
+            return;
+        }
+        axiosClient.get(`/properties/${id}`).then(response => {
+            setPlace(response.data.property);
+            setReviews(response.data.reviews);
+            setDisabledDates(response.data.reservations)
 
-        //     const starsArray = response.data.reviews.map(rating => rating.stars);
-        //     const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
-        //     setRating(avgRating)
-        // });
-        // const res = await axiosClient.get('/favorites/' + place._id)
-        // setIsFavorite(res.data)
+            const starsArray = response.data.reviews.map(rating => rating.stars);
+            const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
+            setRating(avgRating)
+        });
+        const res = await axiosClient.get('/favorites/' + place._id)
+        setIsFavorite(res.data)
+    }
+    useEffect(() => {
+        // getData()
 
         setPlace(dummyPlace)
         setReviews(dummyRatings)
@@ -117,7 +120,7 @@ function Property() {
     if (!place) return '';
 
     return (
-        <div>
+        <div className="p-4">
             <Link className="w-fit flex items-center mt-5 text-primary text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="stroke-primary" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6" /></svg>
                 Back to home

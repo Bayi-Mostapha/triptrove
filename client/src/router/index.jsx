@@ -20,6 +20,7 @@ import Users from "../pages/admin/users"
 import Admins from "../pages/admin/admins-page"
 import Support from "../pages/admin/support"
 import Properties from "../pages/admin/properties"
+import Settings from "../pages/admin/settings"
 
 import Home from "../pages/guest/home"
 import Explore from "../pages/guest/explore"
@@ -35,13 +36,15 @@ import PropertyReviews from '@/pages/host/property-reviews';
 import BookingSucces from '@/pages/guest/booking-success';
 import Bookings from '@/pages/guest/bookings';
 import Reports from '@/pages/admin/reports';
+import BookingFail from '@/pages/guest/booking-fail';
+import Favorites from '@/pages/guest/favorites';
+import HostDashboard from '@/pages/host/dashboard';
 import HostBookings from '@/pages/host/bookings';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
-import BookingFail from '@/pages/guest/booking-fail';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -61,6 +64,7 @@ export const PROPERTY_LINK = '/property/:id';
 export const BOOKING_SUCCESS = '/booking-success';
 export const BOOKING_FAIL = '/booking-fail';
 export const BOOKINGS = '/bookings';
+export const FAVORITES = '/favorites';
 
 // Host
 export const REVIEWS = '/listing-reviews/:id';
@@ -73,6 +77,7 @@ export const ADMIN_USERS_LINK = '/admin/users';
 export const ADMIN_ADMINS_LINK = '/admin/admins';
 export const ADMIN_SUPPORT_LINK = '/admin/support';
 export const ADMIN_PROPERTIES_LINK = '/admin/properties';
+export const ADMIN_SETTINGS_LINK = '/admin/settings';
 
 
 
@@ -145,14 +150,22 @@ export const router = createBrowserRouter([
                 path: BOOKINGS,
                 element: <Bookings />
             },
+            {
+                path: FAVORITES,
+                element: <Favorites />
+            },
             // for host 
             {
                 path: REVIEWS,
                 element: <PropertyReviews />
             },
             {
-                path: '/listings/bookings',
-                element: <HostBookings />
+                path: '/host/dashboard',
+                element: <HostDashboard />
+            },
+            {
+                path: '/host/bookings',
+                element: <HostBookings limit={false} />
             },
             // for admin 
             {
@@ -168,11 +181,13 @@ export const router = createBrowserRouter([
                 path: HOST_LINK,
                 element: <List />
             },
+
             {
                 path: LISTINGS_LINK,
                 element: <AllListings />
             },
           
+
         ]
     },
     {
@@ -198,6 +213,10 @@ export const router = createBrowserRouter([
                 path: ADMIN_PROPERTIES_LINK,
                 element: <Properties />
             },
+            {
+                path: ADMIN_SETTINGS_LINK,
+                element: <Settings />
+            },
         ]
     },
     {
@@ -207,7 +226,7 @@ export const router = createBrowserRouter([
                 path: HOME_LINK,
                 element: <Home />
             },
-            
+
         ]
     },
     {
