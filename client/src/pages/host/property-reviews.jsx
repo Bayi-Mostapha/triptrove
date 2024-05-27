@@ -4,56 +4,41 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function PropertyReviews() {
-    const dummyRatings = [
-        {
-            _id: 'ffff',
-            stars: 4,
-            content: 'nice, i guess',
-            author: {
-                fullName: 'Moha Moha',
-                image: '/img2.webp',
-            },
-            created_at: '2024-06-17T14:00:00.000Z'
-        },
-        {
-            _id: 'dddd',
-            stars: 3,
-            content: 'not that nice!',
-            author: {
-                fullName: 'hi hi',
-                image: '/img3.webp',
-            },
-            created_at: '2024-06-15T12:00:00.000Z'
-        },
-    ]
-
     const { id } = useParams();
     const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     async function getReviews() {
-        axiosClient.get(`/reviews/${id}`).then(response => {
+        setLoading(true);
+        try {
+            const response = await axiosClient.get(`/reviews/${id}`);
             setReviews(response.data);
-        });
+        } catch (error) {
+            console.error("Failed to fetch reviews:", error);
+        } finally {
+            setLoading(false);
+        }
     }
-    useEffect(() => {
-        // if (!id) {
-        //     return;
-        // }
-        // getReviews()
 
-        setReviews(dummyRatings)
+    useEffect(() => {
+        if (!id) {
+            return;
+        }
+        getReviews();
     }, [id]);
 
     return (
         <div>
             <h1 className="text-2xl font-semibold">Property Reviews</h1>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-5">
-                {
-                    reviews.map(review =>
+            {loading ? (
+                <p>Loading...</p>
+            ) : (
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {reviews.map(review => (
                         <ReviewHost key={review.id} review={review} />
-                    )
-                }
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

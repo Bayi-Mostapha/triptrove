@@ -21,112 +21,69 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "react-toastify";
 import PlaceFeatures from "@/components/guest/property-reservation/place-features";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 function Property() {
-    const dummyPlace = {
-        _id: 1,
-        title: 'The Best Place',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem tur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem tur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem',
-        city: 'Agadir',
-        checkIn: '14:00',
-        checkOut: '16:00',
-        streetAddress: 'sidi youssef',
-        photos: ['/img1.webp', '/img2.webp', '/img3.webp'],
-        price: 100,
-        owner: {
-            image: '/img2.webp',
-            fullName: 'Sara Sanchez',
-            created_at: '2024-08-05'
-        },
-        guests: 12,
-        bedrooms: 3,
-        bathrooms: 2,
-        beds: 5,
-        cleaningFees: 50,
-        hasWifi: true,
-        hasPool: true,
-        hasTv: true,
-        hasWasher: true,
-        hasPark: true,
-        hasKitchen: true,
-        hasDesk: true,
-        allowsPets: true
-    }
-    const dummyRatings = [
-        {
-            stars: 4,
-            content: 'nice, i guess',
-            author: {
-                fullName: 'Moha Moha',
-                image: '/img2.webp',
-            },
-            created_at: '2024-06-17T14:00:00.000Z'
-        },
-        {
-            stars: 3,
-            content: 'not that nice!',
-            author: {
-                fullName: 'hi hi',
-                image: '/img3.webp',
-            },
-            created_at: '2024-06-15T12:00:00.000Z'
-        },
-    ]
-    const dummyReservations = [
-        new Date('2024-06-14').toISOString(),
-        new Date('2024-06-15').toISOString(),
-        new Date('2024-06-16').toISOString(),
-        new Date('2024-07-09').toISOString(),
-        new Date('2024-07-10').toISOString(),
-        new Date('2024-07-11').toISOString(),
-    ];
-
     const { id } = useParams();
+    const [loading, setLoading] = useState(false);
     const [place, setPlace] = useState(null);
-    // date range 
+    // Date range
     const [disabledDates, setDisabledDates] = useState([]);
-    //ratings
+    // Ratings
     const [reviews, setReviews] = useState([]);
     const [rating, setRating] = useState(0);
-    // guests input 
+    // Guests input
     const maxInfants = 5;
     const maxPets = 3;
-    // report 
+    // Report
     const [reason, setReason] = useState('');
     const handleReasonChange = (event) => {
         setReason(event.target.value);
     };
-    // favortie 
+    // Favorite
     const [isFavorite, setIsFavorite] = useState(false);
 
     async function getData() {
         if (!id) {
             return;
         }
-        axiosClient.get(`/properties/${id}`).then(response => {
+        try {
+            setLoading(true);
+            const response = await axiosClient.get(`/properties/${id}`);
             setPlace(response.data.property);
             setReviews(response.data.reviews);
-            setDisabledDates(response.data.reservations)
+            setDisabledDates(response.data.reservations);
 
-            const starsArray = response.data.reviews.map(rating => rating.stars);
-            const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
-            setRating(avgRating)
-        });
-        const res = await axiosClient.get('/favorites/' + place._id)
-        setIsFavorite(res.data)
+            if (response.data.reviews.length > 0) {
+                const starsArray = response.data.reviews.map(rating => rating.stars);
+                const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
+                setRating(avgRating);
+            } else {
+                setRating(0)
+            }
+
+            const res = await axiosClient.get('/favorites/' + response.data.property._id);
+            setIsFavorite(res.data);
+
+            console.log('data:', response, res);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }
-    useEffect(() => {
-        // getData()
 
-        setPlace(dummyPlace)
-        setReviews(dummyRatings)
-        const starsArray = dummyRatings.map(rating => rating.stars);
-        const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
-        setRating(avgRating)
-        setDisabledDates(dummyReservations)
+    useEffect(() => {
+        getData();
     }, [id]);
 
-    if (!place) return '';
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!place) {
+        return <div>Property not found</div>;
+    }
 
     return (
         <div className="p-4">
@@ -169,14 +126,14 @@ function Property() {
                                 </DialogClose>
                                 <Button
                                     variant="destructive"
-                                // onClick={async () => {
-                                //     try {
-                                //         const res = await axiosClient.post('/property-reports/' + place._id, { reason })
-                                //         toast.success(res.data.message)
-                                //     } catch (error) {
-                                //         toast.error('something went wrong')
-                                //     }
-                                // }}
+                                    onClick={async () => {
+                                        try {
+                                            const res = await axiosClient.post('/property-reports/' + place._id, { reason })
+                                            toast.success(res.data.message)
+                                        } catch (error) {
+                                            toast.error('something went wrong')
+                                        }
+                                    }}
                                 >
                                     Report
                                 </Button>
@@ -185,12 +142,12 @@ function Property() {
                     </Dialog>
 
                     <button onClick={async () => {
-                        // try {
-                        //     const res = await axiosClient.post('/favorites/' + place._id)
-                        //     setIsFavorite(res.data)
-                        // } catch (error) {
-                        //     toast.error('something went wrong')
-                        // }
+                        try {
+                            const res = await axiosClient.post('/favorites/' + place._id)
+                            setIsFavorite(res.data)
+                        } catch (error) {
+                            toast.error('something went wrong')
+                        }
                     }}>
                         <svg className={`stroke-primary ${isFavorite ? 'fill-primary' : 'fill-none'}`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg>
                     </button>
@@ -232,10 +189,13 @@ function Property() {
                     <div className="mt-2 mb-6">
                         <h2 className="mt-1 font-medium text-xl">Hosted By</h2>
                         <div className="flex items-center gap-2">
-                            <img className="w-14 h-14 object-cover rounded-full" src={place.owner.image} alt={`${place.owner.fullName} picture`} />
+                            <Avatar>
+                                <AvatarImage src={place.owner.image} />
+                                <AvatarFallback className='uppercase'>{place.owner.fullName[0]}</AvatarFallback>
+                            </Avatar>
                             <div>
-                                <p className="font-medium">{place.owner.fullName}</p>
-                                <p className="text-sm text-gray-400">Hosting for {formatDistanceToNow(place.owner.created_at)}</p>
+                                <p className="font-medium capitalize">{place.owner.fullName}</p>
+                                <p className="-mt-1 text-xs text-gray-500">Hosting for {formatDistanceToNow(place.owner.createdAt)}</p>
                             </div>
                         </div>
                     </div>

@@ -62,11 +62,11 @@ export const bookingsColumns = [
         },
     },
     {
-        accessorKey: "fullPrice",
+        accessorKey: "totalPrice",
         header: "Amount",
         cell: ({ row }) => {
             const { convert, selectedCurrency } = useContext(ExchangeRateContext)
-            const price = row.original.fullPrice;
+            const price = row.original.totalPrice;
             return <p>{convert(price)} {selectedCurrency}</p>;
         },
     },
