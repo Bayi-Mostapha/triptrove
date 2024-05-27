@@ -68,7 +68,7 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
     };
 
     return (
-        <div className="md:px-3 md:py-5 md:shadow-md md:rounded md:bg-[#FDFDFD]">
+        <div className="h-fit md:px-3 md:py-5 md:shadow-md md:rounded-md md:bg-[#FDFDFD]">
             <h2 className="mb-2 text-2xl font-semibold md:hidden">Book it now!</h2>
             <h4 className="text-gray-500">
                 <span className="text-xl font-medium text-primary">{convert(place.price)} {selectedCurrency}</span>/night
@@ -117,7 +117,7 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
                 adults={adults} setAdults={setAdults} maxAdults={place.guests}
                 children={children} setChildren={setChildren}
                 infants={infants} setInfants={setInfants} maxInfants={maxInfants}
-                pets={pets} setPets={setPets} maxPets={maxPets}
+                pets={pets} setPets={setPets} maxPets={place.allowsPets ? maxPets : 0}
             />
 
             <Button

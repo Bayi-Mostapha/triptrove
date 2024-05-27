@@ -74,7 +74,7 @@ function GeustsInput({ adults, setAdults, maxAdults, children, setChildren, infa
         <div>
             <h4 className="mt-3">Guests</h4>
             <Popover>
-                <PopoverTrigger className="mt-1 block border px-4 py-2 rounded text-sm mx-auto">
+                <PopoverTrigger className="mt-1 block border px-4 py-2 rounded text-sm mx-auto bg-white">
                     {adults + children} Guest{adults + children > 1 && 's'} {infants > 0 && `, ${infants} infant`}{infants > 1 && 's'} {pets > 0 && `, ${pets} pet`}{pets > 1 && 's'}
                 </PopoverTrigger>
                 <PopoverContent>
@@ -137,6 +137,12 @@ function GeustsInput({ adults, setAdults, maxAdults, children, setChildren, infa
                             </button>
                         </div>
                     </div>
+                    {
+                        maxPets == 0 &&
+                        <div className="mt-1 text-sm font-medium">
+                            This place does not allow pets
+                        </div>
+                    }
                 </PopoverContent>
             </Popover>
         </div>

@@ -30,19 +30,22 @@ import Property from '@/pages/guest/property';
 
 // import List from "../pages/host/listg"
 import List from "../pages/host/listing"
+import AllListings from "../pages/host/AllListings"
 
 import PropertyReviews from '@/pages/host/property-reviews';
 import BookingSucces from '@/pages/guest/booking-success';
 import Bookings from '@/pages/guest/bookings';
 import Reports from '@/pages/admin/reports';
+import BookingFail from '@/pages/guest/booking-fail';
+import Favorites from '@/pages/guest/favorites';
+import HostDashboard from '@/pages/host/dashboard';
 import HostBookings from '@/pages/host/bookings';
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
-import BookingFail from '@/pages/guest/booking-fail';
-import Favorites from '@/pages/guest/favorites';
+import USupport from '@/pages/support';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -53,6 +56,7 @@ export const HOME_LINK = '/home';
 export const EXPLORE_LINK = '/explore';
 
 export const HOST_LINK = '/host';
+export const LISTINGS_LINK = '/listings';
 
 
 // Guest 
@@ -158,8 +162,17 @@ export const router = createBrowserRouter([
                 element: <PropertyReviews />
             },
             {
-                path: '/listings/bookings',
-                element: <HostBookings />
+                path: '/host/dashboard',
+                element: <HostDashboard />
+            },
+            {
+                path: '/host/bookings',
+                element: <HostBookings limit={false} />
+            },
+            // for both 
+            {
+                path: '/support',
+                element: <USupport />
             },
             // for admin 
             {
@@ -175,6 +188,12 @@ export const router = createBrowserRouter([
                 path: HOST_LINK,
                 element: <List />
             },
+
+            {
+                path: LISTINGS_LINK,
+                element: <AllListings />
+            },
+
 
         ]
     },

@@ -20,12 +20,13 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "react-toastify";
+import PlaceFeatures from "@/components/guest/property-reservation/place-features";
 
 function Property() {
     const dummyPlace = {
         _id: 1,
         title: 'The Best Place',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem tur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem tur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem',
         city: 'Agadir',
         checkIn: '14:00',
         checkOut: '16:00',
@@ -41,7 +42,15 @@ function Property() {
         bedrooms: 3,
         bathrooms: 2,
         beds: 5,
-        cleaningFees: 50
+        cleaningFees: 50,
+        hasWifi: true,
+        hasPool: true,
+        hasTv: true,
+        hasWasher: true,
+        hasPark: true,
+        hasKitchen: true,
+        hasDesk: true,
+        allowsPets: true
     }
     const dummyRatings = [
         {
@@ -120,7 +129,7 @@ function Property() {
     if (!place) return '';
 
     return (
-        <div>
+        <div className="p-4">
             <Link className="w-fit flex items-center mt-5 text-primary text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="stroke-primary" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6" /></svg>
                 Back to home
@@ -190,7 +199,7 @@ function Property() {
             <PlaceGallery place={place} />
             <div className="mt-8 mb-8 grid gap-8 grid-cols-1 md:grid-cols-[2fr_1fr]">
                 <div>
-                    <div className="p-4 pr-0 grid grid-cols-4 border rounded">
+                    <div className="p-4 pr-0 grid grid-cols-4 border rounded-md">
                         <div>
                             <h4 className="text-[#808494] text-sm font-bold">Bedrooms</h4>
                             <div className="flex items-center gap-1">
@@ -235,18 +244,13 @@ function Property() {
                         <p className="text-sm">{place.description}</p>
                     </div>
                     <p className="flex gap-1 items-center text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7065F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-3"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16.5 12" /></svg>
-                        Check-in: <span className="font-medium">{place.checkIn}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7065F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-3"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16.5 12" /></svg>
+                        Check-in: {place.checkIn}
                     </p>
                     <p className="flex gap-1 items-center text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7065F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-3"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16.5 12" /></svg>
-                        Check-out: <span className="font-medium">{place.checkOut}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7065F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-3"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16.5 12" /></svg>
+                        Check-out: {place.checkOut}
                     </p>
-
-                    <h2 className="mt-3 font-medium text-xl">What this place offers</h2>
-                    <div>
-
-                    </div>
                 </div>
                 <Booking
                     place={place}
@@ -255,6 +259,8 @@ function Property() {
                     maxPets={maxPets}
                 />
             </div>
+            <h2 className="mt-3 font-medium text-xl text-center">What this place offers</h2>
+            <PlaceFeatures place={place} />
             <div>
                 <h2 className=" text-center mt-6 mb-2 font-medium text-xl">Location</h2>
                 <MapContainer location={[30.296117, -9.462425]} />

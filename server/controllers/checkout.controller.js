@@ -3,9 +3,23 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.MostaphaStripe);
 
+export const hasAccount = async (req, res) => {
+    try {
+        const { userId } = req;
+        const wallet = await Wallet.findOne({ host: userId });
+        if (!wallet || !wallet.stripeAccountId) {
+            return res.json(false);
+        }
+        return res.json(true);
+    } catch (error) {
+        console.error('Error checking account:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
 export const createStripeAccountLink = async (req, res) => {
     const { userId } = req;
-
     try {
         const account = await stripe.accounts.create({
             type: 'express',
@@ -62,7 +76,7 @@ export const checkoutWallet = async (req, res) => {
         }
 
         const payout = await stripe.transfers.create({
-            amount: Math.round(amount * 100), 
+            amount: Math.round(amount * 100),
             currency: 'mad',
             destination: hostWallet.stripeAccountId,
         });

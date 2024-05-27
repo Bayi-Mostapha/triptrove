@@ -14,12 +14,7 @@ const Additionalinfo = () => {
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    updateUserData({
-      amenities: {
-        ...userData.amenities,
-        [name]: checked
-      }
-    });
+    updateUserData({ [name]: checked });
   };
 
   return (
@@ -78,90 +73,90 @@ const Additionalinfo = () => {
         </div>
       </div>
 
-      <div className='sec2 flex flex-col gap-4 items-center '>
-        <div className='flex gap-6'>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="wifi"
-              checked={userData.amenities.wifi}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Wifi
-          </div>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="pool"
-              checked={userData.amenities.pool}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Pool
-          </div>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="tv"
-              checked={userData.amenities.tv}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            TV
-          </div>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="washer"
-              checked={userData.amenities.washer}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Washer
-          </div>
+      <div className='sec2 flex flex-col gap-4'>
+        <div className='flex gap-4 justify-center '>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasWifi"
+            checked={userData.hasWifi || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Wifi
         </div>
-        <div className='flex gap-6'> 
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="kitchen"
-              checked={userData.amenities.kitchen}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Kitchen
-          </div>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="park"
-              checked={userData.amenities.park}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Park
-          </div>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="desk"
-              checked={userData.amenities.desk}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Desk
-          </div>
-          <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
-            <input
-              type="checkbox"
-              name="pets"
-              checked={userData.amenities.pets}
-              onChange={handleCheckboxChange}
-              className='cursor-pointer'
-            /> 
-            Pets
-          </div>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasPool"
+            checked={userData.hasPool || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Pool
+        </div>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasTv"
+            checked={userData.hasTv || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          TV
+        </div>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasWasher"
+            checked={userData.hasWasher || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Washer
+        </div>
+        </div>
+        <div className='flex gap-4 justify-center '>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasKitchen"
+            checked={userData.hasKitchen || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Kitchen
+        </div>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasPark"
+            checked={userData.hasPark || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Park
+        </div>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="hasDesk"
+            checked={userData.hasDesk || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Desk
+        </div>
+        <div className='flex gap-2 border pr-4 py-2 items-center justify-left pl-3 rounded-md'>
+          <input
+            type="checkbox"
+            name="allowsPets"
+            checked={userData.allowsPets || false}
+            onChange={handleCheckboxChange}
+            className='cursor-pointer'
+          /> 
+          Pets
+        </div>
         </div>
       </div>
     </div>
