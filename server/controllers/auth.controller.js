@@ -90,22 +90,22 @@ export const signin = async (request, response, next) => {
         await Newpass.save();
 
       console.log(code)
-        // let transporter = nodemailer.createTransport({
-        //   service: "gmail", 
-        //   host: "smtp.gmail.com", 
-        //   auth: {
-        //     user: "redaredael2004@gmail.com", 
-        //     pass: "", 
-        //   },
-        // });
+        let transporter = nodemailer.createTransport({
+          service: "gmail", 
+          host: "smtp.gmail.com", 
+          auth: {
+            user: "", 
+            pass: "", 
+          },
+        });
         
-        // await transporter.sendMail({
-        //   from: "redaredael2004@gmail.com", // you email
-        //   to: email, // to email
-        //   subject: "reset password",
-        //   text:  `Your password reset code is: ${code}`,
-        //   html: "hey good",
-        // });
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Reset Password',
+          text: `Your password reset code is: ${code}`,
+          html: `<p>Your password reset code is: <strong>${code}</strong></p>`,
+        });
         res.status(200).json({ message: "Password reset code sent successfully" });
     } catch (error) {
         next(error);

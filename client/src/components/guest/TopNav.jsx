@@ -249,8 +249,6 @@ export default function TopNav() {
       toast.error('Error reading notifications. Please try again later.');
     }
   }
-
-
   return (
     <>
       {
