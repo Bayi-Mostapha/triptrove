@@ -2,60 +2,72 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { formatDistanceToNow } from 'date-fns';
 import { Eye, Plus, SearchIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { axiosClient } from '@/api/axios';
-
-const dummyProblemReports = [
-    {
-        _id: '1',
-        user: 'User1',
-        title: 'Problem with Booking',
-        category: 'Booking',
-        description: 'I am unable to book a property.',
-        status: 'open',
-        createdAt: '2024-05-27T08:00:00.000Z',
-    },
-    {
-        _id: '2',
-        user: 'User2',
-        title: 'Payment Issue',
-        category: 'Payment',
-        description: 'My payment did not go through.',
-        status: 'open',
-        createdAt: '2024-05-23T08:30:00.000Z',
-    },
-    {
-        _id: '3',
-        user: 'User3',
-        title: 'Property Issue',
-        category: 'Property',
-        description: 'The property was not as described.',
-        status: 'closed',
-        createdAt: '2024-01-11T09:00:00.000Z',
-    }
-];
+import { Button } from '@/components/ui/button';
+import SupportProblem from '@/components/support-problem';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { toast } from 'react-toastify';
 
 function USupport() {
+    const [actualTicket, setActualTicket] = useState(null);
     const [problems, setProblems] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
 
+    // **********************
+
+    const [searchTerm, setSearchTerm] = useState('');
     const filteredReports = problems.filter(report =>
         report.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // **********************
+
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
+    const [description, setDescription] = useState('');
+    const handleTitleChange = (e) => {
+        setTitle(e.target.value);
+    };
+    const handleCategoryChange = (value) => {
+        setCategory(value);
+    };
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+    };
+
+    // **********************
+
     async function fetchData() {
         try {
-            const res = await axiosClient.get('/problems');
+            const res = await axiosClient.get('/problem/problems/user');
             setProblems(res.data)
         } catch (error) {
             console.error(error);
         }
     }
     useState(() => {
-        // fetchData()
-        setProblems(dummyProblemReports)
+        fetchData()
     }, [])
 
+    if (actualTicket) {
+        return (
+            <SupportProblem actualTicket={actualTicket} setActualTicket={setActualTicket} />
+        )
+    }
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-medium">Support Tickets</h1>
@@ -74,11 +86,56 @@ function USupport() {
                         onChange={e => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Link
-                    className='bg-primary rounded text-white py-2.5 px-3 flex items-center gap-1'
-                >
-                    <Plus size={18} /> New ticket
-                </Link>
+                <Dialog>
+                    <DialogTrigger
+                        className='bg-primary rounded text-white py-2.5 px-3 flex items-center gap-1'
+                    >
+                        <Plus size={18} /> New ticket
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>New ticket</DialogTitle>
+                            <DialogDescription>
+                                create a new ticket, an admin will contact you soon and help you with your problem
+                            </DialogDescription>
+                            <Input
+                                value={title}
+                                onChange={handleTitleChange}
+                                placeholder="Title"
+                            />
+                            <Select
+                                value={category}
+                                onValueChange={handleCategoryChange}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Problem with booking">Problem with booking</SelectItem>
+                                    <SelectItem value="Payment issue">Payment issue</SelectItem>
+                                    <SelectItem value="Cancellation request">Cancellation request</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Input
+                                value={description}
+                                onChange={handleDescriptionChange}
+                                placeholder="Description"
+                            />
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button
+                                onClick={async () => {
+                                    try {
+                                        await axiosClient.post('/problem/create', { title, category, description })
+                                        toast.success('ticket created successfully')
+                                    } catch (error) {
+                                        toast.error('someting went wrong')
+                                    }
+                                }}
+                            >Create</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
             <div className="grid gap-5">
                 {filteredReports.map(report => (
@@ -93,12 +150,13 @@ function USupport() {
                         <p className="mt-1 text-sm text-primary">{report.category}</p>
                         <p className='-mt-1'>Description: {report.description}</p>
                         <div className='mt-2 flex items-center justify-center'>
-                            <Link
-                                // to={'/' + report._id}
-                                className='text-sm flex items-center gap-0.5 hover:underline'
+                            <Button
+                                className='flex items-center gap-1'
+                                variant='ghost'
+                                onClick={() => { setActualTicket(report) }}
                             >
                                 view <Eye size={11} />
-                            </Link>
+                            </Button>
                         </div>
                     </div>
                 ))}
