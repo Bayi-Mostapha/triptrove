@@ -4,29 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function PropertyReviews() {
-    const dummyRatings = [
-        {
-            _id: 'ffff',
-            stars: 4,
-            content: 'nice, i guess',
-            author: {
-                fullName: 'Moha Moha',
-                image: '/img2.webp',
-            },
-            created_at: '2024-06-17T14:00:00.000Z'
-        },
-        {
-            _id: 'dddd',
-            stars: 3,
-            content: 'not that nice!',
-            author: {
-                fullName: 'hi hi',
-                image: '/img3.webp',
-            },
-            created_at: '2024-06-15T12:00:00.000Z'
-        },
-    ]
-
     const { id } = useParams();
     const [reviews, setReviews] = useState([]);
 
@@ -36,12 +13,10 @@ function PropertyReviews() {
         });
     }
     useEffect(() => {
-        // if (!id) {
-        //     return;
-        // }
-        // getReviews()
-
-        setReviews(dummyRatings)
+        if (!id) {
+            return;
+        }
+        getReviews()
     }, [id]);
 
     return (
