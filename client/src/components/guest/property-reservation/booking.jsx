@@ -15,7 +15,7 @@ import { axiosClient } from "@/api/axios";
 import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
 
 function Booking({ place, disabledDates, maxInfants, maxPets }) {
-    const { convert, selectedCurrency } = useContext(ExchangeRateContext)
+    const { convert, selectedCurrency } = useContext(ExchangeRateContext);
     // date range 
     const [date, setDate] = useState({
         from: startOfDay(new Date()),
@@ -25,6 +25,10 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
     const nNights = date.to ? differenceInDays(date.to, date.from) : 0;
 
     const isDateDisabled = (date) => {
+        if (!disabledDates || disabledDates.length === 0) {
+            return false;
+        }
+
         const today = startOfDay(new Date());
         return disabledDates.some(disabledDate =>
             startOfDay(new Date(disabledDate)).getTime() === date.getTime()

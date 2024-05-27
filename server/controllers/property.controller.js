@@ -9,7 +9,7 @@ export const getProperty = async (req, res) => {
     const propertyId = req.params.id;
     const property = await Property.findById(propertyId).populate(
       "owner",
-      "fullName image created_at"
+      "fullName image createdAt"
     );
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
