@@ -4,10 +4,15 @@ import {
   createProperty,
   updateProperty,
   deleteProperty,
+  getAllProperties,
 } from "../controllers/property.controller.js";
 import { verifyToken } from "../controllers/verifytoken.js";
+import { verifyTokenAdmin } from "../controllers/verifytokenadmin.js";
 
 const router = express.Router();
+
+// GET  all properties for the admin 
+router.get("/get", verifyTokenAdmin, getAllProperties);
 
 // GET a property by ID
 router.get("/:id", getProperty);

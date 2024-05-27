@@ -2,7 +2,7 @@ import Property from "../models/property.model.js";
 import Review from "../models/review.model.js";
 import Booking from "../models/booking.model.js";
 import moment from "moment";
-
+ 
 // Retrieve a property by ID
 export const getProperty = async (req, res) => {
   try {
@@ -133,6 +133,21 @@ export const deleteProperty = async (req, res) => {
     }
 
     res.json({ message: "Property deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to delete property", error: error.message });
+  }
+};
+
+// get all properties
+export const getAllProperties = async (req, res) => {
+  try {
+    const properties = await Property.find({}).populate('owner', '-password').populate({ path: 'rentalCount' });
+    res.status(200).json(properties.map(property => ({
+      ...property.toObject(),
+      createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
+    })));
   } catch (error) {
     res
       .status(500)

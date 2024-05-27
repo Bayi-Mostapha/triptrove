@@ -8,6 +8,7 @@ import { authContext } from "@/contexts/AuthWrapper";
     FilterX ,
     EllipsisVertical ,
     SquareArrowLeft, 
+    Trash2,
   } from 'lucide-react';
   import {
     DropdownMenu,
@@ -19,6 +20,16 @@ import { authContext } from "@/contexts/AuthWrapper";
     DropdownMenuTrigger,
     DropdownMenuItem,
   } from "@/components/ui/dropdown-menu";
+  import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogDescription,
+  } from "@/components/ui/dialog"
 import {
     Avatar,
     AvatarFallback,
@@ -42,10 +53,10 @@ export default function Properties() {
     const [properties, setproperties] = useState([]);
     const [filteredProperties, setFilteredProperties] = useState([]);
     const [selectedProperties, setSelectedProperties] = useState([]);
-    const [ actualTicket, setActualTicket] = useState(null);
+    const [ actualHost, setActualHost] = useState(null);
     const [ messages, setMessages] = useState([]);
     const [ filterComponents, setFilterComponents] = useState(false);
-
+    const [open, setOpen] = useState(false)
     const checkAll = () => {
         if (selectedProperties.length === filteredProperties.length) {
             setSelectedProperties([]);
@@ -62,10 +73,10 @@ export default function Properties() {
   
     const getAllProperties = async () => {
         try {
-            const response = await axiosClient.get('/admin/property/get-all');
+            const response = await axiosClient.get('/properties/get');
             setproperties(response.data);
             setFilteredProperties(response.data)
-             console.log(response.data)
+            console.log(response.data)
         } catch (error) {
             console.log(error)
             toast.error('something went wrong when getting properties');
@@ -88,7 +99,7 @@ export default function Properties() {
     };
 
     const handleDelete = (admins) =>{
-        if(deleteProblemHandle(admins)){
+        if(deletePropHandle(admins)){
             toast.success("tickets are deleted");
             fetchUsers();
         }else{
@@ -96,14 +107,7 @@ export default function Properties() {
         }
     }
  
-    const handleSetTicket = (id) => {
-        problems.forEach(pro => {
-            if(pro._id === id){
-                setActualTicket(pro);
-                setMessages(pro.messages);
-            }
-        });
-    }
+   
 
     const handleCheckboxChange = (propId) => {
         setSelectedProperties(prevSelectedProperties => {
@@ -115,20 +119,7 @@ export default function Properties() {
         });
     };
 
-    const closeTicket = async (id) => {
-        if(!id){
-            return;
-        }
-        try {
-            const response = await axiosClient.post(`/problem/${id}/close`);
-            getAllProblems();
-            setActualTicket(null)
-            toast.success("ticket closed successfully");
-        } catch (error) {
-            console.log(error)
-            toast.error('something went wrong when closing ticket');
-        }
-    }
+   
 
     const [ filter, setFilter ] = useState("filter by");
     const [date, setDate] = useState();
@@ -334,24 +325,30 @@ export default function Properties() {
     // useEffect(() => { 
         
     // },[filteredProperties]);
-    const filterByOwner = (id) =>{
-      const  filtered = properties.filter(property => property.owner._id === id);
-      setFilteredProperties(filtered);
-    }
+  
     const resetFilters = (id) =>{
         setFilterComponents(!filterComponents)
         setFilteredProperties(properties);
         setFilter("null");
         setSelectedCity('null');
-        setSelectedType("null")
-        setSelectedOwner("null")
+        setSelectedType("null");
+        setSelectedOwner("null");
         setDate(null);
+        setActualHost(null);
     }
+    
     useEffect(() => {
         filterProps();
     }, [filter, date, selectedCity, selectedType, selectedOwner]);
      
-
+    const handleSetHost = (property) => {
+        setActualHost(property.owner);
+        const newProperties = properties.filter((elem) => {
+            return elem.owner._id === property.owner._id;
+        });
+        setFilteredProperties(newProperties);
+        setFilterComponents(!filterComponents)
+    }
   return (
     <div className='flex flex-col w-full pt-16 pl-24 p-3 pr-5'>
        <div className="flex w-full items-center justify-between pt-12">
@@ -416,11 +413,44 @@ export default function Properties() {
                         </div>
                     </div>
                 }
+                <div className='flex items-center'>
+                 {  selectedProperties.length !== 0
+            && 
+            <div className='flex items-center justify-end  mr-3 '>
+                <button className='cursor-pointer flex gap-3 items-center bg-red-50 rounded py-[8px] px-5 text-[#ff2f2f] font-medium' onClick={()=>setOpen(true)}>
+                    delete
+                    <Trash2 color='#ff2f2f' size={20}/>
+                </button>
+                <Dialog open={open} onOpenChange={()=>{setOpen(false)}}>
+                            <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                <DialogTitle>Are You sure ? </DialogTitle>
+                                <DialogDescription>
+                                    Are you sure , you wanna delete those proprties 
+                                </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="sm:justify-start">
+                                <DialogClose asChild>
+                                    <div className='flex gap-4 w-full'>
+                                    <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
+                                                Close
+                                        </button> 
+                                        <button onClick={()=>{handleDelete(selectedProperties)}} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                                Confirm 
+                                            </button>
+                                    </div>
+                                </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                </Dialog>
+            </div>
+        }
+        
                     <div className='flex items-center '>
                     <div className='w-24 mr-3'>
                                             <DropdownMenu >
                                                 <DropdownMenuTrigger asChild >
-                                                    <div className='flex items-center gap-1 text-[#222222] rounded border-2 border-[#dbd9d9]  pl-4 lg:py-2 pr-0 '>
+                                                    <div className='flex items-center gap-1 text-[#222222] rounded border-2 border-[#dbd9d9]  pl-4 lg:py-[8px] pr-0 '>
                                                         <p className='text-sm'>filter by</p> 
                                                         <ChevronDown color='#222222' size={18}/>
                                                     </div>
@@ -448,6 +478,7 @@ export default function Properties() {
                                         }
                                     </div>
                     </div>
+                    </div>
                 </div>
                 
              
@@ -463,7 +494,7 @@ export default function Properties() {
                                                     id="checkbox-all" 
                                                     type="checkbox" 
                                                     className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300"
-                                                    checked={selectedProperties.length === filteredProperties.length && selectedProperties !== 0 }
+                                                    checked={selectedProperties.length === filteredProperties.length && selectedProperties.length !== 0 }
                                                     onChange={checkAll}
                                                 />
                                                 <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
@@ -518,7 +549,7 @@ export default function Properties() {
                                 </thead>
                                 <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
                                 {filteredProperties?.map(problem => (
-                                    <tr className="hover:bg-[#cfcce6] dark:hover:bg-gray-700   w-24 max-h-32 " key={problem._id}>
+                                    <tr className="hover:bg-[#f7f6f6]  w-24 max-h-32 " key={problem._id}>
                                         <td className="p-3 w-4">
                                             <div className="flex items-center">
                                                 <input
@@ -533,7 +564,7 @@ export default function Properties() {
                                         </td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{problem.title}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {problem.Type}</td>
-                                        <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.owner.firstName}</td>
+                                        <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.owner.fullName}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.city}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">20 </td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">4.9</td>
@@ -546,24 +577,20 @@ export default function Properties() {
                                             <EllipsisVertical />
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent className="w-42 bg-white">
+                                           {
+                                            actualHost == null &&
                                             <DropdownMenuItem className="p-0" >
-                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>handleSetTicket(problem._id)}>
-                                            view ticket
+                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>handleSetHost(problem)}>
+                                            view all properties of {problem.owner.fullName}
                                             </div>
                                             </DropdownMenuItem>
+                                           }
                                             <DropdownMenuItem className="p-0" >
-                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>filterProps(problem.owner._id)}>
-                                            view all properties of {problem.owner.firstName}
+                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={()=>handleDelete([problem._id])}>
+                                            delete property
                                             </div>
                                             </DropdownMenuItem>
-                                            {
-                                            problem.status === "open" && 
-                                            <DropdownMenuItem className="p-0"> 
-                                            <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer'  onClick={()=>{closeTicket(problem._id)}} >
-                                            close ticket
-                                            </div>
-                                            </DropdownMenuItem>
-                                            }
+            
                                             </DropdownMenuContent>
                                             </DropdownMenu>
                                         </td>

@@ -466,7 +466,7 @@ export default function Users() {
                                         checked={selectedUsers.length === filteredUsers.length && selectedUsers.length >= 1}
                                         onChange={checkAll} 
                                     />
-                                    <label for="checkbox-all" className="sr-only">checkbox</label>
+                                    <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
                                 </div>
                             </th>
                             <th className="py-3 px-6 text-sm font-small  text-gray-700">
@@ -520,7 +520,7 @@ export default function Users() {
                                     checked={selectedUsers.includes(user._id)} 
                                     onChange={() => handleCheckboxChange(user._id)} 
                                />
-                               <label for="checkbox-table-1" className="sr-only"></label>
+                               <label htmlFor="checkbox-table-1" className="sr-only"></label>
                            </div>
                        </td>
                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">

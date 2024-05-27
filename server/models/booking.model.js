@@ -7,7 +7,8 @@ const bookingSchema = mongoose.Schema(
             required: true
         },
         property: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Property",
             required: true
         },
         checkIn: {

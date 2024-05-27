@@ -81,11 +81,13 @@ export default function TopNav() {
   }, []);
 
   useEffect(() => {
-    setData({
-      firstName: userContext.user.firstName,
-      email: userContext.user.email
-    });
-    getAllNotifications();
+    if(userContext.isLoggedIn){
+      setData({
+        firstName: userContext.user.firstName,
+        email: userContext.user.email
+      });
+      getAllNotifications();
+    }
   }, [userContext.user]);
 
   useEffect(() => {
@@ -233,7 +235,7 @@ export default function TopNav() {
   const [notifications, setNotifications] = useState([]);
   const getAllNotifications = async () => {
     try {
-      const response = await axiosClient.get('/notification/admin');
+      const response = await axiosClient.get('/notification');
       setNotifications(response.data);
       console.log(response.data);
     } catch (error) {
@@ -243,7 +245,9 @@ export default function TopNav() {
   };
 
   useEffect(() => {
+    if(userContext.isLoggedIn){
     getAllNotifications();
+    }
     socket.emit('joinRoom', userContext.user._id);
     socket.on('notification', (notification) => {
       setNotifications((prevNotifications) => [...prevNotifications, notification.message]);

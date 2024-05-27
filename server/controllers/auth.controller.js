@@ -94,13 +94,13 @@ export const signin = async (request, response, next) => {
           service: "gmail", 
           host: "smtp.gmail.com", 
           auth: {
-            user: "", 
-            pass: "", 
+            user: "boumhaaziz@gmail.com", 
+            pass: "xnzeixxvtnlsrhmj", 
           },
         });
         
         await transporter.sendMail({
-          from: process.env.EMAIL_USER,
+          from: 'boumhaaziz@gmail.com',
           to: email,
           subject: 'Reset Password',
           text: `Your password reset code is: ${code}`,
@@ -108,7 +108,7 @@ export const signin = async (request, response, next) => {
         });
         res.status(200).json({ message: "Password reset code sent successfully" });
     } catch (error) {
-        next(error);
+        console.log("error psdss", error);
     }       
   };
 
