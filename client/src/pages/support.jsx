@@ -24,6 +24,7 @@ import {
 import { toast } from 'react-toastify';
 
 function USupport() {
+    const [open, setOpen] = useState(false)
     const [actualTicket, setActualTicket] = useState(null);
     const [problems, setProblems] = useState([]);
 
@@ -86,7 +87,7 @@ function USupport() {
                         onChange={e => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Dialog>
+                <Dialog onOpenChange={setOpen} open={open}>
                     <DialogTrigger
                         className='bg-primary rounded text-white py-2.5 px-3 flex items-center gap-1'
                     >
@@ -128,6 +129,11 @@ function USupport() {
                                     try {
                                         await axiosClient.post('/problem/create', { title, category, description })
                                         toast.success('ticket created successfully')
+                                        fetchData()
+                                        setCategory('')
+                                        setDescription('')
+                                        setTitle('')
+                                        setOpen(false)
                                     } catch (error) {
                                         toast.error('someting went wrong')
                                     }
