@@ -75,6 +75,7 @@ export const ADMIN_ADMINS_LINK = '/admin/admins';
 export const ADMIN_SUPPORT_LINK = '/admin/support';
 export const ADMIN_PROPERTIES_LINK = '/admin/properties';
 export const ADMIN_SETTINGS_LINK = '/admin/settings';
+export const ADMIN_REPORTS_LINK = '/admin/reports';
 
 
 
@@ -203,6 +204,14 @@ export const router = createBrowserRouter([
             {
                 path: ADMIN_SETTINGS_LINK,
                 element: <Settings />
+            },
+            {
+                path: ADMIN_REPORTS_LINK ,
+                element: <Reports />
+            },
+            {
+                path: '/admin/reports/:id',
+                element: <Reports />
             },
         ]
     },

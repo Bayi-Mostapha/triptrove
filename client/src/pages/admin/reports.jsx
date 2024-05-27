@@ -120,13 +120,16 @@ function Reports() {
         setPropertyReports(data2)
     }, [])
     return (
-        <div className="mt-5">
-            <h1 className="mb-5 text-2xl font-semibold">Reports</h1>
+        <div className="mt-5 px-5 pt-16 pl-24 p-3 pr-5">
+            
             <Tabs defaultValue="reviews" className="w-full">
-                <TabsList>
-                    <TabsTrigger value="reviews">Review reports</TabsTrigger>
-                    <TabsTrigger value="properties">Property reports</TabsTrigger>
-                </TabsList>
+                <div className="flex items-center justify-between">
+                    <h1 className="mb-5 text-3xl font-semibold text-[#141414]">Reports</h1>
+                    <TabsList>
+                        <TabsTrigger value="reviews">Review reports</TabsTrigger>
+                        <TabsTrigger value="properties">Property reports</TabsTrigger>
+                    </TabsList>
+                </div>
                 <TabsContent value="reviews">
                     <h2 className="mb-4 text-lg font-medium">Review reports</h2>
                     <MyTable columns={reportColumns} data={reviewReports} />

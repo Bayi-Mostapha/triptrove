@@ -6,7 +6,7 @@ import Message from '../models/message.model.js';
 export const createProblemReport = async (req, res) => { 
     try {
         const { title, category, description } = req.body;
-        const user = await User.findById("6639d3c6b0b40748184bed99");
+        const user = await User.findById(req.userId);
         const newProblemReport = await ProblemReport.create({ user, title, category, description});
         res.status(201).json({message : "problem send successfully"});
     } catch (error) {
@@ -19,11 +19,11 @@ export const createMessage = async (req, res) => {
         const { content, userType } = req.body; 
         const { problemId } = req.params;
         if(userType == "user"){
-            const sender = await User.findById("6639d3c6b0b40748184bed99");
+            const sender = await User.findById(req.userId);
             const newMessage = await Message.create({ problemReport: problemId, user: sender, senderRole: sender.role, content });
             await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
         }if(userType == "admin"){
-            const sender = await Admin.findById("664022272365c9a1c45cf2f7");
+            const sender = await Admin.findById(req.userId);
             const newMessage = await Message.create({ problemReport: problemId, admin: sender, senderRole: sender.role, content });
             await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
         }
@@ -57,6 +57,19 @@ export const closeTicket = async (req, res) => {
         res.status(201).json({ message: 'problem closed! ' });
     } catch (error) {
         console.error('Error fetching problems with messages:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+export const deleteTicket = async (req, res) => {
+    const { ProblemIds } = req.body; 
+    try {
+        for (const problemid of ProblemIds) {
+            await ProblemReport.findByIdAndDelete(problemid);
+        }
+
+        res.status(200).json({ message: 'tickets deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting tickets:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };

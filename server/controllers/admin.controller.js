@@ -104,7 +104,7 @@ export const changeAdminRole = async (req, res, next) => {
       user.role = "admin";
     }
     user.save();
-
+    // start notification
     const notification = new Notification({
       user_id: user._id,
       message: `${admin.fullName} changed your role to ${user.role}`,
@@ -116,7 +116,7 @@ export const changeAdminRole = async (req, res, next) => {
     io.to(user._id.toString()).emit('notification', {
       message: notification,
     });
-
+    // end notification
     res.status(200).json({ message: 'admin role updated successfulyy' });
   } catch (error) {
       console.error('Error updating admin role', error);

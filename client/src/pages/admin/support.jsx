@@ -52,10 +52,11 @@ export default function Support() {
     const userContext = useContext(authContext);
     const [message, setMessage] = useState(null);
     const [problems, setProblems] = useState([]);
+    const [ messages, setMessages] = useState([]);
+    const [ actualTicket, setActualTicket] = useState(null);
     const [filteredProblems, setFilteredProblems] = useState([]);
     const [selectedProblems, setSelectedProblems] = useState([]);
-    const [ actualTicket, setActualTicket] = useState(null);
-    const [ messages, setMessages] = useState([]);
+   
 
     const checkAll = () => {
         if (selectedProblems.length === filteredProblems.length) {
@@ -278,7 +279,7 @@ export default function Support() {
     const deleteProbHandle = async (ProblemIds) => {
         try {
             console.log(ProblemIds)
-            const response = await axiosClient.delete('/support', {
+            const response = await axiosClient.delete('/problem', {
                 data: { ProblemIds } 
             });
              return true;
@@ -290,7 +291,8 @@ export default function Support() {
         const isDeleted = await deleteProbHandle(tickets); 
         if (isDeleted) {
             toast.success("ticket is deleted");
-            fetchUsers(); 
+            getAllProblems(); 
+            setSelectedProblems([]);
         } else {
             toast.error('Error deleting ticket');
         }
@@ -405,7 +407,7 @@ export default function Support() {
                                                     id="checkbox-all" 
                                                     type="checkbox" 
                                                     className="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300"
-                                                    checked={selectedProblems.length === filteredProblems.length }
+                                                    checked={selectedProblems.length === filteredProblems.length && selectedProblems.length !== 0 }
                                                     onChange={checkAll}
                                                 />
                                                 <label htmlFor="checkbox-all" className="sr-only">checkbox</label>
@@ -413,7 +415,7 @@ export default function Support() {
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterTicketsByOrder("email")}> 
-                                                <p className='mr-2  '>reported By </p> 
+                                                <p className='mr-2  '>User </p> 
                                                 <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
@@ -460,7 +462,20 @@ export default function Support() {
                                                 <label htmlFor="checkbox-table-1" className="sr-only"></label>
                                             </div>
                                         </td>
-                                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{problem.user?.email}</td>
+                                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            <div className="flex items-center justify-start gap-1 ">
+                                                <div>
+                                                    <Avatar className="w-10 h-10 cursor-pointer">
+                                                        <AvatarImage src={problem.user?.image?.url} alt="@shadcn"  />
+                                                        <AvatarFallback className="bg-[#e0eb4c]">{problem.user?.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
+                                                    </Avatar>
+                                                </div>
+                                                <div>
+                                                    <p className='text-md'>{problem.user?.email}</p>
+                                                    <p className='text-xs text-gray-700'>{problem.user?.fullName}</p>
+                                                </div>
+                                            </div>
+                                            </td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {problem.category}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.title}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -515,7 +530,7 @@ export default function Support() {
                                     <button className="basis-1/2 border-black border-2 bg-white  rounded py-2">
                                                 Close
                                         </button> 
-                                        <button onClick={()=>{deleteProblemHandle([probDelete])}} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
+                                        <button onClick={()=>{deleteProblemHandle([probDelete]) }} className="basis-1/2 text-white bg-black rounded py-2 px-5 w-full">
                                                 Confirm 
                                             </button>
                                     </div>
@@ -541,7 +556,7 @@ export default function Support() {
             </div>
 :
     <div className='w-full pt-4'>
-        <div className='pb-2 c'>
+        <div className='pb-2 '>
            
         </div>
         <div className='flex flex-col rounded bg-[#faf8f8] w-full py-5 px-7 mb-4 min-h-screen relative'> 
@@ -571,7 +586,7 @@ export default function Support() {
               }
            </div>
             {
-                true &&
+                actualTicket.status == "open"  &&
                 <div className="w-full  p-3">
                     <div className='relative '>
                         <textarea  id="messageArea" onChange={(e)=>handleMessageChange(e)}  className="rounded w-full py-4 px-5 pr-24 outline-none border-[1px] border-gray-300 min-h-24" placeholder='answer ticket'></textarea>
