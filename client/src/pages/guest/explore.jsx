@@ -1,56 +1,45 @@
-// Explore.jsx
 import React, { useEffect, useState, useContext } from 'react';
-import { axiosClient } from '@/api/axios';
+import { axiosClient } from '@/api/axios'; // Using the pre-configured axios client
 import PropertyCard from '@/components/guest/PropertyCard';
 import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
+import { IoSearch } from "react-icons/io5";
 
 export default function Explore() {
     const { convert, selectedCurrency } = useContext(ExchangeRateContext);
     const [properties, setProperties] = useState([]);
-
-    // Dummy data for properties
-    const dummyProperties = [
-        {
-            _id: '1',
-            title: 'Luxurious Villa',
-            photos: ['/img1.webp'],
-            city: 'Marrakech',
-            streetAddress: 'Gueliz',
-            price: 250,
-            amenities: ['WiFi', 'Swimming Pool', 'Air Conditioning']
-        },
-        {
-            _id: '2',
-            title: 'Modern Apartment',
-            photos: ['/img2.webp'],
-            city: 'Casablanca',
-            streetAddress: 'Maarif',
-            price: 150,
-            amenities: ['WiFi', 'Gym', 'Parking']
-        },
-        // Add more dummy properties here
-    ];
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Fetch properties data
-        // async function fetchProperties() {
-        //     try {
-        //         const res = await axiosClient.get('/properties');
-        //         setProperties(res.data);
-        //     } catch (error) {
-        //         console.error('Failed to fetch properties');
-        //     }
-        // }
-        // fetchProperties();
+        const fetchProperties = async () => {
+            try {
+                const response = await axiosClient.get('/properties'); // Fetch properties using axiosClient
+                setProperties(response.data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        // Use dummy data for now
-        setProperties(dummyProperties);
+        fetchProperties();
     }, []);
 
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
     return (
-        <div className=''>
+        <div>
             <div className='search-bar flex gap-4 mt-8 mx-[150px] p-4 rounded-xl bg-[#F8F8F8]'>
-                <input type="text" className='p-[6px] rounded-md pl-4' placeholder='Marrakech, Morocco' />
+                <div className='flex rounded-md bg-white justify-center items-center pl-2'>
+                    <IoSearch className='text-xl text-[#464545]' />
+                    <input
+                        type="text"
+                        className='p-[6px] focus:outline-none pl-4'
+                        placeholder='Marrakech, Morocco'
+                    />
+                </div>
+                
                 <input type="date" className='p-[6px] rounded-md pl-4 text-[#4B4949]' placeholder='Check in' />
                 <input type="date" className='p-[6px] rounded-md pl-4 text-[#4B4949]' placeholder='Check out' />
                 <input type="text" className='w-[90px] rounded-md pl-4' placeholder='Guests' />

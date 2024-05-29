@@ -41,6 +41,20 @@ export const getProperty = async (req, res) => {
   }
 };
 
+// Retrieve all properties
+export const getAllProperties = async (req, res) => {
+  try {
+    const properties = await Property.find().populate(
+      "owner",
+      "fullName image"
+    );
+    res.json(properties);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 // Create a new property
 export const createProperty = async (req, res) => {
   const {

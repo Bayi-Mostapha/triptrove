@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getProperty,
+  getAllProperties,
   createProperty,
   updateProperty,
   deleteProperty,
@@ -8,6 +9,9 @@ import {
 import { verifyToken } from "../controllers/verifytoken.js";
 
 const router = express.Router();
+
+// GET all properties
+router.get("/", getAllProperties);
 
 // GET a property by ID
 router.get("/:id", getProperty);
