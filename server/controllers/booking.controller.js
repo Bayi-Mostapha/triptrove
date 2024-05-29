@@ -118,8 +118,8 @@ export const createBooking = async (req, res) => {
         const booking = await Booking.create([{
             guest,
             property: pid,
-            checkIn: new Date(checkIn),
-            checkOut: new Date(checkOut),
+            checkIn: new Date(parseInt(checkIn)),
+            checkOut: new Date(parseInt(checkOut)),
             totalPrice: totalPrice,
         }], { session });
 

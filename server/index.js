@@ -2,17 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
-<<<<<<< HEAD
-import Stripe from "stripe";
-import cors from "cors";
-
-import { handleSubscriptionDeleted } from "./controllers/payment.controller.js";
-import http from "http";
-import { Server } from "socket.io";
-=======
 import Stripe from 'stripe';
 import cors from "cors";
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import paymentRoutes from "./routes/payment.route.js";
@@ -26,16 +17,8 @@ import propertyReportsRoutes from "./routes/property_report.route.js";
 import reviewReportsRoutes from "./routes/review_report.route.js";
 import problemRoutes from "./routes/problem.route.js";
 import walletRoutes from "./routes/checkout.route.js";
-<<<<<<< HEAD
-import hostRoutes from "./routes/host-stats.route.js";
-// hakim
 import propertyRoutes from "./routes/property.route.js";
 import favoriteRoutes from "./routes/favorite-property.route.js";
-import { initSocket } from "./services/socket.js";
-=======
-import propertyRoutes from "./routes/property.route.js";
-import favoriteRoutes from "./routes/favorite-property.route.js";
-import notificationRoutes from "./routes/notification.route.js";
 import hostRoutes from "./routes/host-stats.route.js";
 import {
   handleSubscriptionDeleted,
@@ -43,15 +26,10 @@ import {
 import http from 'http';
 import { Server } from 'socket.io';
 import { initSocket } from './services/socket.js';
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6
 
 const app = express();
 const server = http.Server(app);
 const io = initSocket(server);
-<<<<<<< HEAD
-=======
-
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6
 
 app.use(express.json());
 app.use(
@@ -63,16 +41,6 @@ app.use(
   })
 );
 
-<<<<<<< HEAD
-mongoose
-  .connect(process.env.MONGODB_URL)
-  .then(() => {
-    console.log("connected to database successfully");
-    server.listen(process.env.PORT, () => {
-      console.log(`server is running on the port ${process.env.PORT}`);
-    });
-  })
-=======
 
 
 mongoose.connect(process.env.MONGODB_URL).then(() => {
@@ -82,51 +50,12 @@ mongoose.connect(process.env.MONGODB_URL).then(() => {
 
   });
 })
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6
   .catch((error) => {
     console.log(`something went wrong while connecting to databse : ${error}`);
   });
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-<<<<<<< HEAD
-
-app.use("/payment", paymentRoutes);
-app.use("/admin", adminRoutes);
-app.use("/problem", problemRoutes);
-app.use("/notification", notificationRoutes);
-// mostafa
-app.use("/book", bookingRoutes);
-app.use("/reviews", reviewRoutes);
-app.use("/review-reports", reviewReportsRoutes);
-app.use("/property-reports", propertyReportsRoutes);
-app.use("/wallet", walletRoutes);
-app.use("/host-stats", hostRoutes);
-// hakim
-app.use("/properties", propertyRoutes);
-app.use("/favorites", favoriteRoutes);
-
-const stripe = new Stripe(process.env.STRIPE_SECRET);
-const endpointSecret = process.env.ENDPOINT_SECRET;
-app.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  async (request, response) => {
-    let event = request.body;
-
-    if (endpointSecret) {
-      const signature = request.headers["stripe-signature"];
-      try {
-        event = stripe.webhooks.constructEvent(
-          request.body,
-          signature,
-          endpointSecret
-        );
-      } catch (err) {
-        console.log(`⚠️  Webhook signature verification failed.`, err.message);
-        return response.sendStatus(400);
-      }
-=======
 app.use('/payment', paymentRoutes);
 app.use('/admin', adminRoutes);
 app.use('/problem', problemRoutes);
@@ -161,35 +90,20 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (request, 
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed.`, err.message);
       return response.sendStatus(400);
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6
     }
 
-<<<<<<< HEAD
     // Handle the event
     switch (event.type) {
-      case "customer.subscription.deleted":
+      case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(event.data.object);
-        console.log("deleted");
+        console.log("deleted")
         break;
       default:
         // Unexpected event type
         console.log(`Unhandled event type ${event.type}.`);
     }
-
-    // Return a 200 response to acknowledge receipt of the event
-    response.send();
-=======
-  // Handle the event
-  switch (event.type) {
-    case 'customer.subscription.deleted':
-      await handleSubscriptionDeleted(event.data.object);
-      console.log("deleted")
-      break;
-    default:
-      // Unexpected event type
-      console.log(`Unhandled event type ${event.type}.`);
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6
   }
+}
 );
 
 app.post("/rent", (req, res) => {
@@ -200,8 +114,6 @@ app.post("/rent", (req, res) => {
   });
   res.status(200).send("House rented successfully");
 });
-<<<<<<< HEAD
-=======
 
 
 app.post('/rent', (req, res) => {
@@ -212,4 +124,3 @@ app.post('/rent', (req, res) => {
   });
   res.status(200).send('House rented successfully');
 });
->>>>>>> 6cd2bd9b7d259e42d03536acb67a402be1ae3fd6

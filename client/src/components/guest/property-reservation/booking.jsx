@@ -53,8 +53,8 @@ function Booking({ place, disabledDates, maxInfants, maxPets }) {
             toast.error('You have selected a disabled date within the range.');
         } else {
             const data = {
-                checkIn: addDays(date.from, 1),
-                checkOut: addDays(date.to, 1)
+                checkIn: date.from.setHours(14, 0, 0, 0),
+                checkOut: date.to.setHours(14, 0, 0, 0)
             };
 
             try {
