@@ -45,6 +45,7 @@ import HostBookings from '@/pages/host/bookings';
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
+import USupport from '@/pages/support';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -78,6 +79,7 @@ export const ADMIN_ADMINS_LINK = '/admin/admins';
 export const ADMIN_SUPPORT_LINK = '/admin/support';
 export const ADMIN_PROPERTIES_LINK = '/admin/properties';
 export const ADMIN_SETTINGS_LINK = '/admin/settings';
+export const ADMIN_REPORTS_LINK = '/admin/reports';
 
 
 
@@ -167,6 +169,11 @@ export const router = createBrowserRouter([
                 path: '/host/bookings',
                 element: <HostBookings limit={false} />
             },
+            // for both 
+            {
+                path: '/support',
+                element: <USupport />
+            },
             // for admin 
             {
                 path: '/reports/:id',
@@ -186,7 +193,7 @@ export const router = createBrowserRouter([
                 path: LISTINGS_LINK,
                 element: <AllListings />
             },
-          
+
 
         ]
     },
@@ -216,6 +223,14 @@ export const router = createBrowserRouter([
             {
                 path: ADMIN_SETTINGS_LINK,
                 element: <Settings />
+            },
+            {
+                path: ADMIN_REPORTS_LINK ,
+                element: <Reports />
+            },
+            {
+                path: '/admin/reports/:id',
+                element: <Reports />
             },
         ]
     },

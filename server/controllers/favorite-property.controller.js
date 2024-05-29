@@ -1,3 +1,4 @@
+import FavoriteProperty from '../models/favorite-property.model.js';
 import Favorite from '../models/favorite-property.model.js';
 
 export const getFavorites = async (req, res) => {
@@ -19,7 +20,7 @@ export const getFavorites = async (req, res) => {
 export const isFavorite = async (req, res) => {
     try {
         const propertyId = req.params.pid
-        const existsInFavorite = await FavoriteProperty.find({ property: propertyId, user: req.userId })
+        const existsInFavorite = await FavoriteProperty.findOne({ property: propertyId, user: req.userId })
         let isUserFavorite = false
         if (existsInFavorite) {
             isUserFavorite = true

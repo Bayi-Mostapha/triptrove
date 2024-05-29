@@ -83,7 +83,9 @@ function HostDashboard() {
     return (
         <div className="p-4">
             {loading ? (
-                <div className="h-40 flex justify-center items-center gap-1 text-primary text-xl">Loading data <FaChartArea /> ...</div>
+                <div className="h-40 flex justify-center items-center gap-1 text-primary text-xl">
+                    Loading data <FaChartArea /> ...
+                </div>
             ) : (
                 <>
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-5">

@@ -2,7 +2,9 @@ import Review from "../models/review.model.js";
 
 export const getReviews = async (req, res) => {
     try {
-        const reviews = await Review.find({ property: req.params.pid }).populate('author','fullName image');
+        const reviews = await Review
+            .find({ property: req.params.pid })
+            .populate('author', 'fullName image');
         res.json(reviews);
     } catch (err) {
         res.status(500).json({ message: err.message });

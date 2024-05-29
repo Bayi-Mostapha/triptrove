@@ -5,14 +5,6 @@ import { Eye, Trash } from 'lucide-react';
 import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
 import { Link } from "react-router-dom";
 
-const pros = [{
-    _id: 'sfr',
-    title: 'cozy cabin',
-    photos: ['/img1.webp'],
-    city: 'agadir',
-    streetAddress: 'sidi youssef',
-    price: 100
-}]
 function Favorites() {
     const { convert, selectedCurrency } = useContext(ExchangeRateContext)
     const [favorites, setFavorites] = useState([]);
@@ -27,8 +19,7 @@ function Favorites() {
     }
 
     useEffect(() => {
-        // getFavorites();
-        setFavorites(pros)
+        getFavorites();
     }, []);
 
     async function handleRemoveFavorite(id) {
@@ -64,7 +55,12 @@ function Favorites() {
                                 </button>
                             </div>
                             <p className='capitalize text-xs text-gray-600 pb-4 border-b'>{favorite.city}, {favorite.streetAddress}</p>
-                            <Link className="mt-2 mx-auto w-fit text-sm text-primary flex items-center gap-1">view <Eye size={14} /></Link>
+                            <Link
+                                to={'/property/' + favorite._id}
+                                className="mt-2 mx-auto w-fit text-sm text-primary flex items-center gap-1 hover:underline"
+                            >
+                                view <Eye size={14} />
+                            </Link>
                         </div>
                     </div>
                 ))}

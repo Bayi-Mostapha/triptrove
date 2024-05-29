@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 
 function ReviewHost({ review }) {
@@ -22,10 +23,15 @@ function ReviewHost({ review }) {
         setReason(event.target.value);
     };
 
-    function handleClick(id) {
-        // axiosClient.post('/review-reports/' + id, {
-        //     reason
-        // })
+    async function handleClick(id) {
+        try {
+            await axiosClient.post('/review-reports/' + id, {
+                reason
+            })
+            toast.success('reported')
+        } catch (error) {
+            toast.error('something went wrong')
+        }
     }
     return (
         <div className="p-3 border rounded-lg">
@@ -37,7 +43,7 @@ function ReviewHost({ review }) {
                     </Avatar>
                     <div>
                         <p className="font-medium capitalize">{review.author.fullName}</p>
-                        <p className="text-xs text-gray-600">{formatDistanceToNow(review.created_at)} ago</p>
+                        <p className="text-xs text-gray-600">{formatDistanceToNow(review.createdAt)} ago</p>
                     </div>
                 </div>
                 <Dialog>

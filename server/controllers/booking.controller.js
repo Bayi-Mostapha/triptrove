@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Booking from "../models/booking.model.js";
 import Property from "../models/property.model.js";
 import User from "../models/user.model.js";
@@ -29,8 +30,9 @@ export const getBookings = async (req, res) => {
         res.json(bookings);
     } catch (error) {
         res.status(500).json({ message: error.message });
+
     }
-};
+}
 
 export const cancelBooking = async (req, res) => {
     try {
@@ -74,6 +76,8 @@ export const createBookingSession = async (req, res) => {
         const nights = calculateNights(checkIn, checkOut);
         const property = await Property.findOne({ _id: pid });
 
+        const totalAmount = (property.price * nights) + property.cleaningFees;
+
         const stripe = new Stripe(process.env.MostaphaStripe);
         const frontend = process.env.FRONTEND_URL || 'http://localhost:5173'
         const session = await stripe.checkout.sessions.create({
@@ -85,11 +89,11 @@ export const createBookingSession = async (req, res) => {
                     product_data: {
                         name: property.title
                     },
-                    unit_amount: property.price * 100
+                    unit_amount: totalAmount * 100
                 },
-                quantity: nights
+                quantity: 1
             }],
-            success_url: frontend + `/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${property.price * nights}`,
+            success_url: frontend + `/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${totalAmount}`,
             cancel_url: frontend + '/booking-fail',
         })
         res.json({ url: session.url })

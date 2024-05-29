@@ -86,8 +86,19 @@ const propertySchema = mongoose.Schema(
   },
   {
     timestamps: true,
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+propertySchema.virtual('rentalCount', {
+  ref: 'Booking',
+  localField: '_id',
+  foreignField: 'property',
+  count: true
+});
 
 const Property = mongoose.model("Property", propertySchema);
 

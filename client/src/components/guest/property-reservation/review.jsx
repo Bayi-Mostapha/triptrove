@@ -12,7 +12,7 @@ function Review({ review }) {
                 </Avatar>
                 <div>
                     <p className="font-medium capitalize">{review.author.fullName}</p>
-                    <p className="text-xs text-gray-600">{formatDistanceToNow(review.created_at)} ago</p>
+                    <p className="text-xs text-gray-600">{formatDistanceToNow(review.createdAt)} ago</p>
                 </div>
             </div>
             <StarRating size={13} rating={review.stars} gap={0} />

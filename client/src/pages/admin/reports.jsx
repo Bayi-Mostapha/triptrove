@@ -4,80 +4,8 @@ import MyTable from "@/components/admin/table";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-const data = [
-    {
-        _id: "reviewReportId1",
-        review: {
-            _id: "reviewId1",
-            stars: 5,
-            content: "Great property!",
-            author: {
-                _id: "authorId1",
-                fullName: "John Doe",
-                image: "authorImageUrl",
-                email: "johndoe@example.com"
-            },
-            property: {
-                _id: "propertyId1",
-                title: "Beautiful Beach House",
-                owner: {
-                    fullName: "Alice Johnson",
-                }
-            },
-            createdAt: "2024-05-18T00:00:00.000Z",
-            updatedAt: "2024-05-18T00:00:00.000Z"
-        },
-        reason: "Inappropriate content",
-        createdAt: "2024-05-18T00:00:00.000Z",
-        updatedAt: "2024-05-18T00:00:00.000Z"
-    },
-    {
-        _id: "reviewReportId2",
-        review: {
-            _id: "reviewId2",
-            stars: 3,
-            content: "Average experience.",
-            author: {
-                _id: "authorId2",
-                fullName: "Jane Smith",
-                image: "authorImageUrl",
-                email: "janesmith@example.com"
-            },
-            property: {
-                _id: "propertyId2",
-                title: "Cozy Cabin",
-                owner: {
-                    fullName: "Mohammed Ali",
-                }
-            },
-            createdAt: "2024-05-17T00:00:00.000Z",
-            updatedAt: "2024-05-17T00:00:00.000Z"
-        },
-        reason: "Spam",
-        createdAt: "2024-05-17T00:00:00.000Z",
-        updatedAt: "2024-05-17T00:00:00.000Z"
-    }
-]
-const data2 = [
-    {
-        _id: "reviewReportId1",
-        property: {
-            _id: "propertyId2",
-            title: "Cozy Cabin",
-            owner: {
-                fullName: "Mohammed Ali",
-            }
-        },
-        reporter: {
-            fullName: "Khalid Zado",
-            email: "test@gmail.com"
-        },
-        reason: "Fake property",
-        createdAt: "2024-05-18T00:00:00.000Z",
-        updatedAt: "2024-05-18T00:00:00.000Z"
-    },
-]
+import { toast } from "react-toastify";
+import { axiosClient } from "@/api/axios";
 
 function Reports() {
     const [propertyReports, setPropertyReports] = useState([]);
@@ -88,45 +16,53 @@ function Reports() {
         if (!id) {
             return;
         }
-        if (id == 'all') {
-            axiosClient.get(`/review-reports`).then(response => {
-                setPropertyReports(response.data);
-            });
-        } else {
-            axiosClient.get(`/review-reports/${id}`).then(response => {
-                setPropertyReports(response.data);
-            });
+
+        try {
+            let response;
+            if (id === 'all') {
+                response = await axiosClient.get(`/property-reports`);
+            } else {
+                response = await axiosClient.get(`/property-reports/${id}`);
+            }
+            setPropertyReports(response.data);
+        } catch (error) {
+            console.error("Failed to fetch property reports:", error);
+            toast.error("Failed to fetch property reports. Please try again later.");
         }
     }
     async function getReviewReports() {
         if (!id) {
             return;
         }
-        if (id == 'all') {
-            axiosClient.get(`/property-reports`).then(response => {
-                setReviewReports(response.data);
-            });
-        } else {
-            axiosClient.get(`/property-reports/${id}`).then(response => {
-                setReviewReports(response.data);
-            });
+
+        try {
+            let response;
+            if (id === 'all') {
+                response = await axiosClient.get(`/review-reports`);
+            } else {
+                response = await axiosClient.get(`/review-reports/${id}`);
+            }
+            setReviewReports(response.data);
+        } catch (error) {
+            console.error("Failed to fetch review reports:", error);
+            toast.error("Failed to fetch review reports. Please try again later.");
         }
     }
     useEffect(() => {
-        // getPropertyReports()
-        // getReviewReports()
-
-        setReviewReports(data)
-        setPropertyReports(data2)
+        getPropertyReports()
+        getReviewReports()
     }, [])
     return (
-        <div className="mt-5">
-            <h1 className="mb-5 text-2xl font-semibold">Reports</h1>
+        <div className="mt-5 px-5 pt-16 pl-24 p-3 pr-5">
+            
             <Tabs defaultValue="reviews" className="w-full">
-                <TabsList>
-                    <TabsTrigger value="reviews">Review reports</TabsTrigger>
-                    <TabsTrigger value="properties">Property reports</TabsTrigger>
-                </TabsList>
+                <div className="flex items-center justify-between">
+                    <h1 className="mb-5 text-3xl font-semibold text-[#141414]">Reports</h1>
+                    <TabsList>
+                        <TabsTrigger value="reviews">Review reports</TabsTrigger>
+                        <TabsTrigger value="properties">Property reports</TabsTrigger>
+                    </TabsList>
+                </div>
                 <TabsContent value="reviews">
                     <h2 className="mb-4 text-lg font-medium">Review reports</h2>
                     <MyTable columns={reportColumns} data={reviewReports} />

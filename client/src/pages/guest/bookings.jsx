@@ -26,13 +26,13 @@ const dummybookings = [
 function Bookings() {
     const [bookings, setBookings] = useState([]);
 
-    // async function getBookings() {
-    //     const res = await axiosClient.get('/book')
-    //     setBookings(res.data)
-    // }
+    async function getBookings() {
+        const res = await axiosClient.get('/book')
+        console.log(res)
+        setBookings(res.data)
+    }
     useEffect(() => {
-        // getBookings()
-        setBookings(dummybookings);
+        getBookings()
     }, []);
 
     return (
