@@ -46,6 +46,7 @@ import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
 import USupport from '@/pages/support';
+import LandingPage from '@/pages/landing-page';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -225,7 +226,7 @@ export const router = createBrowserRouter([
                 element: <Settings />
             },
             {
-                path: ADMIN_REPORTS_LINK ,
+                path: ADMIN_REPORTS_LINK,
                 element: <Reports />
             },
             {
@@ -240,6 +241,10 @@ export const router = createBrowserRouter([
             {
                 path: HOME_LINK,
                 element: <Home />
+            },
+            {
+                path: '/',
+                element: <LandingPage />
             },
 
         ]
