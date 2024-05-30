@@ -8,6 +8,9 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import adminRoutes from "./routes/admin.route.js";
+import notificationRoutes from "./routes/notification.route.js";
+
+// mostafa
 import bookingRoutes from "./routes/booking.route.js";
 import reviewRoutes from "./routes/review.route.js";
 import propertyReportsRoutes from "./routes/property_report.route.js";
@@ -16,7 +19,6 @@ import problemRoutes from "./routes/problem.route.js";
 import walletRoutes from "./routes/checkout.route.js";
 import propertyRoutes from "./routes/property.route.js";
 import favoriteRoutes from "./routes/favorite-property.route.js";
-import notificationRoutes from "./routes/notification.route.js";
 import hostRoutes from "./routes/host-stats.route.js";
 import {
   handleSubscriptionDeleted,
@@ -28,7 +30,6 @@ import { initSocket } from './services/socket.js';
 const app = express();
 const server = http.Server(app);
 const io = initSocket(server);
-
 
 app.use(express.json());
 app.use(
@@ -90,21 +91,28 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (request, 
       console.log(`⚠️  Webhook signature verification failed.`, err.message);
       return response.sendStatus(400);
     }
-  }
 
-  // Handle the event
-  switch (event.type) {
-    case 'customer.subscription.deleted':
-      await handleSubscriptionDeleted(event.data.object);
-      console.log("deleted")
-      break;
-    default:
-      // Unexpected event type
-      console.log(`Unhandled event type ${event.type}.`);
+    // Handle the event
+    switch (event.type) {
+      case 'customer.subscription.deleted':
+        await handleSubscriptionDeleted(event.data.object);
+        console.log("deleted")
+        break;
+      default:
+        // Unexpected event type
+        console.log(`Unhandled event type ${event.type}.`);
+    }
   }
+}
+);
 
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
+app.post("/rent", (req, res) => {
+  const { guestName, houseId, hostId } = req.body;
+  console.log(`${guestName} rented house with ID: ${houseId}`);
+  io.to(hostId).emit("notification", {
+    message: `${guestName} has rented your house with ID: ${houseId}`,
+  });
+  res.status(200).send("House rented successfully");
 });
 
 

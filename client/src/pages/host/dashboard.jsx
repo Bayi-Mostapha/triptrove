@@ -1,6 +1,6 @@
 import { axiosClient } from "@/api/axios";
 import { Button } from "@/components/ui/button";
-import { CheckIcon, HandCoinsIcon, Home, Wallet } from "lucide-react";
+import { ArrowRight, CheckIcon, HandCoinsIcon, Home, Wallet } from "lucide-react";
 import { FaChartArea, FaCreditCard } from "react-icons/fa";
 import { TiDocumentText } from "react-icons/ti";
 import HostBookings from "./bookings";
@@ -23,6 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Link } from "react-router-dom";
 
 
 function HostDashboard() {
@@ -155,6 +156,9 @@ function HostDashboard() {
                         </div>
                     </div>
                     <HostBookings limit={true} />
+                    <Link to={'/host/bookings'} className='mt-3 mx-auto flex items-center gap-1 w-fit text-sm text-primary hover:underline'>
+                        view all <ArrowRight size={14} />
+                    </Link>
                 </>
             )}
         </div>

@@ -2,6 +2,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Eye } from 'lucide-react';
+import { MdOutlineBed } from "react-icons/md";
+import { BiBath } from "react-icons/bi";
+
 
 const PropertyCard = ({ property, convert, selectedCurrency }) => {
     return (
@@ -23,6 +26,11 @@ const PropertyCard = ({ property, convert, selectedCurrency }) => {
                     </Link>
                 </div>
                 <p className='capitalize text-xs text-gray-600 pb-4 border-b'>{property.city}, {property.streetAddress}</p>
+                <div className='mt-2 flex gap-4 items-center justify-center'>
+                    <h4 className="bathrooms text-xs text-[#000929] font-medium flex items-center gap-1"><MdOutlineBed  className='text-xl text-[#7065F0] '/>{property.beds} Beds</h4>
+                    <h4 className="bathrooms text-xs text-[#000929] font-medium flex items-center gap-1"><BiBath className='text-xl text-[#7065F0]' /> {property.bathrooms} Bathrooms</h4>
+                    
+                </div>
             </div>
         </div>
     );

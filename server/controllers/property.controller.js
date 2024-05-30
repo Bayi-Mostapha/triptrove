@@ -2,7 +2,7 @@ import Property from "../models/property.model.js";
 import Review from "../models/review.model.js";
 import Booking from "../models/booking.model.js";
 import moment from "moment";
- 
+
 // Retrieve a property by ID
 export const getProperty = async (req, res) => {
   try {
@@ -36,8 +36,89 @@ export const getProperty = async (req, res) => {
 
     res.json({ property, reviews, reservations });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const getProperties = async (req, res) => {
+  try {
+    const {
+      city,
+      checkInDate,
+      checkOutDate,
+      guests,
+      hasWifi,
+      hasPool,
+      hasTv,
+      hasWasher,
+      hasPark,
+      hasKitchen,
+      hasDesk,
+      allowsPets
+    } = req.query;
+
+    const query = {};
+
+    if (city) query.city = new RegExp(city, 'i');
+    if (guests) query.guests = { $gte: Number(guests) };
+
+    const amenities = { hasWifi, hasPool, hasTv, hasWasher, hasPark, hasKitchen, hasDesk, allowsPets };
+    Object.keys(amenities).forEach(key => {
+      if (amenities[key] !== undefined) {
+        query[key] = amenities[key] === 'true';
+      }
+    });
+
+    let properties = await Property.find(query);
+
+    if (checkInDate && checkOutDate) {
+      const checkIn = new Date(checkInDate);
+      const checkOut = new Date(checkOutDate);
+
+      checkIn.setHours(1, 0, 0, 0);
+      checkOut.setHours(0, 59, 59, 999);
+
+      const bookedProperties = await Booking.find({
+        $or: [
+          { checkIn: { $lt: checkOut }, checkOut: { $gt: checkIn } }
+        ]
+      }).distinct('property');
+
+      const bookedPropertyIds = bookedProperties.map(id => id.toString());
+      properties = properties.filter(property => !bookedPropertyIds.includes(property._id.toString()));
+    }
+
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get all properties
+export const getAllProperties = async (req, res) => {
+  try {
+    const properties = await Property.find({}).populate('owner', '-password').populate({ path: 'rentalCount' });
+    res.status(200).json(properties.map(property => ({
+      ...property.toObject(),
+      createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
+    })));
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to delete property", error: error.message });
+  }
+};
+
+// get all properties of a location
+export const getPropertyLocation = async (req, res) => {
+  try {
+    const city = req.params.city.toLowerCase();
+    const properties = await Property.find({ city });
+    res.status(200).json(properties);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve properties", error: error.message });
   }
 };
 

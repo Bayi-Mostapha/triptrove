@@ -20,17 +20,24 @@ const PlaceFeatures = ({ place }) => {
     ];
 
     return (
-        <div className="mt-2 grid grid-cols-5 gap-2">
-            {features.map(
-                (feature, index) =>
-                    feature.hasFeature && (
-                        <div key={index} className="p-2 flex flex-col justify-center gap-1 items-center border rounded-md">
-                            <feature.Icon className="w-7 h-7" />
-                            <span className='font-medium text-xs'>{feature.label}</span>
-                        </div>
-                    )
-            )}
-        </div>
+        <>
+            {
+                features.length > 0 ?
+                    <div className="mt-2 grid grid-cols-5 gap-2">
+                        {features.map(
+                            (feature, index) =>
+                                feature.hasFeature && (
+                                    <div key={index} className="p-2 flex flex-col justify-center gap-1 items-center border rounded-md">
+                                        <feature.Icon className="w-7 h-7 text-primary" />
+                                        <span className='font-medium text-xs'>{feature.label}</span>
+                                    </div>
+                                )
+                        )}
+                    </div>
+                    :
+                    <div className='mt-14 flex items-center justify-center font-medium'>This property has no sepecial amenities</div>
+            }
+        </>
     );
 };
 

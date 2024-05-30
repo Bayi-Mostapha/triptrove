@@ -1,71 +1,59 @@
-// AllListings.jsx
 import React, { useEffect, useState } from 'react';
 import { axiosClient } from '@/api/axios';
 import PropertyCard from '@/components/host/PropertyCard';
 import { Link } from 'react-router-dom';
-
-const dummyProperties = [
-    {
-        _id: '1',
-        title: 'Riad Loft N\'Joy',
-        photos: ['/img1.webp'],
-        city: 'Marrakech',
-        streetAddress: 'Gueliz',
-        price: 900,
-        beds: 4,
-        bathrooms: 2,
-        amenities: ['WiFi', 'Swimming Pool', 'Air Conditioning']
-    },
-    {
-        _id: '2',
-        title: 'Riad Loft N\'Joy',
-        photos: ['/img1.webp'],
-        city: 'Marrakech',
-        streetAddress: 'Gueliz',
-        price: 900,
-        beds: 4,
-        bathrooms: 2,
-        amenities: ['WiFi', 'Swimming Pool', 'Air Conditioning']
-    },
-    // Add more dummy properties here
-];
+import { IoSearch } from "react-icons/io5";
 
 function AllListings() {
     const [listings, setListings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Fetch listings data
-        // async function fetchListings() {
-        //     try {
-        //         const res = await axiosClient.get('/listings');
-        //         setListings(res.data);
-        //     } catch (error) {
-        //         console.error('Failed to fetch listings');
-        //     }
-        // }
-        // fetchListings();
+        const fetchProperties = async () => {
+            try {
+                const response = await axiosClient.get('/properties');
+                setListings(response.data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        // Use dummy data for now
-        setListings(dummyProperties);
+        fetchProperties();
     }, []);
 
     const handleRemoveListing = (id) => {
-        // Handle remove listing logic
         setListings(prevListings => prevListings.filter(listing => listing._id !== id));
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         <div className='p-8'>
             <div className='flex justify-between items-center mb-6'>
-                <h1 className='text-3xl font-semibold'>All Listings</h1>
+                <h1 className='text-3xl font-medium'>All Listings</h1>
                 <div className='flex items-center gap-4'>
+                
+                <div className='flex justify-center bg-[#F8F8F8] py-3 px-4 gap-2 items-center  rounded-full focus-within:border-transparent'>
+                    <IoSearch className='  text-xl text-[#464545]' />
                     <input
                         type='text'
-                        placeholder='Search property'
-                        className='p-2 border rounded-md'
+                        placeholder='search property'
+                        className='bg-[#F8F8F8] pl-1 focus:outline-none'
                     />
-                    <Link to='/host' className='bg-primary text-white px-4 py-2 rounded-md'>
-                        + Add a property
+                </div>
+
+                    <Link to='/host' className='bg-primary flex justify-cenetr items-center gap-2 text-white px-4 py-2 rounded-full'>
+                        <h1 className='text-2xl rounded-md'>+</h1> 
+                        <h1> Add a property</h1>
                     </Link>
                 </div>
             </div>
