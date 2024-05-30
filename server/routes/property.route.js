@@ -5,11 +5,15 @@ import {
   updateProperty,
   deleteProperty,
   getAllProperties,
+  deleteAdminProperties,
 } from "../controllers/property.controller.js";
 import { verifyToken } from "../controllers/verifytoken.js";
 import { verifyTokenAdmin } from "../controllers/verifytokenadmin.js";
 
 const router = express.Router();
+
+// DELETE a property by admin
+router.delete("/admin", verifyTokenAdmin, deleteAdminProperties);
 
 // GET  all properties for the admin 
 router.get("/get", verifyTokenAdmin, getAllProperties);
@@ -25,5 +29,7 @@ router.put("/:id", verifyToken, updateProperty);
 
 // DELETE a property by ID (requires authentication)
 router.delete("/:id", verifyToken, deleteProperty);
+
+
 
 export default router;

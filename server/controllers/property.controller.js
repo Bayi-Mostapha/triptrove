@@ -143,14 +143,40 @@ export const deleteProperty = async (req, res) => {
 // get all properties
 export const getAllProperties = async (req, res) => {
   try {
-    const properties = await Property.find({}).populate('owner', '-password').populate({ path: 'rentalCount' });
-    res.status(200).json(properties.map(property => ({
-      ...property.toObject(),
-      createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
-    })));
+    const properties = await Property.find({}).populate('owner', '-password').populate({ path: 'rentalCount' }).lean();
+
+    const propertiesWithRatings = await Promise.all(properties.map(async (property) => {
+      const reviews = await Review.find({ property: property._id });
+      const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
+      const reviewCount = reviews.length;
+      const rating = reviewCount > 0 ? (totalStars / reviewCount) : null;
+
+      return {
+        ...property,
+        rating,
+        createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
+      };
+    }));
+
+    res.status(200).json(propertiesWithRatings);
   } catch (error) {
     res
       .status(500)
       .json({ message: "Failed to delete property", error: error.message });
+  }
+};
+
+// delete properties for admin
+export const deleteAdminProperties = async (req, res) => {
+  const { Ids } = req.body; 
+  try {
+    for (const property of Ids) {
+        await Property.findByIdAndDelete(property);
+    }
+
+    res.status(200).json({ message: 'properties deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting properties:', error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 };

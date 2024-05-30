@@ -78,7 +78,7 @@ export const createBookingSession = async (req, res) => {
 
         const totalAmount = (property.price * nights) + property.cleaningFees;
 
-        const stripe = new Stripe(process.env.MostaphaStripe);
+        const stripe = new Stripe(process.env.STRIPE_SECRET);
         const frontend = process.env.FRONTEND_URL || 'http://localhost:5173'
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],

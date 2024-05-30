@@ -1,21 +1,18 @@
 import React, { PureComponent } from 'react';
 import { PieChart, Pie, Sector, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const data = [
-  { name: 'Free', value: 800 },
-  { name: 'Premium', value: 300 },
-  { name: 'Business', value: 300 }
-];
+
 const COLORS = ['#0088FE', '#FFBB28', '#FFBB28'];
 
-export default class Example extends PureComponent {
-  static demoUrl = 'https://codesandbox.io/s/pie-chart-with-padding-angle-7ux0o';
-
-  render() {
+export const Example1 = ({data01})=> {
+ 
+    if(data01 === null){
+      return <p>loadin</p>;
+    }
     return (
-      <PieChart width={200} height={200} onMouseEnter={this.onPieEnter}>
+      <PieChart width={200} height={200} >
         <Pie
-          data={data}
+          data={data01}
           cx="50%"
           cy="50%"
           innerRadius={60}
@@ -24,7 +21,7 @@ export default class Example extends PureComponent {
           paddingAngle={5}
           dataKey="value"
         >
-          {data.map((entry, index) => (
+          {data01.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
@@ -32,4 +29,4 @@ export default class Example extends PureComponent {
       </PieChart>
     );
   }
-}
+

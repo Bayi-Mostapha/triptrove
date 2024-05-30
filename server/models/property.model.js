@@ -86,8 +86,6 @@ const propertySchema = mongoose.Schema(
   },
   {
     timestamps: true,
-  },
-  {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
@@ -99,6 +97,9 @@ propertySchema.virtual('rentalCount', {
   foreignField: 'property',
   count: true
 });
+
+
+
 
 const Property = mongoose.model("Property", propertySchema);
 

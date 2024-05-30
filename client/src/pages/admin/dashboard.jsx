@@ -28,8 +28,8 @@ import {
     DropdownMenuTrigger,
     DropdownMenuItem,
   } from "@/components/ui/dropdown-menu";
-  import PieChart from "./pieChart";
-  import SubsChart from "./subscribersChart";
+  import {Example1} from "./pieChart";
+  import { Example } from "./subscribersChart";
   import ReserChart from "./reservationChart";
   import RevChart from "./revenueChart";
   import { addDays, format } from "date-fns"
@@ -42,31 +42,236 @@ import {
     PopoverTrigger,
   } from "@/components/ui/popover"
   import { authContext } from "../../contexts/AuthWrapper"
-  import io from 'socket.io-client';
-import { axiosClient } from '../../api/axios'; // Assuming you're using axios for API requests
-const socket = io('http://localhost:5555');
+
+import { axiosClient } from '../../api/axios'; 
+
 
 
 export default function Dashboard() {
-  const [date, setDate] = useState();
+  const today = new Date().toISOString().split('T')[0]; 
+
+  const [date, setDate] = useState({ from: today, to: today });
+  
   const [ filter1, setFilter1 ] = useState("lastw");
   const [ filter2, setFilter2 ] = useState("lastw");
   const [notifications, setNotifications] = useState([]);
   const userContext = useContext(authContext)
-  // useEffect(() => {
-  //   socket.emit('joinRoom', userContext.user._id); 
-  //   socket.on('notification', (notification) => {
-  //     setNotifications((prevNotifications) => [...prevNotifications, notification]);
-  //   });
-  //   return () => {
-  //     socket.off('notification');
-  //     socket.emit('leaveRoom', userContext.user._id);
-  //   };
-  // }, [userContext.user]);
 
-  // useEffect(() => {
-  //   console.log(notifications);
-  // }, [notifications]);
+
+  const [subsRevenue, setSubsRevenue] = useState([]);
+  const [feesRevenue, setFeesRevenue] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [data, setData] = useState(null);
+  
+  const [subscribers, setSubscribers] = useState(null);
+  const [tickets, setTickets] = useState([]);
+  const [reportP, setReportP] = useState([]);
+  const [reportR, setReportR] = useState([]);
+  const [reservations, setReservations] = useState([]);
+
+  const [filteredSubsRevenue, setFilteredSubsRevenue] = useState(0);
+  const [filteredSubscribers, setFilteredSubscribers] = useState([]);
+  const [filteredFeesRevenue, setFilteredFeesRevenue] = useState(0);
+  const [filteredProperties, setFilteredProperties] = useState(0);
+  const [filteredUsers, setFilteredUsers] = useState(0);
+  const [filteredTickets, setFilteredTickets] = useState(0);
+  const [filteredReportP, setFilteredReportP] = useState(0);
+  const [filteredReportR, setFilteredReportR] = useState(0);
+  const getSubsRevenue = async () => {
+    try {
+        const response = await axiosClient.get('/admin/get-dashboard-data');
+        setSubsRevenue(response.data.subscriptions);
+        setProperties(response.data.properties);
+        setUsers(response.data.users);
+        setTickets(response.data.tickets);
+        setReportP(response.data.reportsProp);
+        setReportR(response.data.reportsReview);
+        setReservations(response.data.reservations)
+        console.log('users in   ',response.data.reservations)
+        processUserRoles(response.data.users);
+        filterBookings("lastw")
+    } catch (error) {
+        console.log(error)
+        console.error('something went wrong when getting revenue data');
+    }
+};
+const processUserRoles = (users) => {
+  let hostCount = 0;
+  let guestCount = 0;
+  let freeCount = 0;
+  let premiumCount = 0;
+  let businessCount = 0;
+
+  
+
+  users.forEach(user => {
+    if (user.role === 'host') {
+      hostCount++;
+    } else if (user.role === 'guest') {
+      guestCount++;
+    }
+  });
+  console.log('users', users);
+  const updatedData = [
+    { name: 'host', value: hostCount },
+    { name: 'guest', value: guestCount },
+  ];
+  setData([...updatedData]);
+  
+  
+  users.forEach(subscription => {
+    switch (subscription.subscriptionType) { 
+      case 'free':
+        freeCount++;
+        break;
+      case 'premium':
+        premiumCount++;
+        break;
+      case 'business':
+        businessCount++;
+        break;
+      default:
+        break;
+    }
+  });
+
+let subscribersCount = [
+  { name: 'free', value: freeCount },
+  { name: 'premium', value: premiumCount },
+  { name: 'business', value: businessCount },
+];
+  setSubscribers([...subscribersCount]);
+};
+
+
+ useEffect(()=>{
+  getSubsRevenue();
+ },[])
+ useEffect(()=>{
+  console.log(data);
+ },[data])
+ const filterStats = () => {
+  const today = new Date(); 
+ 
+  if(date && date.from !== undefined  && date.to !== undefined){
+    let filtered = [];
+    filtered = properties.filter(problem => {
+        const joinDate = new Date(problem.createdAt);
+        const startDate = new Date(date.from);
+        const endDate = new Date(date.to);
+        return joinDate >= startDate && joinDate <= endDate ;
+    });
+    setFilteredProperties(filtered.length);
+
+
+    filtered = users.filter(problem => {
+      const joinDate = new Date(problem.createdAt);
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      return joinDate >= startDate && joinDate <= endDate ;
+    });
+    setFilteredUsers(filtered.length);
+
+    filtered = tickets.filter(problem => {
+      const joinDate = new Date(problem.createdAt);
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      return joinDate >= startDate && joinDate <= endDate ;
+    });
+    setFilteredTickets(filtered.length);
+
+    filtered = reportP.filter(problem => {
+      const joinDate = new Date(problem.createdAt);
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      return joinDate >= startDate && joinDate <= endDate ;
+    });
+    setFilteredReportP(filtered.length);
+
+    filtered = reportR.filter(problem => {
+      const joinDate = new Date(problem.createdAt);
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      return joinDate >= startDate && joinDate <= endDate ;
+    });
+    setFilteredReportR(filtered.length);
+
+    filtered = subsRevenue.filter(problem => {
+      const joinDate = new Date(problem.createdAt);
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      return joinDate >= startDate && joinDate <= endDate ;
+    });
+    setFilteredSubscribers(filtered)
+    const totalSubsRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
+    setFilteredSubsRevenue(totalSubsRevenue);
+    
+    // filtered = subsRevenue.filter(problem => {
+    //   const joinDate = new Date(problem.createdAt);
+    //   const startDate = new Date(date.from);
+    //   const endDate = new Date(date.to);
+    //   return joinDate >= startDate && joinDate <= endDate ;
+    // });
+    // setFilteredSubscribers(filtered)
+    // const totalFeesRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
+    // setFilteredFeesRevenue(totalFeesRevenue);
+    
+    
+  
+  }
+  
+ 
+}
+useEffect(()=>{
+  filterStats();
+ },[date])
+ const [ filteredReservations, setFilteredReservations] = useState([])
+
+ const filterBookings = (str) => {
+  const today = new Date(); 
+  let filtered = reservations.slice();
+  switch (str) {
+      case "lastw":
+          const startOfLastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+           filtered = filtered.filter(problem => {
+              const joinDate = new Date(problem.createdAt);
+              return joinDate >= startOfLastWeek && joinDate < today;
+          });
+          break;
+      case "lastm":
+          const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+          const endOfLastMonth = new Date(startOfLastMonth.getFullYear(), startOfLastMonth.getMonth() + 1 , 1);
+           filtered = filtered.filter(problem => {
+              const joinDate = new Date(problem.createdAt);
+              return joinDate >= startOfLastMonth && joinDate <= endOfLastMonth;
+          });
+         
+          break;
+      case "lasty":
+          const startOfLastYear = new Date(today.getFullYear()-1, today.getMonth() , 1);
+          const endOfLastYear = new Date(startOfLastYear.getFullYear(), startOfLastYear.getMonth() + 1 , 1);
+           filtered = filtered.filter(problem => {
+              const joinDate = new Date(problem.createdAt);
+              return joinDate >= startOfLastYear && joinDate <= endOfLastYear;
+          });
+         
+          break;
+      default:
+          break;
+  }
+  const result = {};
+  filtered.forEach(problem => {
+    const dateKey = problem.createdAt.split('T')[0]; // Get date without time
+    if (!result[dateKey]) {
+      result[dateKey] = { cancelled: 0, reserved: 0 };
+    }
+    result[dateKey][problem.status]++; // Increment count based on status
+  });
+
+  console.log("rrrrr  " ,result);
+  setFilteredReservations(filtered);
+}
   return (
     <div className='bg-[#f8f7ff79]  px-5 pt-16 pl-24 p-3 pr-5'>
       <div className='flex justify-between items-center pt-10 pb-8 px-5'>
@@ -123,7 +328,7 @@ export default function Dashboard() {
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-2xl font-medium  '>$455475</p>
+            <p className='text-2xl font-medium  '>{filteredSubsRevenue}</p>
             <p className='text-ld text-gray-200 font-small'>Revenue</p>
         </div>
       </div>
@@ -135,7 +340,7 @@ export default function Dashboard() {
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-3xl font-medium  '>12</p>
+            <p className='text-3xl font-medium  '>{filteredTickets}</p>
             <p className='text-ld text-gray-400 font-small'>Tickets</p>
         </div>
       </div>
@@ -146,7 +351,7 @@ export default function Dashboard() {
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-3xl font-medium  '>8</p>
+            <p className='text-3xl font-medium  '>{filteredReportP + filteredReportR}</p>
             <p className='text-ld text-gray-400 font-small'>Reports</p>
         </div>
       </div>
@@ -157,7 +362,7 @@ export default function Dashboard() {
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-3xl font-medium  '>5</p>
+            <p className='text-3xl font-medium  '>{filteredUsers}</p>
             <p className='text-ld text-gray-400 font-small'>New Users</p>
         </div>
       </div>
@@ -168,7 +373,7 @@ export default function Dashboard() {
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-3xl font-medium  '>5</p>
+            <p className='text-3xl font-medium  '>{filteredSubscribers}</p>
             <p className='text-ld text-gray-400 font-small'>New Subscribers</p>
         </div>
       </div>
@@ -179,12 +384,13 @@ export default function Dashboard() {
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-3xl font-medium  '>15</p>
+            <p className='text-3xl font-medium  '>{filteredProperties}</p>
             <p className='text-ld text-gray-400 font-small'>New Properties</p>
         </div>
       </div>
     </div>
     </div>
+    
     
   <div className='p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
   <div className='flex items-center justify-between py-3 px-3 pb-8'>
@@ -251,7 +457,8 @@ export default function Dashboard() {
         </div>
       <div className="flex items-center ">
         <div className='flex items-center justify-center basis-1/1 w-2/3 h-64 '>
-        <SubsChart />
+       <Example data01={data} />
+        
           </div>
           <div className='flex flex-col  gap-5'>
             <div className='flex items-center '> 
@@ -271,7 +478,7 @@ export default function Dashboard() {
   </div>
  <div className="flex items-center ">
   <div className='flex items-center justify-center basis-1/1 w-2/3 h-64 '>
-      <PieChart />
+      <Example1 data01={subscribers}/>
     </div>
     <div className='flex flex-col  gap-5'>
       <div className='flex items-center '> 

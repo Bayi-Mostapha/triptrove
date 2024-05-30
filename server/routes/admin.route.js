@@ -8,6 +8,7 @@ import
     deleteAdmin,
     changeAdminRole,
     updateAdmin,
+    getDashboard,
 }
 from "../controllers/admin.controller.js";
 import { verifyTokenAdmin  } from "../controllers/verifytokenadmin.js";
@@ -23,5 +24,6 @@ router.post("/create",verifyTokenAdmin, createAdmin);
 router.delete("/",verifyTokenAdmin, deleteAdmin);
 router.post("/upgrade-downgrade",verifyTokenAdmin, changeAdminRole);
 router.put("/",verifyTokenAdmin, updateAdmin);
+router.get("/get-dashboard-data",verifyTokenAdmin, getDashboard);
 
 export default router;

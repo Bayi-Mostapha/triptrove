@@ -47,6 +47,42 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+
+
+const MoroccanCities = [
+    'Casablanca',
+    'Rabat',
+    'Marrakech',
+    'Fes',
+    'Tangier',
+    'Agadir',
+    'Meknes',
+    'Oujda',
+    'Kenitra',
+    'Tetouan',
+    'Safi',
+    'Khouribga',
+    'Beni Mellal',
+    'Mohammedia',
+    'El Jadida',
+    'Nador',
+    'Khemisset',
+    'Settat',
+    'Larache',
+    'Ksar El Kebir',
+    'Guelmim',
+    'Ouarzazate',
+    'Al Hoceima',
+    'Taza',
+    'Errachidia',
+    'Berkane',
+    'Inezgane',
+    'Tiznit',
+    'Sidi Kacem',
+    'Taroudant'
+  ];
+
+  
 export default function Properties() {
     const userContext = useContext(authContext);
     const [message, setMessage] = useState(null);
@@ -89,7 +125,7 @@ export default function Properties() {
    
     const deletePropHandle = async (Ids) => {
         try {
-            const response = await axiosClient.delete('/propeties', {
+            const response = await axiosClient.delete('/properties/admin', {
                 data: { Ids } 
             });
             return true;
@@ -98,12 +134,15 @@ export default function Properties() {
         }
     };
 
-    const handleDelete = (admins) =>{
-        if(deletePropHandle(admins)){
-            toast.success("tickets are deleted");
-            fetchUsers();
+    const handleDelete = async (ids) =>{
+        console.log(ids)
+        const result = await deletePropHandle(ids);
+        if(result){
+            toast.success("propeties are deleted");
+            getAllProperties();
+            setSelectedProperties([]);
         }else{
-            toast.error('Error deleting tickets');
+            toast.error('Error deleting propeties');
         }
     }
  
@@ -129,6 +168,7 @@ export default function Properties() {
         createdAt: false,
         status: false,
         email: false,
+        rentalCount: false,
     });
    const [ selectedCity , setSelectedCity ] = useState("null");
    const [ selectedType , setSelectedType ] = useState("null");
@@ -144,19 +184,8 @@ export default function Properties() {
         const today = new Date(); 
         let filtered = properties.slice();
         switch (filter) {
-            case "custom":
-                if(date && date.from !== undefined  && date.to !== undefined){
-                     filtered = filtered.filter(problem => {
-                        const joinDate = new Date(problem.createdAt);
-                        const startDate = new Date(date.from);
-                        const endDate = new Date(date.to);
-                        return joinDate >= startDate && joinDate <= endDate ;
-                    });
-                   
-                }
-               
-                break;
             case "today":
+                setDate(null)
                 const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                 const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
                  filtered = filtered.filter(problem => {
@@ -166,6 +195,7 @@ export default function Properties() {
                
                 break;
             case "lastw":
+                setDate(null)
                 const startOfLastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
                  filtered = filtered.filter(problem => {
                     const joinDate = new Date(problem.createdAt);
@@ -174,6 +204,7 @@ export default function Properties() {
               
                 break;
             case "lastm":
+                setDate(null)
                 const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
                 const endOfLastMonth = new Date(startOfLastMonth.getFullYear(), startOfLastMonth.getMonth() + 1 , 1);
                  filtered = filtered.filter(problem => {
@@ -185,6 +216,14 @@ export default function Properties() {
             default:
                 break;
         }
+        if(date && date.from !== undefined  && date.to !== undefined){
+            filtered = filtered.filter(problem => {
+               const joinDate = new Date(problem.createdAt);
+               const startDate = new Date(date.from);
+               const endDate = new Date(date.to);
+               return joinDate >= startDate && joinDate <= endDate ;
+           });
+       }
         if (selectedCity !== "null") {
             filtered = filtered.filter(property => property.city.toLowerCase().includes(selectedCity.toLowerCase()));
         }
@@ -262,70 +301,37 @@ export default function Properties() {
             } else {
                 setOrder({ ...order, createdAt: false });
             }
+        }else if (str === "rentalCount") {
+            if (!order.rentalCount) {
+                setOrder({ ...order, rentalCount: true });
+                sortedProperties = filteredProperties.slice().sort((a, b) => {
+                    return b.rentalCount - a.rentalCount; 
+                });
+            } else {
+                setOrder({ ...order, rentalCount: false });
+                sortedProperties = filteredProperties.slice().sort((a, b) => {
+                    return a.rentalCount - b.rentalCount; 
+                });
+            }
+        }else if (str === "rating") {
+            if (!order.rating) {
+                setOrder({ ...order, rating: true });
+                sortedProperties = filteredProperties.slice().sort((a, b) => {
+                    return b.rating - a.rating; 
+                });
+            } else {
+                setOrder({ ...order, rating: false });
+                sortedProperties = filteredProperties.slice().sort((a, b) => {
+                    return a.rating - b.rating; 
+                });
+            }
         }
-
-        // else if (str === "nbrRents") {
-        //     if (!order.city) {
-        //         setOrder({ ...order, city: true });
-        //         sortedProperties = filteredProperties.slice().sort((a, b) => {
-        //             return b.city.localeCompare(a.city); 
-        //         });
-        //     } else {
-        //         setOrder({ ...order, city: false });
-        //         sortedProperties = filteredProperties.slice().sort((a, b) => {
-        //             return a.city.localeCompare(b.city); 
-        //         });
-        //     }
-        // }else if (str === "rating") {
-        //     if (!order.rating) {
-        //         setOrder({ ...order, rating: true });
-        //         sortedProperties = filteredProperties.slice().sort((a, b) => {
-        //             return b.rating.localeCompare(a.rating); 
-        //         });
-        //     } else {
-        //         setOrder({ ...order, rating: false });
-        //         sortedProperties = filteredProperties.slice().sort((a, b) => {
-        //             return a.rating.localeCompare(b.rating); 
-        //         });
-        //     }
-        // }
-
         setFilteredProperties(sortedProperties);
     };
 
-    // useEffect(()=>{
-    //     setDate(null);
-    //     filterProps();
-    //     if(filter === "custom"){
-           
-    //         if(selectedCity !== null){
-    //             const newsProperties = filteredProperties.filter(property => {
-    //                 return (property.city.toLowerCase().includes(selectedCity.toLowerCase()) );
-    //             });
-    //             setFilteredProperties(newsProperties);
-    //             return ;
-    //         }else{
-    //             setFilteredProperties(properties);
-    //         }
-    //     }
-    // },[filter]);
 
-    // useEffect(() => { 
-    //     filterProps();
-    //     if(selectedCity !== null){
-    //         filterBycity();
-    //     }
-    // },[date]);
-    // useEffect(() => { 
-    //     if(selectedCity !== null){
-    //         filterBycity();
-    //     }
-    //     setDate(null);
-    // },[selectedCity]);
-    // useEffect(() => { 
-        
-    // },[filteredProperties]);
-  
+
+    
     const resetFilters = (id) =>{
         setFilterComponents(!filterComponents)
         setFilteredProperties(properties);
@@ -349,6 +355,7 @@ export default function Properties() {
         setFilteredProperties(newProperties);
         setFilterComponents(!filterComponents)
     }
+    
   return (
     <div className='flex flex-col w-full pt-16 pl-24 p-3 pr-5'>
        <div className="flex w-full items-center justify-between pt-12">
@@ -398,14 +405,26 @@ export default function Properties() {
                     filterComponents && 
                     <div className='flex items-center justify-end gap-2'>
                         <div  className='mr-3'>
-                            <select name="city" id="" onChange={handleSelectChange} value={selectedCity} className='text-[#222222] rounded border-2 border-[#dbd9d9]   lg:py-2  '>
-                                <option value="null">choose city</option>
-                                <option value="agadir">agadir</option>
-                                <option value="casa">casa</option>
+                            <select
+                                onChange={handleSelectChange} 
+                                value={selectedCity} 
+                                name="city"
+                                className='h-10 w-full  max-w-xs rounded-md border border-[#D7E0ED] bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                            >
+                                <option value="null" disabled >Select a city</option>
+                                {MoroccanCities.map((city) => (
+                                <option key={city} value={city}>
+                                    {city}
+                                </option>
+                                ))}
                             </select>
                         </div>
                         <div  className='mr-3'>
-                            <select name="type" id="" onChange={handleTypeChange} value={selectedType} className='text-[#222222] rounded border-2 border-[#dbd9d9]   lg:py-2  '>
+                            <select 
+                             name="type" 
+                             onChange={handleTypeChange} 
+                             value={selectedType} 
+                             className='h-10 w-full  max-w-xs rounded-md border border-[#D7E0ED] bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
                                 <option value="null">choose a Type</option>
                                 <option value="villa">villa</option>
                                 <option value="appertement">appertement</option>
@@ -525,13 +544,13 @@ export default function Properties() {
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                            <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("status")}> 
+                                            <div className='flex items-center cursor-pointer justify-center' onClick={()=>filterPropertiesByOrder("rentalCount")}> 
                                                 <p className='mr-2 ' >rented times</p> 
                                                 <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
-                                            <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("status")}> 
+                                            <div className='flex items-center cursor-pointer justify-center' onClick={()=>filterPropertiesByOrder("rating")}> 
                                                 <p className='mr-2 ' >rating</p> 
                                                 <ArrowDownUp size={18} color='#000000' />
                                             </div>
@@ -566,8 +585,8 @@ export default function Properties() {
                                         <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {problem.Type}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.owner.fullName}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.city}</td>
-                                        <td className="py-3 px-6 text-sm font-medium text-gray-500  ">20 </td>
-                                        <td className="py-3 px-6 text-sm font-medium text-gray-500  ">4.9</td>
+                                        <td className="py-3 px-6 text-sm font-medium text-gray-500 text-center">{problem.rentalCount}</td>
+                                        <td className="py-3 px-6 text-sm font-medium text-gray-500 text-center">{problem.rating === 0 ? "__" : problem.rating}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{problem.createdAt}</td>
                                         <td 
                                             className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"

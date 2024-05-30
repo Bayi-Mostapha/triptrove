@@ -5,6 +5,14 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { getSocket } from '../services/socket.js';
 import Notification from "../models/notification.model.js"
+import Subscription from "../models/subscription.model.js"
+import ProblemReport from "../models/problem.model.js"
+import PropertyReport from "../models/property_report.model.js"
+import ReviewReport from "../models/review_report.model.js"
+import Property from "../models/property.model.js"
+import User from "../models/user.model.js"
+import Booking from "../models/booking.model.js"
+
 
 export const signin = async (request, response, next) => {
   const { email, password } = request.body;
@@ -162,3 +170,95 @@ export const updateAdmin = async (req, res, next) => {
       res.status(500).json({ message: 'Internal server error' });
   }
 }; 
+export const getDashboard = async (req, res, next) => {
+  try {
+    const subscriptions = await Subscription.find().select('price createdAt');
+    const tickets = await ProblemReport.find().select('createdAt');
+    const reportsProp = await PropertyReport.find().select('createdAt');
+    const reportsReview = await ReviewReport.find().select('createdAt');
+    const reservations = await Booking.aggregate([
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          status: 1
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          confirmed: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "paid"] }, 1, 0]
+            }
+          },
+          cancelled: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "canceled"] }, 1, 0]
+            }
+          }
+        }
+      },
+      {
+        $sort: { _id: 1 } // Sort by date
+      },{
+        $project: {
+          _id: 0,
+          name: "$_id",
+          confirmed: 1,
+          cancelled: 1
+        }
+      }
+    ]);
+
+  
+    const properties = await Property.find().select('createdAt');
+    let users = await User.find({}, { password: 0 }).select('firstName lastName email role createdAt image');
+
+    const formatDate = (date) => date ? date.toISOString().split('T')[0].replace(/-/g, '/') : 'N/A';
+
+    const formattedSubscriptions = subscriptions.map(subscription => ({
+      ...subscription.toObject(),
+      createdAt: formatDate(subscription.createdAt),
+    }));
+
+    const formattedTickets = tickets.map(ticket => ({
+      ...ticket.toObject(),
+      createdAt: formatDate(ticket.createdAt),
+    }));
+
+    const formattedReportsProp = reportsProp.map(report => ({
+      ...report.toObject(),
+      createdAt: formatDate(report.createdAt),
+    }));
+
+    const formattedReportsReview = reportsReview.map(report => ({
+      ...report.toObject(),
+      createdAt: formatDate(report.createdAt),
+    }));
+
+    const formattedProperties = properties.map(property => ({
+      ...property.toObject(),
+      createdAt: formatDate(property.createdAt),
+    }));
+
+    const formattedUsers = users.map(user => ({
+      ...user.toObject(),
+      createdAt: formatDate(user.createdAt),
+    }));
+
+    
+
+    res.status(200).json({
+      subscriptions: formattedSubscriptions,
+      tickets: formattedTickets,
+      reportsProp: formattedReportsProp,
+      reportsReview: formattedReportsReview,
+      properties: formattedProperties,
+      users: formattedUsers,
+      reservations: reservations,
+    });
+  } catch (error) {
+    console.error('Error getting dashboard data:', error);
+    res.status(500).json({ message: 'Error getting dashboard data' });
+  }
+};

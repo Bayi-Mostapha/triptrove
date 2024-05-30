@@ -50,17 +50,18 @@ export const createSubscription = async (req, res, next) => {
         // Save subscription details in your database
         const expirationDate = new Date();
         expirationDate.setMonth(expirationDate.getMonth() + 1);
-        const newSubscription = await Subscription.create({
-            userId: req.userId, // assuming you have access to the logged-in user's ID
-            subscriptionId: subscription.id,
-            customerId: customer.id,
-            subscriptionItemId: subscription.items.data[0].id,
-            expirationDate: expirationDate, 
-        });
+      
 
         // Optionally, update the user's subscriptionType in the User collection
         const subscriptionPlan = await SubscriptionPlan.findOne({ priceId });
-
+        const newSubscription = await Subscription.create({
+          userId: req.userId, // assuming you have access to the logged-in user's ID
+          subscriptionId: subscription.id,
+          customerId: customer.id,
+          subscriptionItemId: subscription.items.data[0].id,
+          expirationDate: expirationDate, 
+          price: subscriptionPlan.price
+        });
         // Update user's subscription type based on subscription plan title
         await User.findByIdAndUpdate(req.userId, { subscriptionType: subscriptionPlan.title });
 
