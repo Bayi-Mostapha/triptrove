@@ -47,6 +47,7 @@ import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
 import USupport from '@/pages/support';
 import LandingPage from '@/pages/landing-page';
+import GuestLayout2 from '@/layouts/GuestLayout2';
 
 // auth 
 export const LOGIN_LINK = '/signin';
@@ -242,6 +243,12 @@ export const router = createBrowserRouter([
                 path: HOME_LINK,
                 element: <Home />
             },
+
+        ]
+    },
+    {
+        element: <GuestLayout2 />,
+        children: [
             {
                 path: '/',
                 element: <LandingPage />
