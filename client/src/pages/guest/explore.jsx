@@ -55,11 +55,13 @@ export default function Explore() {
         fetchProperties();
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error)
+        return <div className='w-full h-96 flex items-center justify-center text-red-600 text-xl font-medium'>
+            Error: {error}
+        </div>;
 
     return (
-        <div>
+        <div className='p-4'>
             <div className='search-bar flex gap-4 mt-8 mx-[150px] p-4 rounded-xl bg-[#F8F8F8]'>
                 <div className='flex rounded-md bg-white justify-center items-center pl-2'>
                     <IoSearch className='text-xl text-[#464545]' />
@@ -114,17 +116,25 @@ export default function Explore() {
                     </button>
                 </div>
             </div >
-
-            <div className='properties grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
-                {properties.map(property => (
-                    <PropertyCard
-                        key={property._id}
-                        property={property}
-                        convert={convert}
-                        selectedCurrency={selectedCurrency}
-                    />
-                ))}
-            </div>
+            {
+                loading ?
+                    <div className='text-xl text-center font-medium mt-28 text-primary'>
+                        Loading...
+                    </div>
+                    :
+                    <>
+                        <div className='properties grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
+                            {properties.map(property => (
+                                <PropertyCard
+                                    key={property._id}
+                                    property={property}
+                                    convert={convert}
+                                    selectedCurrency={selectedCurrency}
+                                />
+                            ))}
+                        </div>
+                    </>
+            }
         </div >
     );
 }
