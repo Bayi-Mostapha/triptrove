@@ -5,7 +5,8 @@ import {
   updateProperty,
   deleteProperty,
   getAllProperties,
-  getProperties
+  getProperties,
+  getPropertyLocation
 } from "../controllers/property.controller.js";
 import { verifyToken } from "../controllers/verifytoken.js";
 import { verifyTokenAdmin } from "../controllers/verifytokenadmin.js";
@@ -19,6 +20,8 @@ router.get("/get", verifyTokenAdmin, getAllProperties);
 
 // GET a property by ID
 router.get("/:id", getProperty);
+
+router.get("/location/:city", getPropertyLocation);
 
 // POST a new property (requires authentication)
 router.post("/", verifyToken, createProperty);

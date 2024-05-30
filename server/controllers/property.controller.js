@@ -109,6 +109,19 @@ export const getAllProperties = async (req, res) => {
   }
 };
 
+// get all properties of a location
+export const getPropertyLocation = async (req, res) => {
+  try {
+    const city = req.params.city.toLowerCase();
+    const properties = await Property.find({ city });
+    res.status(200).json(properties);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve properties", error: error.message });
+  }
+};
+
 // Create a new property
 export const createProperty = async (req, res) => {
   const {

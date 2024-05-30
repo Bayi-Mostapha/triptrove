@@ -5,9 +5,9 @@ import 'leaflet/dist/leaflet.css';
 
 const customMarkerIcon = new L.Icon({
     iconUrl: '/assets/marker.svg',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+    iconSize: [60, 60],
+    iconAnchor: [30, 60],
+    popupAnchor: [0, -60],
 });
 
 const MapContainer = ({ location }) => {
