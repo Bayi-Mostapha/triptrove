@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 function Footer() {
     return (
-        <div className="w-full mt-6 border-t">
+        <div className="w-full mt-14 border-t">
             <footer className="mx-auto py-5 px-4 w-full max-w-6xl flex justify-between">
                 <div>
                     <img src='/assets/logo.svg' alt="TripTrove" />
