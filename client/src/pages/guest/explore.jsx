@@ -123,16 +123,21 @@ export default function Explore() {
                     </div>
                     :
                     <>
-                        <div className='properties grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
-                            {properties.map(property => (
-                                <PropertyCard
-                                    key={property._id}
-                                    property={property}
-                                    convert={convert}
-                                    selectedCurrency={selectedCurrency}
-                                />
-                            ))}
-                        </div>
+                        {
+                            properties.length > 0 ?
+                                <div className='properties grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
+                                    {properties.map(property => (
+                                        <PropertyCard
+                                            key={property._id}
+                                            property={property}
+                                            convert={convert}
+                                            selectedCurrency={selectedCurrency}
+                                        />
+                                    ))}
+                                </div>
+                                :
+                                <div className='mt-14 flex items-center justify-center font-medium'>No properties found</div>
+                        }
                     </>
             }
         </div >

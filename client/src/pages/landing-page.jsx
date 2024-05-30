@@ -171,14 +171,19 @@ function LandingPage() {
                     <Button>Browse more properties</Button>
                 </div>
                 <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
-                    {properties.splice(0, 6).map(property => (
-                        <PropertyCard
-                            key={property._id}
-                            property={property}
-                            convert={convert}
-                            selectedCurrency={selectedCurrency}
-                        />
-                    ))}
+                    {properties.length > 0
+                        ?
+                        properties.splice(0, 6).map(property => (
+                            <PropertyCard
+                                key={property._id}
+                                property={property}
+                                convert={convert}
+                                selectedCurrency={selectedCurrency}
+                            />
+                        ))
+                        :
+                        <div className='flex items-center justify-center font-medium'>No properties found at your location</div>
+                    }
                 </div>
             </section>
         </div>
