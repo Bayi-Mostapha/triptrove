@@ -4,6 +4,7 @@ import { axiosClient } from '@/api/axios';
 import PropertyCard from '@/components/guest/PropertyCard';
 import { ExchangeRateContext } from "@/contexts/exchangeRatesWrapper";
 import { IoSearch } from "react-icons/io5";
+import { Minus, Plus } from 'lucide-react';
 
 export default function Explore() {
     const { convert, selectedCurrency } = useContext(ExchangeRateContext);
@@ -14,7 +15,7 @@ export default function Explore() {
         city: '',
         checkInDate: '',
         checkOutDate: '',
-        guests: '',
+        guests: 0,
         hasWifi: false,
         hasPool: false,
         hasTv: false,
@@ -74,9 +75,8 @@ export default function Explore() {
 
                 <input type="date" name="checkInDate" className='p-[6px] rounded-md pl-4 text-[#4B4949]' value={filters.checkInDate} onChange={handleFilterChange} placeholder='Check in' />
                 <input type="date" name="checkOutDate" className='p-[6px] rounded-md pl-4 text-[#4B4949]' value={filters.checkOutDate} onChange={handleFilterChange} placeholder='Check out' />
-                <input type="number" name="guests" className='w-[90px] rounded-md pl-4' value={filters.guests} onChange={handleFilterChange} placeholder='Guests' />
 
-                <button className='bg-[#7065F0] px-8 text-white rounded-md' onClick={handleSearch}>Search</button>
+                <button className='bg-[#7065F0] px-8 text-white rounded-md block ml-auto' onClick={handleSearch}>Search</button>
             </div>
 
             <div className='filter-bar flex gap-4 mt-4 mx-[150px] p-4 rounded-xl bg-[#F8F8F8]'>
@@ -87,11 +87,33 @@ export default function Explore() {
                             name={amenity}
                             checked={filters[amenity]}
                             onChange={handleFilterChange}
+                            className='accent-primary'
                         />
                         <label htmlFor={amenity} className='ml-2'>{amenity.replace('has', '').replace(/([A-Z])/g, ' $1').trim()}</label>
                     </div>
                 ))}
-            </div>
+                <div className="ml-auto flex items-center gap-2">
+                    Guests:
+                    <button
+                        onClick={() => {
+                            setFilters(prev => ({ ...prev, guests: Math.max(0, prev.guests - 1) }));
+                        }}
+                        disabled={filters.guests <= 0}
+                        className="group w-8 h-8 flex justify-center items-center border border-gray-300 rounded-full text-lg hover:bg-gray-200 disabled:border-gray-300 disabled:cursor-not-allowed transition-all"
+                    >
+                        <Minus className="stroke-gray-500 group-disabled:stroke-gray-300" size='14px' />
+                    </button>
+                    <div>{filters.guests}</div>
+                    <button
+                        onClick={() => {
+                            setFilters(prev => ({ ...prev, guests: prev.guests + 1 }));
+                        }}
+                        className="group w-8 h-8 flex justify-center items-center border border-gray-300 rounded-full text-lg hover:bg-gray-200 disabled:border-gray-300 disabled:cursor-not-allowed transition-all"
+                    >
+                        <Plus className="stroke-gray-500 group-disabled:stroke-gray-300" size='14px' />
+                    </button>
+                </div>
+            </div >
 
             <div className='properties grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4'>
                 {properties.map(property => (
@@ -103,6 +125,6 @@ export default function Explore() {
                     />
                 ))}
             </div>
-        </div>
+        </div >
     );
 }
