@@ -15,7 +15,7 @@ export default function Explore() {
         city: '',
         checkInDate: '',
         checkOutDate: '',
-        guests: 0,
+        guests: 1,
         hasWifi: false,
         hasPool: false,
         hasTv: false,
@@ -100,7 +100,7 @@ export default function Explore() {
                         onClick={() => {
                             setFilters(prev => ({ ...prev, guests: Math.max(0, prev.guests - 1) }));
                         }}
-                        disabled={filters.guests <= 0}
+                        disabled={filters.guests <= 1}
                         className="group w-8 h-8 flex justify-center items-center border border-gray-300 rounded-full text-lg hover:bg-gray-200 disabled:border-gray-300 disabled:cursor-not-allowed transition-all"
                     >
                         <Minus className="stroke-gray-500 group-disabled:stroke-gray-300" size='14px' />
