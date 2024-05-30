@@ -16,8 +16,8 @@ function LandingPage() {
     return (
         <div>
             <section className='overflow-hidden h-screen relative bg-[#F7F7FD]'>
-                <div className='pt-16 pl-32'>
-                    <h1 className='text-4xl font-semibold w-96'>
+                <div className='pt-16 pl-36'>
+                    <h1 className='text-4xl font-semibold w-[450px]'>
                         Unlock effortless renting for your property with us
                     </h1>
                     <p className='mt-5 w-96 text-sm'>A great platform to rent your properties without any complications.</p>
@@ -36,8 +36,8 @@ function LandingPage() {
                 </div>
 
                 <img src={s1bg} alt="background map" className="absolute top-0 -right-14 w-1/2 h-full object-contain" />
-                <img src={s1i1} alt="property" className="absolute top-16 right-80 w-64" />
-                <img src={s1i2} alt="property" className="absolute top-80 right-5 w-44" />
+                <img src={s1i1} alt="property" className="absolute top-16 right-96 w-64" />
+                <img src={s1i2} alt="property" className="absolute top-80 right-10 w-44" />
             </section>
             <section className='mt-24'>
                 <h1 className='text-2xl font-semibold w-72 mx-auto text-center'>

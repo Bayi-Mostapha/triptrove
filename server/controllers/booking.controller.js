@@ -4,6 +4,7 @@ import Property from "../models/property.model.js";
 import User from "../models/user.model.js";
 import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
+import Fee from "../models/fee.model.js";
 
 export const getHostBookings = async (req, res) => {
     const userId = req.userId;
@@ -147,9 +148,7 @@ export const createBooking = async (req, res) => {
                     return totalPrice * 0.90;
             }
         };
-
         const hostEarnings = getHostEarnings(host.subscriptionType);
-
         if (hostWallet) {
             hostWallet.balance += hostEarnings;
             await hostWallet.save({ session });
@@ -159,6 +158,20 @@ export const createBooking = async (req, res) => {
                 balance: hostEarnings,
             }], { session });
         }
+
+        const getOurEarnings = (subscriptionType) => {
+            switch (subscriptionType) {
+                case 'premium':
+                    return totalPrice * 0.05;
+                case 'business':
+                    return 0;
+                case 'free':
+                default:
+                    return totalPrice * 0.10;
+            }
+        };
+        const ourEarnings = getOurEarnings(host.subscriptionType);
+        await Fee.create({ amount: ourEarnings }, { session });
 
         await session.commitTransaction();
         session.endSession();
