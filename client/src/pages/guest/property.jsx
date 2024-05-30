@@ -223,7 +223,7 @@ function Property() {
             <PlaceFeatures place={place} />
             <div>
                 <h2 className=" text-center mt-6 mb-2 font-medium text-xl">Location</h2>
-                <MapContainer location={[30.296117, -9.462425]} />
+                <MapContainer location={place.city + ' , ' + place.streetAddress} />
             </div>
             <div className="mt-8 flex flex-col items-center">
                 <h2 className="font-medium text-xl">Overall rating</h2>
