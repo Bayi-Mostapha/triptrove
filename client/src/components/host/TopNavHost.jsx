@@ -285,7 +285,10 @@ export default function TopNav() {
                   <img src="/assets/logo.svg" alt="" className='w-full' />
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
-                  <li className='mr-5 text-[#222222] cursor-pointer'>
+                  
+
+                  {  userContext.user.role !== "host" ?
+                    <><li className='mr-5 text-[#222222] cursor-pointer'>
                     <Link to="/explore">Explore</Link>
                   </li>
                   <li className='mr-5 text-[#222222] cursor-pointer'>
@@ -293,7 +296,11 @@ export default function TopNav() {
                   </li>
                   <li className='mr-5 text-[#222222] cursor-pointer'>
                     <Link to="/host/dashboard">Dashboard</Link>
-                  </li>
+                  </li></>
+                  :
+                 <> <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
+                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/listings">Listing</Link></li>
+                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Reservations</Link></li></>}
                 </ul>
               </div>
               <div className=' basis-1/3 lg:basis-1/2 flex items-center justify-end'>

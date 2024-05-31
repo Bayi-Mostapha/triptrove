@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import TopNav from "../components/guest/TopNav"
+import TopNav from "../components/host/TopNavHost"
 import Footer from "@/components/footer";
 function GuestLayout() {
     return (
