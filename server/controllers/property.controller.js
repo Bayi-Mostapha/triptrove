@@ -95,6 +95,26 @@ export const getProperties = async (req, res) => {
   }
 };
 
+export const getPropertyHost = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is missing" });
+    }
+
+    const properties = await Property.find({ owner: userId });
+    if (!properties.length) {
+      return res.status(404).json({ message: "No properties found" });
+    }
+    res.status(200).json(properties);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Failed to retrieve properties",
+      error: error.message
+    });
+  }
+};
 
 // get all properties of a location
 export const getPropertyLocation = async (req, res) => {
@@ -236,16 +256,16 @@ export const getAllProperties = async (req, res) => {
 
 // delete properties for admin
 export const deleteAdminProperties = async (req, res) => {
-  const { Ids } = req.body; 
+  const { Ids } = req.body;
   try {
     for (const property of Ids) {
-        await Property.findByIdAndDelete(property);
+      await Property.findByIdAndDelete(property);
     }
 
     res.status(200).json({ message: 'properties deleted successfully' });
   } catch (error) {
-      console.error('Error deleting properties:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error('Error deleting properties:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -253,7 +273,7 @@ export const uploadImages = async (req, res) => {
   try {
     const files = req.files;
     const propertyId = req.params.id;
-   
+
 
     let uploadedImages = [];
     for (const file of files) {
@@ -265,13 +285,13 @@ export const uploadImages = async (req, res) => {
     console.log(uploadedImages)
     const property = await Property.findByIdAndUpdate(
       propertyId,
-      { photos: uploadedImages  },
+      { photos: uploadedImages },
       { new: true }
     );
 
     res.status(200).json({ message: "Images uploaded successfully", property });
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }  
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };

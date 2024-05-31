@@ -56,7 +56,6 @@ export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
 export const HOME_LINK = '/home';
 export const EXPLORE_LINK = '/explore';
-
 export const HOST_LINK = '/host';
 export const LISTINGS_LINK = '/listings';
 
@@ -83,10 +82,7 @@ export const ADMIN_PROPERTIES_LINK = '/admin/properties';
 export const ADMIN_SETTINGS_LINK = '/admin/settings';
 export const ADMIN_REPORTS_LINK = '/admin/reports';
 
-
-
-
-
+// router
 export const router = createBrowserRouter([
     {
         element: <GuestRoute><AuthLayout /></GuestRoute>,
@@ -154,18 +150,6 @@ export const router = createBrowserRouter([
                 element: <Favorites />
             },
             {
-                path: REVIEWS,
-                element: <PropertyReviews />
-            },
-            {
-                path: '/host/dashboard',
-                element: <HostDashboard />
-            },
-            {
-                path: '/host/bookings',
-                element: <HostBookings limit={false} />
-            },
-            {
                 path: '/support',
                 element: <USupport />
             },
@@ -181,6 +165,18 @@ export const router = createBrowserRouter([
             {
                 path: LISTINGS_LINK,
                 element: <AllListings />
+            },
+            {
+                path: REVIEWS,
+                element: <PropertyReviews />
+            },
+            {
+                path: '/host/dashboard',
+                element: <HostDashboard />
+            },
+            {
+                path: '/host/bookings',
+                element: <HostBookings limit={false} />
             },
         ]
     },
@@ -219,20 +215,6 @@ export const router = createBrowserRouter([
                 path: '/admin/reports/:id',
                 element: <Reports />
             },
-        ]
-    },
-    {
-        element: <GuestLayout />,
-        children: [
-            {
-                path: HOME_LINK,
-                element: <Home />
-            },
-            {
-                path: '/support',
-                element: <USupport />
-            },
-
         ]
     },
     {

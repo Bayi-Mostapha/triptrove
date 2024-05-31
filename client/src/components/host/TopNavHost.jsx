@@ -76,7 +76,7 @@ export default function TopNav() {
   useEffect(() => {
     if (window.location.pathname === "/home") {
       userContext.getUser();
-    }  
+    }
 
   }, []);
 
@@ -285,28 +285,25 @@ export default function TopNav() {
                   <img src="/assets/logo.svg" alt="" className='w-full' />
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
-                  
-
-                  {  userContext.user.role === "host" ?
+                  {userContext.user.role === "host" ?
                     <><li className='mr-5 text-[#222222] cursor-pointer'>
-                    <Link to="/explore">Explore</Link>
-                  </li>
-                  <li className='mr-5 text-[#222222] cursor-pointer'>
-                    <Link to="/listings">Listings</Link>
-                  </li>
-                  <li className='mr-5 text-[#222222] cursor-pointer'>
-                    <Link to="/host/dashboard">Dashboard</Link>
-                  </li></>
-                  :
-                 <> <li className='mr-5 text-[#222222] cursor-pointer'>
-                 <Link to="">Home</Link>
-               </li>
-               <li className='mr-5 text-[#222222] cursor-pointer'>
-                 <Link to="">Explore</Link>
-               </li>
-               <li className='mr-5 text-[#222222] cursor-pointer'>
-                 <Link to="">Nearbly</Link>
-               </li></>}
+                      <Link to="/explore">Explore</Link>
+                    </li>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/listings">Listings</Link>
+                      </li>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/host/dashboard">Dashboard</Link>
+                      </li></>
+                    :
+                    <>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/explore">Explore</Link>
+                      </li>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/bookings">Bookings</Link>
+                      </li>
+                    </>}
                 </ul>
               </div>
               <div className=' basis-1/3 lg:basis-1/2 flex items-center justify-end'>

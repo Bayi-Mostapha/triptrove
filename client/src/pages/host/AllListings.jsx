@@ -12,9 +12,10 @@ function AllListings() {
     useEffect(() => {
         const fetchProperties = async () => {
             try {
-                const response = await axiosClient.get('/properties');
+                const response = await axiosClient.get('/properties/host');
                 setListings(response.data);
             } catch (err) {
+                console.error(err);
                 setError(err.message);
             } finally {
                 setLoading(false);
