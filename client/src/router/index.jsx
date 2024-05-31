@@ -21,6 +21,7 @@ import Admins from "../pages/admin/admins-page"
 import Support from "../pages/admin/support"
 import Properties from "../pages/admin/properties"
 import Settings from "../pages/admin/settings"
+import NotFound from "../pages/notFound"
 
 import Home from "../pages/guest/home"
 import Explore from "../pages/guest/explore"
@@ -229,6 +230,6 @@ export const router = createBrowserRouter([
     },
     {
         path: '*',
-        element: <div>Not found</div>
+        element: <NotFound />
     }
 ])

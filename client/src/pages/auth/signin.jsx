@@ -41,7 +41,7 @@ export default function SignIn() {
           if(userContext.currentLocation){
             navigate(userContext.currentLocation);
           }else{
-            navigate("/home");
+            navigate("/explore");
           } 
         }
         return true;
@@ -110,7 +110,7 @@ export default function SignIn() {
       userContext.getUser();
       userContext.setIsLoggedIn(true);
      
-      navigate("/home");
+      navigate("/explore");
     } catch (error) {
        toast.error('something went wrong');
     }
