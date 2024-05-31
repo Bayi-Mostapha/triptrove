@@ -317,7 +317,11 @@ export default function TopNav() {
                         (!userContext.user || userContext.user.role == "guest")
                         &&
                         <div className='ml-4 lg:ml-8 cursor-pointer  text-md 0  mr-5 hidden lg:flex'>
-                          <Link to="/signup/host">Become a host</Link>
+                          {  userContext.isLoggedIn ? 
+                            <Link to="/pay">Become a host</Link>
+                           : 
+                           <Link to="/signup/host">Become a host</Link>
+                          }
                         </div>
                       }
                       <div className='text-green-800 cursor-pointer mr-5'>
@@ -360,7 +364,7 @@ export default function TopNav() {
                       <Link to={FAVORITES} className='cursor-pointer mr-5'>
                         <Heart color='#7065F0' size={23} />
                       </Link>
-                      <div className='w-0 h-7 border-[1px] border-[#A7A3A3] mr-3'></div>
+                     
                       <div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -378,34 +382,38 @@ export default function TopNav() {
                               </div>
                             </DropdownMenuItem>
                             {
-                              userContext.user.subscriptionType !== "free" ?
-                                <>{
-                                  userContext.user.subscriptionType === "premium" ?
+                              userContext.user.role !== "guest" && 
+                              <>{
+                                userContext.user.subscriptionType !== "free"  && userContext.user.role !== "guest"  ?
+                                  <>{
+                                    userContext.user.subscriptionType === "premium" ?
+                                      <DropdownMenuItem className="p-0" >
+                                        <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("business")}>
+                                          upgrade to business
+                                        </div>
+                                      </DropdownMenuItem>
+                                      :
+                                      <DropdownMenuItem className="p-0" >
+                                        <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("premium")}>
+                                          downgeade premium
+                                        </div>
+                                      </DropdownMenuItem>
+                                  }
                                     <DropdownMenuItem className="p-0" >
-                                      <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("business")}>
-                                        upgrade to business
+                                      <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => CancelPlan()}>
+                                        Cancel subscription
                                       </div>
                                     </DropdownMenuItem>
-                                    :
-                                    <DropdownMenuItem className="p-0" >
-                                      <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("premium")}>
-                                        downgeade premium
-                                      </div>
-                                    </DropdownMenuItem>
-                                }
+                                  </> :
                                   <DropdownMenuItem className="p-0" >
-                                    <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => CancelPlan()}>
-                                      Cancel subscription
+                                    <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => navigate("/pay")}>
+                                      upgrade premium
                                     </div>
                                   </DropdownMenuItem>
-                                </> :
-                                <DropdownMenuItem className="p-0" >
-                                  <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => navigate("/pay")}>
-                                    upgrade premium
-                                  </div>
-                                </DropdownMenuItem>
+                              }</>
                             }
-                            <DropdownMenuItem className="">
+                            
+                            <DropdownMenuItem className="p-0">
                               <div className='w-full h-full bg-black text-white py-2 px-3 flex items-center justify-center gap-2 cursor-pointer' onClick={logOut}>
                                 <LogOut color='white' size={18} />
                                 <p>logout </p>
@@ -414,7 +422,7 @@ export default function TopNav() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <div className='ml-4 cursor-pointer  flex'>
+                      {/* <div className='ml-4 cursor-pointer  flex'>
                         <DropdownMenu >
                           <DropdownMenuTrigger asChild >
                             <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
@@ -429,12 +437,16 @@ export default function TopNav() {
                             </DropdownMenuRadioGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </div>
+                      </div> */}
                     </>
                     :
                     <>
-                      <div className='ml-4 cursor-pointer  text-md font-small hidden lg:flex'><Link to="/signup/host">Become a host</Link></div>
-                      <div className='ml-4 cursor-pointer  flex'>
+                      <div className='ml-4 cursor-pointer  text-md font-small hidden lg:flex'>{  userContext.isLoggedIn ? 
+                            <Link to="/pay">Become a host</Link>
+                           : 
+                           <Link to="/signup/host">Become a host</Link>
+                          }</div>
+                      {/* <div className='ml-4 cursor-pointer  flex'>
                         <DropdownMenu >
                           <DropdownMenuTrigger asChild >
                             <div className='flex items-center text-[#222222] rounded-3xl border-2 border-[#dbd9d9] py-0 px-2 lg:py-1 '>
@@ -449,7 +461,7 @@ export default function TopNav() {
                             </DropdownMenuRadioGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </div>
+                      </div> */}
                       <div className='ml-4 hidden lg:flex'>
                         <Link to={LOGIN_LINK}>
                           <div className='py-1 px-4 bg-[#7065F0] rounded flex items-center justify-center cursor-pointer'>
@@ -473,7 +485,11 @@ export default function TopNav() {
                           <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Home</Link></div>
                           <div className='mr-5 text-[#222222] text-lg cursor-pointer  py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="/explore">Explore</Link></div>
                           <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Nearbly</Link></div>
-                          <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Become a host </Link></div>
+                          <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>{  userContext.isLoggedIn ? 
+                            <Link to="/pay">Become a host</Link>
+                           : 
+                           <Link to="/signup/host">Become a host</Link>
+                          }</div>
                           {
                             userContext.isLoggedIn ? <></> :
                               <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>

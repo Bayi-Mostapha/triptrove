@@ -196,7 +196,18 @@ let subscribersCount = [
       return joinDate >= startDate && joinDate <= endDate ;
     });
     setFilteredReportR(filtered.length);
-
+     
+    filtered = subsRevenue.filter(problem => {
+      const joinDate = new Date(problem.createdAt);
+      const startDate = new Date(date.from);
+      const endDate = new Date(date.to);
+      return joinDate >= startDate && joinDate <= endDate ;
+    });
+    console.log('subs ',filtered)
+    setFilteredSubscribers(filtered)
+    const totalSubsRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
+    setFilteredSubsRevenue(totalSubsRevenue);
+    
     filtered = subsRevenue.filter(problem => {
       const joinDate = new Date(problem.createdAt);
       const startDate = new Date(date.from);
@@ -204,18 +215,8 @@ let subscribersCount = [
       return joinDate >= startDate && joinDate <= endDate ;
     });
     setFilteredSubscribers(filtered)
-    const totalSubsRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
-    setFilteredSubsRevenue(totalSubsRevenue);
-    
-    // filtered = subsRevenue.filter(problem => {
-    //   const joinDate = new Date(problem.createdAt);
-    //   const startDate = new Date(date.from);
-    //   const endDate = new Date(date.to);
-    //   return joinDate >= startDate && joinDate <= endDate ;
-    // });
-    // setFilteredSubscribers(filtered)
-    // const totalFeesRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
-    // setFilteredFeesRevenue(totalFeesRevenue);
+    const totalFeesRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
+    setFilteredFeesRevenue(totalFeesRevenue);
     
     
   
@@ -373,7 +374,7 @@ useEffect(()=>{
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-3xl font-medium  '>{filteredSubscribers}</p>
+            <p className='text-3xl font-medium  '>{filteredSubscribers.length != 0 ? filteredSubscribers.length: 0 }</p>
             <p className='text-ld text-gray-400 font-small'>New Subscribers</p>
         </div>
       </div>

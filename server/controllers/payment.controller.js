@@ -63,7 +63,7 @@ export const createSubscription = async (req, res, next) => {
           price: subscriptionPlan.price
         });
         // Update user's subscription type based on subscription plan title
-        await User.findByIdAndUpdate(req.userId, { subscriptionType: subscriptionPlan.title });
+        await User.findByIdAndUpdate(req.userId, { subscriptionType: subscriptionPlan.title, role: "host" });
 
         // Send response with subscription details
         res.status(200).json({
@@ -125,6 +125,7 @@ export const upgrade = async (req, res, next) => {
       }
     );
     user.subscriptionType = plan.title;
+    user.role = 'host';
     user.save();
     res.status(200).json({ message: 'Subscription canceled successfully', updatedSubscription });
   } catch (error) {

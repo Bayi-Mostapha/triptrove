@@ -9,6 +9,7 @@ import { authContext } from "@/contexts/AuthWrapper";
     EllipsisVertical ,
     SquareArrowLeft, 
     Trash2,
+    Building2,
   } from 'lucide-react';
   import {
     DropdownMenu,
@@ -617,6 +618,14 @@ export default function Properties() {
                                 ))}
                                 </tbody>
                             </table>
+                            {
+                                filteredProperties.length === 0 && 
+                                <div className="flex items-center justify-center w-full min-h-80 ">
+                                    <div className='flex items-end justify-center'>
+                                        <Building2 size={50}  fontWeight={2} /> <p className='text-3xl ml-3 font-medium '>no properties found</p>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                     </div>

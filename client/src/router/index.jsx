@@ -114,7 +114,7 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        element: <AuthRoute><AuthLayout /></AuthRoute>,
+        element: <AuthLayout />,
         children: [
             {
                 path: PAYMENT_LINK,
