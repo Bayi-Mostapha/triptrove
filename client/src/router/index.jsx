@@ -128,7 +128,7 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        element: <AuthRoute><GuestLayout /></AuthRoute>,
+        element: <AuthRoute><HostLayout /></AuthRoute>,
         children: [
             {
                 path: PROFILE_LINK,

@@ -1,28 +1,27 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { axiosClient } from '@/api/axios';
 import { StepperContext } from '@/contexts/StepperContext';
 
 export default function Photos() {
   const { userData, updateUserData } = useContext(StepperContext);
   const [isDragging, setIsDragging] = useState(false);
-
-  const handleFiles = (files) => {
+  const [files, setFiles] = useState([]);
+  const handleFiles = () => {
     if (files.length >= 3) {
-      const fileURLs = files.map(file => URL.createObjectURL(file));
-      updateUserData({ photos: fileURLs });
-      // Perform the upload here
-      uploadFiles(files);
+      uploadFiles();
     } else {
       alert('Please select at least 3 photos.');
     }
   };
 
-  const uploadFiles = async (files) => {
+  const uploadFiles = async () => {
+    console.log(files)
     const formData = new FormData();
-    files.forEach(file => formData.append('photos', file));
+    Array.from(files).forEach(file => formData.append('image', file));
 
     try {
-      const response = await axiosClient.post('/upload', formData, {
+        console.log(formData)
+      const response = await axiosClient.post('/properties/images/6654ae79ddc7d1fe890b1c4e', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -54,10 +53,13 @@ export default function Photos() {
   };
 
   const handleChange = (e) => {
-    const files = Array.from(e.target.files);
-    handleFiles(files);
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles)
+   
   };
-
+  useEffect(()=>{
+    handleFiles();
+  },[files])
   return (
     <div
       className={`border h-[300px] w-full rounded-xl flex items-center justify-center ${isDragging ? 'bg-gray-200' : ''}`}

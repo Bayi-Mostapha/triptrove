@@ -12,6 +12,7 @@ import ReviewReport from "../models/review_report.model.js"
 import Property from "../models/property.model.js"
 import User from "../models/user.model.js"
 import Booking from "../models/booking.model.js"
+import Fee from "../models/fee.model.js"
 
 
 export const signin = async (request, response, next) => {
@@ -210,7 +211,67 @@ export const getDashboard = async (req, res, next) => {
       }
     ]);
 
-  
+    const subscriptions1 = await Subscription.aggregate([
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          price: 1
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          subscriptionTotal: { $sum: "$price" }
+        }
+      }
+    ]);
+
+    const fees = await Fee.aggregate([
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          price: 1
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          feesTotal: { $sum: "$price" }
+        }
+      }
+    ]);
+
+    // Merge the results
+    const combined = subscriptions1.concat(fees);
+
+    // Group the combined results by date
+    const finalResults = await Fee.aggregate([
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          subscriptionTotal: { $ifNull: ["$subscriptionTotal", 0] },
+          feesTotal: { $ifNull: ["$feesTotal", 0] },
+        }
+      },
+      {
+        $group: {
+          _id: "$date",
+          totalSubscription: { $sum: "$subscriptionTotal" },
+          totalFees: { $sum: "$feesTotal" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id",
+          totalSubscription: 1,
+          totalFees: 1,
+        }
+      },
+      {
+        $sort: { date: 1 }
+      }
+    ]);
     const properties = await Property.find().select('createdAt');
     let users = await User.find({}, { password: 0 }).select('firstName lastName email role createdAt image');
 
@@ -256,6 +317,7 @@ export const getDashboard = async (req, res, next) => {
       properties: formattedProperties,
       users: formattedUsers,
       reservations: reservations,
+      revenue: finalResults ,
     });
   } catch (error) {
     console.error('Error getting dashboard data:', error);

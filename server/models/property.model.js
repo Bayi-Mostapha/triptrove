@@ -24,7 +24,7 @@ const propertySchema = mongoose.Schema(
       required: true,
     },
     photos: {
-      type: [String],
+      type: [ String],
       required: true,
     },
     price: {

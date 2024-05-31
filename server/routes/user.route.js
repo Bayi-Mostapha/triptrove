@@ -20,7 +20,7 @@ import multer from 'multer';
 const router = express.Router();
 
 const upload = multer({ dest: 'uploads/' });
-
+    
 router.get("/",verifyToken, getUser);
 router.get("/get-all",verifyToken, getAllUser);
 router.post("/profile",verifyToken ,upload.single('image'), uploadProfileImage);

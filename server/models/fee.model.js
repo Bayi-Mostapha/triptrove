@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const feeSchema = mongoose.Schema(
     {
-        amount: {
+        price: {
             type: Number,
             required: true,
         },

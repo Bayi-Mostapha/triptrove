@@ -6,13 +6,18 @@ import {
   deleteProperty,
   getAllProperties,
   getProperties,
-  getPropertyLocation
+  getPropertyLocation,
   deleteAdminProperties,
+  uploadImages,
 } from "../controllers/property.controller.js";
 import { verifyToken } from "../controllers/verifytoken.js";
 import { verifyTokenAdmin } from "../controllers/verifytokenadmin.js";
-
+import multer from 'multer';
 const router = express.Router();
+
+const upload = multer({ dest: 'uploads/' });
+
+router.post("/images/:id",verifyToken , upload.array('image', 10), uploadImages);
 
 router.get("/", getProperties);
 

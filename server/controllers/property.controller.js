@@ -1,8 +1,9 @@
 import Property from "../models/property.model.js";
 import Review from "../models/review.model.js";
 import Booking from "../models/booking.model.js";
+import User from "../models/user.model.js";
 import moment from "moment";
-
+import { uploadToCloudinary, deleteFromCloudinary } from "../services/cloudinary.js"
 // Retrieve a property by ID
 export const getProperty = async (req, res) => {
   try {
@@ -94,20 +95,6 @@ export const getProperties = async (req, res) => {
   }
 };
 
-// get all properties
-export const getAllProperties = async (req, res) => {
-  try {
-    const properties = await Property.find({}).populate('owner', '-password').populate({ path: 'rentalCount' });
-    res.status(200).json(properties.map(property => ({
-      ...property.toObject(),
-      createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
-    })));
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete property", error: error.message });
-  }
-};
 
 // get all properties of a location
 export const getPropertyLocation = async (req, res) => {
@@ -260,4 +247,31 @@ export const deleteAdminProperties = async (req, res) => {
       console.error('Error deleting properties:', error);
       res.status(500).json({ message: 'Internal server error' });
   }
+};
+
+export const uploadImages = async (req, res) => {
+  try {
+    const files = req.files;
+    const propertyId = req.params.id;
+   
+
+    let uploadedImages = [];
+    for (const file of files) {
+      const result = await uploadToCloudinary(file.path, "property-photos");
+      uploadedImages.push(result.url);
+      console.log(result)
+      console.log(result.url)
+    }
+    console.log(uploadedImages)
+    const property = await Property.findByIdAndUpdate(
+      propertyId,
+      { photos: uploadedImages  },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Images uploaded successfully", property });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }  
 };
