@@ -81,7 +81,7 @@ export default function TopNav() {
   }, []);
 
   useEffect(() => {
-    if(userContext.isLoggedIn){
+    if (userContext.isLoggedIn) {
       setData({
         firstName: userContext.user.firstName,
         email: userContext.user.email
@@ -245,8 +245,8 @@ export default function TopNav() {
   };
 
   useEffect(() => {
-    if(userContext.isLoggedIn){
-    getAllNotifications();
+    if (userContext.isLoggedIn) {
+      getAllNotifications();
     }
     socket.emit('joinRoom', userContext.user._id);
     socket.on('notification', (notification) => {
@@ -285,13 +285,15 @@ export default function TopNav() {
                   <img src="/assets/logo.svg" alt="" className='w-full' />
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
-
-
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/listings">Listing</Link></li>
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Reservations</Link></li>
-
-
+                  <li className='mr-5 text-[#222222] cursor-pointer'>
+                    <Link to="/explore">Explore</Link>
+                  </li>
+                  <li className='mr-5 text-[#222222] cursor-pointer'>
+                    <Link to="/listings">Listings</Link>
+                  </li>
+                  <li className='mr-5 text-[#222222] cursor-pointer'>
+                    <Link to="/host/dashboard">Dashboard</Link>
+                  </li>
                 </ul>
               </div>
               <div className=' basis-1/3 lg:basis-1/2 flex items-center justify-end'>
