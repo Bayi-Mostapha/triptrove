@@ -52,8 +52,6 @@ function ListingComponent() {
       const response = await axiosClient.post('/properties', userData);
       console.log('Property created successfully:', response.data);
       uploadFiles(response.data._id);
-      toast.success('created successfully')
-      navigate('/listings')
     } catch (error) {
       console.error('Error creating property:', error);
       // Add any error handling
@@ -72,6 +70,8 @@ function ListingComponent() {
         }
       });
       console.log('Upload successful:', response.data);
+      toast.success('created successfully')
+      navigate('/listings')
     } catch (error) {
       console.error('Error uploading files:', error);
     }
