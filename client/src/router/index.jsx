@@ -86,12 +86,7 @@ export const ADMIN_REPORTS_LINK = '/admin/reports';
 
 
 
-// {
-//     path: USER_HOME_LINK,
-//     element: <GuestRoute><div>home</div></GuestRoute>
-// },
 
-// router 
 export const router = createBrowserRouter([
     {
         element: <GuestRoute><AuthLayout /></GuestRoute>,
@@ -128,7 +123,7 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        element: <AuthRoute><HostLayout /></AuthRoute>,
+        element: <AuthRoute><GuestLayout /></AuthRoute>,
         children: [
             {
                 path: PROFILE_LINK,
@@ -158,7 +153,6 @@ export const router = createBrowserRouter([
                 path: FAVORITES,
                 element: <Favorites />
             },
-            // for host 
             {
                 path: REVIEWS,
                 element: <PropertyReviews />

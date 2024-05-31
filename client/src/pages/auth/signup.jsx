@@ -165,7 +165,7 @@ export default function SignUp() {
            <h2 className='text-5xl font-medium mb-4'>Sign up</h2>
            <Link to={LOGIN_LINK} className='flex items-center mb-6'>
              <p className='text-sm text-gray-500'>Already have an account?</p>
-             <p className='ml-1 text-xl font-bold cursor-pointer text-green-700'>Sign In</p>
+             <p className='ml-1 text-xl font-bold cursor-pointer text-[#7065f0]'>Sign In</p>
            </Link>
            <div className='flex flex-col lg:flex-row items-center lg:mb-3'>
               <div className='w-full mb-3 lg:mb-0 lg:mr-6'>
@@ -215,7 +215,7 @@ export default function SignUp() {
            </div>
            <div className=' mb-4'>
               <button 
-              className={`py-3   outline-none text-white text-xl font-medium rounded-xl w-full bg-green-700 ${disabledFlag ? 'cursor-not-allowed opacity-50' : ""}`}
+              className={`py-3   outline-none text-white text-xl font-medium rounded-xl w-full bg-[#7065f0] ${disabledFlag ? 'cursor-not-allowed opacity-50' : ""}`}
               onClick={handleSubmit}
               disabled={disabledFlag} 
               >

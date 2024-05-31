@@ -76,7 +76,7 @@ export default function TopNav() {
   useEffect(() => {
     if (window.location.pathname === "/home") {
       userContext.getUser();
-    }
+    }  
 
   }, []);
 
@@ -287,9 +287,7 @@ export default function TopNav() {
                 <ul className='items-center hidden lg:flex text-md font-small'>
 
 
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/listings">Listing</Link></li>
-                     <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Reservations</Link></li>
+                    
 
 
                 </ul>
