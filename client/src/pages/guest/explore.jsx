@@ -62,7 +62,7 @@ export default function Explore() {
 
     return (
         <div className='p-4'>
-            <div className='search-bar flex gap-4 mt-8 mx-[150px] p-4 rounded-xl bg-[#F8F8F8]'>
+            <div className='search-bar flex gap-4 mt-8 mx-[150px] p-4 rounded-xl bg-[#F9F9F9]'>
                 <div className='flex rounded-md bg-white justify-center items-center pl-2'>
                     <IoSearch className='text-xl text-[#464545]' />
                     <input
@@ -78,10 +78,10 @@ export default function Explore() {
                 <input type="date" name="checkInDate" className='p-[6px] rounded-md pl-4 text-[#4B4949]' value={filters.checkInDate} onChange={handleFilterChange} placeholder='Check in' />
                 <input type="date" name="checkOutDate" className='p-[6px] rounded-md pl-4 text-[#4B4949]' value={filters.checkOutDate} onChange={handleFilterChange} placeholder='Check out' />
 
-                <button className='bg-[#7065F0] px-8 text-white rounded-md block ml-auto' onClick={handleSearch}>Search</button>
+                <button className='bg-[#7065F0] px-8 text-white rounded-md block ml-auto font-medium' onClick={handleSearch}>Search</button>
             </div>
 
-            <div className='filter-bar flex gap-4 mt-4 mx-[150px] p-4 rounded-xl bg-[#F8F8F8]'>
+            <div className='filter-bar flex gap-4 mt-4 mx-[125px] p-4 rounded-xl bg-[#F9F9F9]'>
                 {['hasWifi', 'hasPool', 'hasTv', 'hasWasher', 'hasPark', 'hasKitchen', 'hasDesk', 'allowsPets'].map(amenity => (
                     <div key={amenity} className='flex items-center'>
                         <input

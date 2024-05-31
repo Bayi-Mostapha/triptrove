@@ -76,15 +76,15 @@ export default function TopNav() {
   useEffect(() => {
     if (window.location.pathname === "/home") {
       userContext.getUser();
-    }  
+    }
 
   }, []);
 
   useEffect(() => {
     if (userContext.isLoggedIn) {
       setData({
-        firstName: userContext.user.firstName,
-        email: userContext.user.email
+        firstName: userContext.user?.firstName,
+        email: userContext.user?.email
       });
       getAllNotifications();
     }
@@ -97,8 +97,8 @@ export default function TopNav() {
       confirmNewPass: "",
     });
     setData({
-      firstName: userContext.user.firstName,
-      email: userContext.user.email
+      firstName: userContext.user?.firstName,
+      email: userContext.user?.email
     });
   }, [changePassword]);
 
@@ -163,7 +163,7 @@ export default function TopNav() {
     if (file) {
       handleUpdateProfile();
     }
-    if (data.email !== userContext.user.email || data.firstName !== userContext.user.firstName) {
+    if (data.email !== userContext.user?.email || data.firstName !== userContext.user?.firstName) {
       try {
         const response = await axiosClient.post('/user/update', data);
         toast.success('Updated successfully:');
@@ -248,7 +248,7 @@ export default function TopNav() {
     if (userContext.isLoggedIn) {
       getAllNotifications();
     }
-    socket.emit('joinRoom', userContext.user._id);
+    socket.emit('joinRoom', userContext.user?._id);
     socket.on('notification', (notification) => {
       setNotifications((prevNotifications) => [...prevNotifications, notification.message]);
       toast(notification.message.message);
@@ -256,7 +256,7 @@ export default function TopNav() {
     });
     return () => {
       socket.off('notification');
-      socket.emit('leaveRoom', userContext.user._id);
+      socket.emit('leaveRoom', userContext.user?._id);
     };
   }, [userContext.user]);
 
@@ -285,28 +285,25 @@ export default function TopNav() {
                   <img src="/assets/logo.svg" alt="" className='w-full' />
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
-                  
-
-                  {  userContext.user.role === "host" ?
+                  {userContext.user?.role === "host" ?
                     <><li className='mr-5 text-[#222222] cursor-pointer'>
-                    <Link to="/explore">Explore</Link>
-                  </li>
-                  <li className='mr-5 text-[#222222] cursor-pointer'>
-                    <Link to="/listings">Listings</Link>
-                  </li>
-                  <li className='mr-5 text-[#222222] cursor-pointer'>
-                    <Link to="/host/dashboard">Dashboard</Link>
-                  </li></>
-                  :
-                 <> <li className='mr-5 text-[#222222] cursor-pointer'>
-                 <Link to="">Home</Link>
-               </li>
-               <li className='mr-5 text-[#222222] cursor-pointer'>
-                 <Link to="">Explore</Link>
-               </li>
-               <li className='mr-5 text-[#222222] cursor-pointer'>
-                 <Link to="">Nearbly</Link>
-               </li></>}
+                      <Link to="/explore">Explore</Link>
+                    </li>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/listings">Listings</Link>
+                      </li>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/host/dashboard">Dashboard</Link>
+                      </li></>
+                    :
+                    <>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/explore">Explore</Link>
+                      </li>
+                      <li className='mr-5 text-[#222222] cursor-pointer'>
+                        <Link to="/bookings">Bookings</Link>
+                      </li>
+                    </>}
                 </ul>
               </div>
               <div className=' basis-1/3 lg:basis-1/2 flex items-center justify-end'>
@@ -314,7 +311,7 @@ export default function TopNav() {
                   userContext.isLoggedIn ?
                     <>
                       {
-                        (!userContext.user || userContext.user.role == "guest")
+                        (!userContext.user || userContext.user?.role == "guest")
                         &&
                         <div className='ml-4 lg:ml-8 cursor-pointer  text-md 0  mr-5 hidden lg:flex'>
                           {  userContext.isLoggedIn ? 
@@ -369,12 +366,12 @@ export default function TopNav() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Avatar className="w-10 h-10 cursor-pointer">
-                              <AvatarImage src={userContext.user.image?.url} alt="@shadcn" />
-                              <AvatarFallback className="bg-[#bdbbdb]">{userContext.user.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
+                              <AvatarImage src={userContext.user?.image?.url} alt="@shadcn" />
+                              <AvatarFallback className="bg-[#bdbbdb]">{userContext.user?.firstName?.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="w-56 bg-white">
-                            <DropdownMenuLabel>{userContext.user.email}</DropdownMenuLabel>
+                            <DropdownMenuLabel>{userContext.user?.email}</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="p-0" >
                               <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => setOpen(true)}>
@@ -384,9 +381,9 @@ export default function TopNav() {
                             {
                               userContext.user.role !== "guest" && 
                               <>{
-                                userContext.user.subscriptionType !== "free"  && userContext.user.role !== "guest"  ?
+                                userContext.user?.subscriptionType !== "free"  && userContext.user.role !== "guest"  ?
                                   <>{
-                                    userContext.user.subscriptionType === "premium" ?
+                                    userContext.user?.subscriptionType === "premium" ?
                                       <DropdownMenuItem className="p-0" >
                                         <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("business")}>
                                           upgrade to business
@@ -482,14 +479,25 @@ export default function TopNav() {
                       <SheetTitle className='text-2xl font-semibold pl-3'>Welcome to TripTrove</SheetTitle>
                       <SheetDescription >
                         <div className='flex flex-col  text-md font-small mt-6'>
-                          <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Home</Link></div>
-                          <div className='mr-5 text-[#222222] text-lg cursor-pointer  py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="/explore">Explore</Link></div>
-                          <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'><Link to="">Nearbly</Link></div>
-                          <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>{  userContext.isLoggedIn ? 
-                            <Link to="/pay">Become a host</Link>
-                           : 
-                           <Link to="/signup/host">Become a host</Link>
-                          }</div>
+                          {userContext.user?.role === "host" ?
+                            <><div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
+                              <Link to="/explore">Explore</Link>
+                            </div>
+                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
+                                <Link to="/listings">Listings</Link>
+                              </div>
+                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
+                                <Link to="/host/dashboard">Dashboard</Link>
+                              </div></>
+                            :
+                            <>
+                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
+                                <Link to="/explore">Explore</Link>
+                              </div>
+                              <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
+                                <Link to="/bookings">Bookings</Link>
+                              </div>
+                            </>}
                           {
                             userContext.isLoggedIn ? <></> :
                               <div className='mr-5 text-[#222222] text-lg cursor-pointer py-3 rounded hover:bg-gray-300 px-3 w-full'>
@@ -578,7 +586,7 @@ export default function TopNav() {
                         {selectedImage ? (
                           <img src={selectedImage} alt="Selected" className='w-full h-full rounded-full' />
                         ) : (
-                          <img src={userContext.user.image?.url} alt="" className='w-full h-full rounded-full' />
+                          <img src={userContext.user?.image?.url} alt="" className='w-full h-full rounded-full' />
                         )}
                         <label htmlFor="image" className='w-10 h-10 rounded-full bg-[#000000] absolute bottom-1 right-2 flex items-center justify-center cursor-pointer'>
                           <Pencil color='white' size={20} />
