@@ -4,18 +4,18 @@ import { ArrowRight } from "lucide-react";
 
 function Footer() {
     return (
-        <div className="w-full mt-14 border-t">
+        <div className="w-full mt-24 border-t">
             <footer className="mx-auto py-5 px-4 w-full max-w-6xl flex justify-between">
                 <div>
                     <img src='/assets/logo.svg' alt="TripTrove" />
                     <p className="w-96 text-sm mt-2">
                         Lorem ipsum dolor sit amet, adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                     </p>
-                    <div className="flex items-center justify-center gap-5 mt-7">
-                        <FaFacebook color="#1877F2" size={22} />
-                        <FaTwitter color="#1DA1F2" size={22} />
-                        <FaInstagram color="#EC3397" size={22} />
-                        <FaLinkedin color="#0A66C2" size={22} />
+                    <div className="flex items-center justify-center gap-4 mt-7">
+                        <FaFacebook color="#1877F2" size={23} />
+                        <FaTwitter color="#1DA1F2" size={23} />
+                        <FaInstagram color="#EC3397" size={23} />
+                        <FaLinkedin color="#0A66C2" size={23} />
                     </div>
                     <p className="mt-7 text-xs font-thin">© 2024 . All rights reserved.</p>
                 </div>
