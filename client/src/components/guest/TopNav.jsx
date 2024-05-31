@@ -78,7 +78,7 @@ export default function TopNav() {
   }, []);
 
   useEffect(() => {
-    if(userContext.isLoggedIn){
+    if (userContext.isLoggedIn) {
       setData({
         firstName: userContext.user.firstName,
         email: userContext.user.email
@@ -226,7 +226,7 @@ export default function TopNav() {
   };
 
   useEffect(() => {
-    if(userContext.isLoggedIn){
+    if (userContext.isLoggedIn) {
       getAllNotifications();
     }
     socket.emit('joinRoom', userContext.user._id);
@@ -266,9 +266,15 @@ export default function TopNav() {
                 </div>
                 <ul className='items-center hidden lg:flex text-md font-small'>
                   {  userContext.user.role !== "host" ?
-                    <><li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
-                  <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Explore</Link></li>
-                  <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Nearbly</Link></li></>
+                    <><li className='mr-5 text-[#222222] cursor-pointer'>
+                    <Link to="">Home</Link>
+                  </li>
+                  <li className='mr-5 text-[#222222] cursor-pointer'>
+                    <Link to="">Explore</Link>
+                  </li>
+                  <li className='mr-5 text-[#222222] cursor-pointer'>
+                    <Link to="">Nearbly</Link>
+                  </li></>
                   :
                  <> <li className='mr-5 text-[#222222] cursor-pointer'><Link to="">Home</Link></li>
                      <li className='mr-5 text-[#222222] cursor-pointer'><Link to="/listings">Listing</Link></li>

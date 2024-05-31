@@ -165,15 +165,9 @@ export const router = createBrowserRouter([
                 path: '/host/bookings',
                 element: <HostBookings limit={false} />
             },
-            // for both 
             {
                 path: '/support',
                 element: <USupport />
-            },
-            // for admin 
-            {
-                path: '/reports/:id',
-                element: <Reports />
             },
         ]
     },
@@ -184,13 +178,10 @@ export const router = createBrowserRouter([
                 path: HOST_LINK,
                 element: <List />
             },
-
             {
                 path: LISTINGS_LINK,
                 element: <AllListings />
             },
-
-
         ]
     },
     {
@@ -237,11 +228,15 @@ export const router = createBrowserRouter([
                 path: HOME_LINK,
                 element: <Home />
             },
+            {
+                path: '/support',
+                element: <USupport />
+            },
 
         ]
     },
     {
-        element: <GuestLayout2 />,
+        element: <GuestLayout2 />, // not authenticated
         children: [
             {
                 path: '/',
