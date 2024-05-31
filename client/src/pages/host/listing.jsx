@@ -48,13 +48,29 @@ function ListingComponent() {
     try {
       const response = await axiosClient.post('/properties', userData);
       console.log('Property created successfully:', response.data);
-      // Add any additional actions on success
+      uploadFiles(response.data._id);
     } catch (error) {
       console.error('Error creating property:', error);
       // Add any error handling
     }
   };
+  const uploadFiles = async (id) => {
+   
+    const formData = new FormData();
+    Array.from(userData.photos).forEach(file => formData.append('image', file));
 
+    try {
+        console.log(formData)
+      const response = await axiosClient.post(`/properties/images/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Upload successful:', response.data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
   return (
     <>
       <h1 className='text-2xl mt-6 font-medium'>List your property</h1>

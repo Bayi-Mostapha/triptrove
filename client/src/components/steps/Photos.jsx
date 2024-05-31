@@ -7,30 +7,18 @@ export default function Photos() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([]);
   const handleFiles = () => {
-    if (files.length >= 3) {
-      uploadFiles();
-    } else {
+    if (files.length < 3) {
       alert('Please select at least 3 photos.');
+    } else{
+      updateUserData({ photos: files });
     }
   };
-
-  const uploadFiles = async () => {
-    console.log(files)
-    const formData = new FormData();
-    Array.from(files).forEach(file => formData.append('image', file));
-
-    try {
-        console.log(formData)
-      const response = await axiosClient.post('/properties/images/6654ae79ddc7d1fe890b1c4e', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log('Upload successful:', response.data);
-    } catch (error) {
-      console.error('Error uploading files:', error);
-    }
-  };
+ useEffect(()=>{
+  if (files.length !== 0 ) {
+    handleFiles();
+  }
+ },[files]);
+ 
 
   const handleClick = () => {
     document.getElementById('fileInput').click();
@@ -48,8 +36,9 @@ export default function Photos() {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
+    const selectedFiles = Array.from(e.dataTransfer.files);
+    setFiles(selectedFiles)
+   
   };
 
   const handleChange = (e) => {
@@ -57,9 +46,7 @@ export default function Photos() {
     setFiles(selectedFiles)
    
   };
-  useEffect(()=>{
-    handleFiles();
-  },[files])
+  
   return (
     <div
       className={`border h-[300px] w-full rounded-xl flex items-center justify-center ${isDragging ? 'bg-gray-200' : ''}`}

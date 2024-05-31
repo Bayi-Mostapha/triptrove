@@ -140,7 +140,7 @@ export const createProperty = async (req, res) => {
       owner: req.userId,
       streetAddress,
       city,
-      photos,
+      photos: [],
       price,
       cleaningFees,
       guests,

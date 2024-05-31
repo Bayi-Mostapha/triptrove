@@ -25,7 +25,6 @@ const propertySchema = mongoose.Schema(
     },
     photos: {
       type: [ String],
-      required: true,
     },
     price: {
       type: Number,
