@@ -64,11 +64,17 @@ export const getProperties = async (req, res) => {
     if (guests) query.guests = { $gte: Number(guests) };
 
     const amenities = { hasWifi, hasPool, hasTv, hasWasher, hasPark, hasKitchen, hasDesk, allowsPets };
+    const amenityConditions = [];
+
     Object.keys(amenities).forEach(key => {
-      if (amenities[key] !== undefined) {
-        query[key] = amenities[key] === 'true';
+      if (amenities[key] === 'true') {
+        amenityConditions.push({ [key]: true });
       }
     });
+
+    if (amenityConditions.length > 0) {
+      query.$or = amenityConditions;
+    }
 
     let properties = await Property.find(query);
 
@@ -242,7 +248,7 @@ export const getAllProperties = async (req, res) => {
       return {
         ...property,
         rating,
-        createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), 
+        createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'),
       };
     }));
 

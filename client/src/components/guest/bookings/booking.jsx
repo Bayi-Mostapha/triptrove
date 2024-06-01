@@ -46,9 +46,10 @@ function Booking({ booking }) {
 
     const cancelBooking = async () => {
         try {
-            await axiosClient.put('/book/' + booking.property._id)
+            await axiosClient.put('/book/' + booking._id)
             toast.success('Booking successfully')
         } catch (error) {
+            console.log(error);
             toast.error('something went wrong')
         }
         setShowCancelDialog(false);
