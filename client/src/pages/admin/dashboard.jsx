@@ -1,7 +1,7 @@
 import React , { useState, useEffect , useContext } from 'react'
 import {
    Ellipsis ,
-   DollarSign  ,
+   Wallet   ,
    ChevronDown,
    CalendarDays ,
    MessageSquareWarning  ,
@@ -354,7 +354,7 @@ useEffect(()=>{
 
     <div className="p-3 py-5 rounded-xl flex items-center  border-[2px] border-gray-100 bg-[#7065F0] text-white">
       <div className='flex items-center '>
-        <div className='bg-[#f6f5f8] rounded-xl p-3'><DollarSign  color='#7065F0' size={35}/></div>
+        <div className='bg-[#f6f5f8] rounded-xl p-3'><Wallet   color='#7065F0' size={35}/></div>
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
