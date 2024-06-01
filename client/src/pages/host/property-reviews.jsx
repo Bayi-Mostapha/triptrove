@@ -29,7 +29,7 @@ function PropertyReviews() {
 
     return (
         <div>
-            <h1 className="text-2xl font-semibold">Property Reviews</h1>
+            <h1 className="text-2xl font-semibold mt-8">Property Reviews</h1>
             {loading ? (
                 <p>Loading...</p>
             ) : (
@@ -37,8 +37,19 @@ function PropertyReviews() {
                     {reviews.map(review => (
                         <ReviewHost key={review.id} review={review} />
                     ))}
+                    
                 </div>
             )}
+            <div className="w-full">
+            {
+                        reviews.length === 0 && 
+                        <div className="flex items-center justify-center w-full min-h-80 ">
+                        <div className='flex items-end justify-center'>
+                             <p className='text-3xl ml-3 font-medium '>no reviews yet</p>
+                        </div>
+                    </div>
+                    }
+            </div>
         </div>
     );
 }

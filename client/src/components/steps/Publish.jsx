@@ -18,11 +18,11 @@ const Publish = () => {
         <p className='text-gray-800 mb-2'>Bathrooms: <span className='font-semibold'>{userData.bathrooms}</span></p>
         <p className='text-gray-800 mb-2'>Beds: <span className='font-semibold'>{userData.beds}</span></p>
 
-        <div className='photos flex overflow-x-auto gap-2 justify-center mt-4'>
+        {/* <div className='photos flex overflow-x-auto gap-2 justify-center mt-4'>
           {userData.photos.map((photo, index) => (
             <img key={index} src={photo} alt={`Photo ${index + 1}`} className='w-24 h-24 object-cover rounded-md border border-gray-300' />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
