@@ -60,7 +60,7 @@ export const createSubscription = async (req, res, next) => {
           customerId: customer.id,
           subscriptionItemId: subscription.items.data[0].id,
           expirationDate: expirationDate, 
-          price: subscriptionPlan.price
+          price: subscriptionPlan.price 
         });
         // Update user's subscription type based on subscription plan title
         await User.findByIdAndUpdate(req.userId, { subscriptionType: subscriptionPlan.title, role: "host" });

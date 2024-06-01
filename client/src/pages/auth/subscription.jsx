@@ -6,6 +6,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/AuthWrapper';
+import { CircleCheck  } from 'lucide-react';
+
 
 function CheckoutForm() {
   const userContext = useContext(authContext);
@@ -109,18 +111,61 @@ function CheckoutForm() {
     <div className="grid gap-4 m-auto lg:basis-1/2 md:w-2/3 w-full ">
     <h3 className="text-3xl font-semibold text-center ">Choose a Plan</h3>
       <div>
-          <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded ">
-              <input id="free" checked={!isPaid} type="radio" value="null" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300 " />
-              <label htmlFor="free" className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">free  0/mo</label> 
+          <label className="mb-3 flex  ps-4 border-2 border-[#7065f0] rounded flex-col py-2">
+          <div className="flex items-center">
+              <input id="free" checked={!isPaid} type="radio" value="null" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-[#7065f0]  bg-gray-100 border-gray-300 " />
+              <label htmlFor="free" className="w-full py-4 ms-2 text-xl font-medium text-gray-900 dark:text-gray-300">free  0dh /month</label> 
+          </div>
+          <div className="flex flex-col ml-1">
+                  <div className="flex items-center gap-2">
+                    <CircleCheck  size={15} color="green"/>
+                    <p>only 5 properties</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CircleCheck  size={15} color="green"/>
+                    <p>5  fees on transactions</p>
+                  </div>
+                 
+                </div>
           </label>
-        {
-          plans.map((plan, index)=>(
-            <label className="mb-3 flex items-center ps-4 border-2 border-green-600 rounded " key={index}>
-                <input id={plan.title} type="radio" value={plan.priceId} onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-green-800  bg-gray-100 border-gray-300 " />
-                <label htmlFor={plan.title} className="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{plan.title}  {plan.price}/mo</label> 
-            </label>
-          ))
-        }
+          {
+            plans.length !== 0 && 
+            <>
+            <label className="mb-3 flex  ps-4 border-2 border-[#7065f0] rounded flex-col py-2" >
+               <div className="flex items-center">
+                <input id={plans[0].title} type="radio" value={plans[0].priceId} onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-[#7065f0]  bg-gray-100 border-gray-300 " />
+                <label htmlFor={plans[0].title} className="w-full py-4 ms-2 text-xl font-medium text-gray-900 dark:text-gray-300">{plans[0].title}  {plans[0].price}dh /month</label> 
+               </div>
+                <div className="flex flex-col ml-1">
+                  <div className="flex items-center gap-1">
+                    <CircleCheck  size={15} color="green"/>
+                    <p>15 properties</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CircleCheck  size={15} color="green"/>
+                    <p>2  fees on transactions</p>
+                  </div>
+                </div>
+          </label>
+          <label className="mb-3 flex  ps-4 border-2 border-[#7065f0] rounded flex-col py-2" >
+          <div className="flex items-center">
+            <input id={plans[1].title} type="radio" value={plans[1].priceId} onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-[#7065f0]  bg-gray-100 border-gray-300 " />
+            <label htmlFor={plans[1].title} className="w-full py-4 ms-2 text-xl font-medium text-gray-900 dark:text-gray-300">{plans[1].title}  {plans[1].price}dh /month</label> 
+         </div>
+         
+            <div className="flex flex-col ml-1">
+                  <div className="flex items-center gap-1">
+                    <CircleCheck  size={15} color="green"/>
+                    <p>15 properties</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CircleCheck  size={15} color="green"/>
+                    <p>2  fees on transactions</p>
+                  </div>
+                </div>
+          </label></>
+          }
+         
       </div>
       
        <ToastContainer />
