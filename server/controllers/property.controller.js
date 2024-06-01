@@ -237,12 +237,12 @@ export const getAllProperties = async (req, res) => {
       const reviews = await Review.find({ property: property._id });
       const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
       const reviewCount = reviews.length;
-      const rating = reviewCount > 0 ? (totalStars / reviewCount) : null;
+      const rating = reviewCount > 0 ? (totalStars / reviewCount) : 0;
 
       return {
         ...property,
         rating,
-        createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), // Format join date
+        createdAt: property.createdAt.toISOString().split('T')[0].replace(/-/g, '/'), 
       };
     }));
 

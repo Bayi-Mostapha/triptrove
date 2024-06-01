@@ -526,12 +526,6 @@ export default function Properties() {
                                                 <ArrowDownUp size={18} color='#000000' />
                                             </div>
                                         </th>
-                                        <th className="py-3 px-6 text-sm font-small  text-gray-700">
-                                            <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("category")}> 
-                                                <p className='mr-2  '>category</p> 
-                                                <ArrowDownUp size={18} color='#000000' />
-                                            </div>
-                                        </th>
                                         <th className="py-3 px-6 text-sm font-small  text-left text-gray-700">
                                             <div className='flex items-center cursor-pointer' onClick={()=>filterPropertiesByOrder("owner")}> 
                                                 <p className='mr-2  '>owner</p> 
@@ -583,11 +577,10 @@ export default function Properties() {
                                             </div>
                                         </td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">{problem.title}</td>
-                                        <td className="py-3 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"> {problem.Type}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.owner.fullName}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500  ">{problem.city}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500 text-center">{problem.rentalCount}</td>
-                                        <td className="py-3 px-6 text-sm font-medium text-gray-500 text-center">{problem.rating === 0 ? "__" : problem.rating}</td>
+                                        <td className="py-3 px-6 text-sm font-medium text-gray-500 text-center">{problem.rating}</td>
                                         <td className="py-3 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{problem.createdAt}</td>
                                         <td 
                                             className="py-3  text-sm font-medium text-right whitespace-nowrap cursor-pointer pr-12"

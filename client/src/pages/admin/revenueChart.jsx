@@ -2,45 +2,45 @@ import React, { PureComponent } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { curveCardinal } from 'd3-shape';
 
-const data = [
-  {
-    name: 'Page A',
-    platformFee: 100,
-    subscription: 50,
-    total: 2400 + 100 + 50
-  },
-  {
-    name: 'Page B',
-    platformFee: 100,
-    subscription: 50,
-    total: 2210 + 100 + 50
-  },
-  {
-    name: 'Page A',
-    platformFee: 100,
-    subscription: 50,
-    total: 2400 + 100 + 50
-  },
-  {
-    name: 'Page B',
-    platformFee: 100,
-    subscription: 50,
-    total: 2210 + 100 + 50
-  },
-  {
-    name: 'Page A',
-    platformFee: 100,
-    subscription: 50,
-    total: 2400 + 100 + 50
-  },
-  {
-    name: 'Page B',
-    platformFee: 100,
-    subscription: 50,
-    total: 2210 + 100 + 50
-  },
+// const data = [
+//   {
+//     name: 'Page A',
+//     platformFee: 100,
+//     subscription: 50,
+//     total: 2400 + 100 + 50
+//   },
+//   {
+//     name: 'Page B',
+//     platformFee: 100,
+//     subscription: 50,
+//     total: 2210 + 100 + 50
+//   },
+//   {
+//     name: 'Page A',
+//     platformFee: 100,
+//     subscription: 50,
+//     total: 2400 + 100 + 50
+//   },
+//   {
+//     name: 'Page B',
+//     platformFee: 100,
+//     subscription: 50,
+//     total: 2210 + 100 + 50
+//   },
+//   {
+//     name: 'Page A',
+//     platformFee: 100,
+//     subscription: 50,
+//     total: 2400 + 100 + 50
+//   },
+//   {
+//     name: 'Page B',
+//     platformFee: 100,
+//     subscription: 50,
+//     total: 2210 + 100 + 50
+//   },
 
-];
+// ];
 
 const cardinal = curveCardinal.tension(0.2);
 
@@ -51,8 +51,8 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div className="custom-tooltip p-2 border-[2px] border-violet-400 bg-violet-100">
         <p className="intro text-violet-700">{`Total: ${data.total}`}</p>
-        <p className="desc text-black">{`Platform Fee: ${data.platformFee}`}</p>
-        <p className="desc text-black">{`Subscription: ${data.subscription}`}</p>
+        <p className="desc text-black">{`Platform Fee: ${data.totalFees}`}</p>
+        <p className="desc text-black">{`Subscription: ${data.totalSubscription}`}</p>
       </div>
     );
   }
@@ -60,16 +60,19 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export default class Example extends PureComponent {
-  static demoUrl = 'https://codesandbox.io/p/sandbox/area-chart-different-shapes-6lwnhy';
 
-  render() {
+export const RevChart = ({data01})=> {
+ 
+  if(data01 === null){
+    return <p>loadin</p>;
+  }
+  
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           width={500}
           height={400}
-          data={data}
+          data={data01}
           margin={{
             top: 10,
             right: 30,
@@ -86,4 +89,4 @@ export default class Example extends PureComponent {
       </ResponsiveContainer>
     );
   }
-}
+

@@ -2,9 +2,6 @@ import React , { useState, useEffect , useContext } from 'react'
 import {
    Ellipsis ,
    DollarSign  ,
-   BedDouble ,
-   MessageSquareMore ,
-   OctagonAlert  ,
    ChevronDown,
    CalendarDays ,
    MessageSquareWarning  ,
@@ -30,8 +27,8 @@ import {
   } from "@/components/ui/dropdown-menu";
   import {Example1} from "./pieChart";
   import { Example } from "./subscribersChart";
-  import ReserChart from "./reservationChart";
-  import RevChart from "./revenueChart";
+  import { ReserChart } from "./reservationChart";
+  import { RevChart } from "./revenueChart";
   import { addDays, format } from "date-fns"
 
   import { cn } from "@/lib/utils"
@@ -48,9 +45,9 @@ import { axiosClient } from '../../api/axios';
 
 
 export default function Dashboard() {
-  const today = new Date().toISOString().split('T')[0]; 
 
-  const [date, setDate] = useState({ from: today, to: today });
+
+  const [date, setDate] = useState({});
   
   const [ filter1, setFilter1 ] = useState("lastw");
   const [ filter2, setFilter2 ] = useState("lastw");
@@ -63,21 +60,22 @@ export default function Dashboard() {
   const [properties, setProperties] = useState([]);
   const [users, setUsers] = useState([]);
   const [data, setData] = useState(null);
-  
   const [subscribers, setSubscribers] = useState(null);
   const [tickets, setTickets] = useState([]);
   const [reportP, setReportP] = useState([]);
   const [reportR, setReportR] = useState([]);
   const [reservations, setReservations] = useState([]);
-
+  const [revenue, setRevenue] = useState([])
   const [filteredSubsRevenue, setFilteredSubsRevenue] = useState(0);
   const [filteredSubscribers, setFilteredSubscribers] = useState([]);
+  const [filteredRevenue, setFilteredRevenue] = useState([]);
   const [filteredFeesRevenue, setFilteredFeesRevenue] = useState(0);
   const [filteredProperties, setFilteredProperties] = useState(0);
   const [filteredUsers, setFilteredUsers] = useState(0);
   const [filteredTickets, setFilteredTickets] = useState(0);
   const [filteredReportP, setFilteredReportP] = useState(0);
   const [filteredReportR, setFilteredReportR] = useState(0);
+
   const getSubsRevenue = async () => {
     try {
         const response = await axiosClient.get('/admin/get-dashboard-data');
@@ -88,13 +86,18 @@ export default function Dashboard() {
         setReportP(response.data.reportsProp);
         setReportR(response.data.reportsReview);
         setReservations(response.data.reservations)
-        console.log('users in   ',response.data.reservations)
+        setRevenue(response.data.revenue)
+        setFeesRevenue(response.data.feesRev)
         processUserRoles(response.data.users);
-        filterBookings("lastw")
+     
     } catch (error) {
         console.log(error)
         console.error('something went wrong when getting revenue data');
     }
+    const today = new Date(); 
+    today.setHours(0,0,0,0);
+    setDate({ from: today, to: today });
+    filterStats();
 };
 const processUserRoles = (users) => {
   let hostCount = 0;
@@ -112,7 +115,6 @@ const processUserRoles = (users) => {
       guestCount++;
     }
   });
-  console.log('users', users);
   const updatedData = [
     { name: 'host', value: hostCount },
     { name: 'guest', value: guestCount },
@@ -146,11 +148,11 @@ let subscribersCount = [
 
 
  useEffect(()=>{
-  getSubsRevenue();
+   getSubsRevenue();
+   
  },[])
- useEffect(()=>{
-  console.log(data);
- },[data])
+
+ 
  const filterStats = () => {
   const today = new Date(); 
  
@@ -203,29 +205,24 @@ let subscribersCount = [
       const endDate = new Date(date.to);
       return joinDate >= startDate && joinDate <= endDate ;
     });
-    console.log('subs ',filtered)
     setFilteredSubscribers(filtered)
     const totalSubsRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
     setFilteredSubsRevenue(totalSubsRevenue);
     
-    filtered = subsRevenue.filter(problem => {
+    filtered = feesRevenue.filter(problem => {
       const joinDate = new Date(problem.createdAt);
       const startDate = new Date(date.from);
       const endDate = new Date(date.to);
       return joinDate >= startDate && joinDate <= endDate ;
     });
-    setFilteredSubscribers(filtered)
-    const totalFeesRevenue = filtered.reduce((sum, item) => sum + item.price, 0);
-    setFilteredFeesRevenue(totalFeesRevenue);
-    
-    
-  
+    const totalSubsRevenue1 = filtered.reduce((sum, item) => sum + item.price, 0);
+    setFilteredFeesRevenue(totalSubsRevenue1)
+   
   }
-  
- 
 }
 useEffect(()=>{
   filterStats();
+  console.log(date)
  },[date])
  const [ filteredReservations, setFilteredReservations] = useState([])
 
@@ -236,43 +233,75 @@ useEffect(()=>{
       case "lastw":
           const startOfLastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
            filtered = filtered.filter(problem => {
-              const joinDate = new Date(problem.createdAt);
-              return joinDate >= startOfLastWeek && joinDate < today;
+              const joinDate = new Date(problem.name);
+              return joinDate >= startOfLastWeek && joinDate <= today;
           });
           break;
       case "lastm":
           const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
           const endOfLastMonth = new Date(startOfLastMonth.getFullYear(), startOfLastMonth.getMonth() + 1 , 1);
            filtered = filtered.filter(problem => {
-              const joinDate = new Date(problem.createdAt);
+              const joinDate = new Date(problem.name);
               return joinDate >= startOfLastMonth && joinDate <= endOfLastMonth;
           });
-         
           break;
       case "lasty":
           const startOfLastYear = new Date(today.getFullYear()-1, today.getMonth() , 1);
           const endOfLastYear = new Date(startOfLastYear.getFullYear(), startOfLastYear.getMonth() + 1 , 1);
            filtered = filtered.filter(problem => {
-              const joinDate = new Date(problem.createdAt);
+              const joinDate = new Date(problem.name);
               return joinDate >= startOfLastYear && joinDate <= endOfLastYear;
           });
-         
           break;
       default:
           break;
   }
-  const result = {};
-  filtered.forEach(problem => {
-    const dateKey = problem.createdAt.split('T')[0]; // Get date without time
-    if (!result[dateKey]) {
-      result[dateKey] = { cancelled: 0, reserved: 0 };
-    }
-    result[dateKey][problem.status]++; // Increment count based on status
-  });
-
-  console.log("rrrrr  " ,result);
   setFilteredReservations(filtered);
 }
+
+useEffect(()=>{
+   if(filter1 !== "null" && reservations.length !== 0){
+    filterBookings(filter1)
+   }
+},[filter1,reservations])
+const filterRevenue = (str) => {
+  const today = new Date(); 
+  let filtered = revenue.slice();
+  switch (str) {
+      case "lastw":
+          const startOfLastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+           filtered = filtered.filter(problem => {
+              const joinDate = new Date(problem.name);
+              return joinDate >= startOfLastWeek && joinDate <= today;
+          });
+          break;
+      case "lastm":
+          const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+          const endOfLastMonth = new Date(startOfLastMonth.getFullYear(), startOfLastMonth.getMonth() + 1 , 1);
+           filtered = filtered.filter(problem => {
+              const joinDate = new Date(problem.name);
+              return joinDate >= startOfLastMonth && joinDate <= endOfLastMonth;
+          });
+          break;
+      case "lasty":
+          const startOfLastYear = new Date(today.getFullYear()-1, today.getMonth() , 1);
+          const endOfLastYear = new Date(startOfLastYear.getFullYear(), startOfLastYear.getMonth() + 1 , 1);
+           filtered = filtered.filter(problem => {
+              const joinDate = new Date(problem.name);
+              return joinDate >= startOfLastYear && joinDate <= endOfLastYear;
+          });
+          break;
+      default:
+          break;
+  }
+  setFilteredRevenue(filtered);
+}
+useEffect(()=>{
+   if(filter2 !== "null" && reservations.length !== 0){
+    filterRevenue(filter2)
+   }
+},[filter2,revenue])
+
   return (
     <div className='bg-[#f8f7ff79]  px-5 pt-16 pl-24 p-3 pr-5'>
       <div className='flex justify-between items-center pt-10 pb-8 px-5'>
@@ -329,7 +358,7 @@ useEffect(()=>{
       </div>
       <div className='flex items-center  gap-2'>
         <div className='flex flex-col ml-3 '> 
-            <p className='text-2xl font-medium  '>{filteredSubsRevenue}</p>
+            <p className='text-2xl font-medium  '>{filteredSubsRevenue + filteredFeesRevenue}</p>
             <p className='text-ld text-gray-200 font-small'>Revenue</p>
         </div>
       </div>
@@ -416,7 +445,7 @@ useEffect(()=>{
   </div>
  <div className="flex items-center ">
   <div className='flex items-center justify-center basis-1/1 w-full h-72 '>
-      <ReserChart />
+      <ReserChart data01={filteredReservations} />
     </div>
    
  </div>
@@ -434,7 +463,7 @@ useEffect(()=>{
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-36 bg-white">
               <DropdownMenuRadioGroup value={filter2} onValueChange={setFilter2}>
-              <DropdownMenuRadioItem value="lastw">last week</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="lastw">last weeks</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="lastm">last month</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="lasty">last year</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
@@ -444,7 +473,7 @@ useEffect(()=>{
   </div>
  <div className="flex items-center ">
   <div className='flex items-center justify-center basis-1/1 w-full h-72 '>
-      <RevChart />
+      <RevChart data01={filteredRevenue}/>
     </div>
    
  </div>
@@ -499,7 +528,7 @@ useEffect(()=>{
   </div>
   <div className='basis-1/3 p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
   <div>
-    <h3 className='text-2xl font-medium text-[#141414] mt-2'>Last ransaction:</h3>
+    <h3 className='text-2xl font-medium text-[#141414] mt-2'>Last transaction:</h3>
   </div>
  <div className="flex items-center ">
  <table className="min-w-full divide-y divide-gray-200  ">
