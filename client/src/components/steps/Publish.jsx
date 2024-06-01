@@ -1,9 +1,51 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { StepperContext } from '@/contexts/StepperContext';
 
 const Publish = () => {
   const { userData } = useContext(StepperContext);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
+  const displayImages = () => {
+    let promises = [];
+
+    for (let i = 0; i < userData.photos.length; i++) {
+      const reader = new FileReader();
+      const file = userData.photos[i];
+
+      const promise = new Promise((resolve, reject) => {
+        reader.onload = (e) => {
+          resolve(e.target.result);
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+      });
+
+      reader.readAsDataURL(file);
+      promises.push(promise);
+    }
+
+    Promise.all(promises)
+      .then((results) => {
+        setImagePreviews(results);
+      })
+      .catch((error) => {
+        console.error('Error loading images:', error);
+      });
+
+    return <div className='grid grid-cols-3'>
+      {
+        imagePreviews.splice(0, 6).map((fileURL, index) => (
+          <img
+            key={index}
+            src={fileURL}
+            alt={`Preview ${index}`}
+            className="h-[100px] w-[100px] m-2 rounded-md object-cover"
+          />
+        ))
+      }
+    </div>
+  };
   return (
     <div className='p-6'>
       <h1 className='text-2xl font-medium mb-6'>Preview your listing</h1>
@@ -18,11 +60,9 @@ const Publish = () => {
         <p className='text-gray-800 mb-2'>Bathrooms: <span className='font-semibold'>{userData.bathrooms}</span></p>
         <p className='text-gray-800 mb-2'>Beds: <span className='font-semibold'>{userData.beds}</span></p>
 
-        {/* <div className='photos flex overflow-x-auto gap-2 justify-center mt-4'>
-          {userData.photos.map((photo, index) => (
-            <img key={index} src={photo} alt={`Photo ${index + 1}`} className='w-24 h-24 object-cover rounded-md border border-gray-300' />
-          ))}
-        </div> */}
+        {
+          displayImages()
+        }
       </div>
     </div>
   );
