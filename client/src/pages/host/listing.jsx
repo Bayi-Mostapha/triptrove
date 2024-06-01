@@ -15,6 +15,7 @@ function ListingComponent() {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1);
   const { userData } = useContext(StepperContext); // Access userData from StepperContext
+  const [loading, setLoading] = useState(false)
 
   const steps = [
     "General Details",
@@ -49,12 +50,16 @@ function ListingComponent() {
 
   const handlePublish = async () => {
     try {
+      setLoading(true)
       const response = await axiosClient.post('/properties', userData);
-      console.log('Property created successfully:', response.data);
       uploadFiles(response.data._id);
+      navigate('/listings')
+      toast.success('property created successfully')
     } catch (error) {
       console.error('Error creating property:', error);
-      // Add any error handling
+      toast.error('something went wrong')
+    } finally {
+      setLoading(false)
     }
   };
   const uploadFiles = async (id) => {
@@ -87,6 +92,7 @@ function ListingComponent() {
           </div>
         </div>
         <StepperControl
+          loading={loading}
           handleClick={handleClick}
           handlePublish={handlePublish}
           currentStep={currentStep}

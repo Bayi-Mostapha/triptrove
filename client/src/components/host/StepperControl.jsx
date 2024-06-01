@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StepperControl = ({ handleClick, handlePublish, currentStep, steps }) => {
+const StepperControl = ({ loading, handleClick, handlePublish, currentStep, steps }) => {
   const isLastStep = currentStep === steps.length;
 
   const handleButtonClick = () => {
@@ -24,8 +24,9 @@ const StepperControl = ({ handleClick, handlePublish, currentStep, steps }) => {
 
       {/* Next / Publish Button */}
       <button
+        disabled={loading}
         onClick={handleButtonClick}
-        className='bg-[#7065F0] text-white uppercase py-3 px-4 rounded-lg font-semibold cursor-pointer hover:bg-slate-700 hover:text-white transition duration-200 ease-in-out'
+        className='bg-[#7065F0] text-white uppercase py-3 px-4 rounded-lg font-semibold cursor-pointer hover:bg-slate-700 hover:text-white transition duration-200 ease-in-out disabled:opacity-60 disabled:hover:cursor-not-allowed'
       >
         {isLastStep ? "Publish" : "Next Step"}
       </button>
