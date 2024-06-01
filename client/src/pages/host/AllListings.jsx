@@ -3,6 +3,7 @@ import { axiosClient } from '@/api/axios';
 import PropertyCard from '@/components/host/PropertyCard';
 import { Link } from 'react-router-dom';
 import { IoSearch } from "react-icons/io5";
+import { toast } from 'react-toastify';
 
 function AllListings() {
     const [listings, setListings] = useState([]);
@@ -23,8 +24,14 @@ function AllListings() {
         fetchProperties();
     }, []);
 
-    const handleRemoveListing = (id) => {
-        setListings(prevListings => prevListings.filter(listing => listing._id !== id));
+    const handleRemoveListing = async (id) => {
+        try {
+            await axiosClient.delete('/properties/' + id);
+            setListings(prevListings => prevListings.filter(listing => listing._id !== id));
+            toast.success('property deleted successfully')
+        } catch (error) {
+            toast.error('something went wrong')
+        }
     };
 
     return (
