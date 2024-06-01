@@ -174,6 +174,7 @@ export const updateAdmin = async (req, res, next) => {
 export const getDashboard = async (req, res, next) => {
   try {
     const subscriptions = await Subscription.find().select('price createdAt');
+    const feesRev = await Fee.find().select('price createdAt');
     const tickets = await ProblemReport.find().select('createdAt');
     const reportsProp = await PropertyReport.find().select('createdAt');
     const reportsReview = await ReviewReport.find().select('createdAt');
@@ -221,11 +222,11 @@ export const getDashboard = async (req, res, next) => {
       {
         $group: {
           _id: "$date",
-          subscriptionTotal: { $sum: "$price" }
+          totalSubscription: { $sum: "$price" }
         }
       }
     ]);
-
+    
     const fees = await Fee.aggregate([
       {
         $project: {
@@ -236,42 +237,32 @@ export const getDashboard = async (req, res, next) => {
       {
         $group: {
           _id: "$date",
-          feesTotal: { $sum: "$price" }
+          totalFees: { $sum: "$price" }
         }
       }
     ]);
-
+    
     // Merge the results
-    const combined = subscriptions1.concat(fees);
-
-    // Group the combined results by date
-    const finalResults = await Fee.aggregate([
-      {
-        $project: {
-          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          subscriptionTotal: { $ifNull: ["$subscriptionTotal", 0] },
-          feesTotal: { $ifNull: ["$feesTotal", 0] },
-        }
-      },
-      {
-        $group: {
-          _id: "$date",
-          totalSubscription: { $sum: "$subscriptionTotal" },
-          totalFees: { $sum: "$feesTotal" }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          date: "$_id",
-          totalSubscription: 1,
-          totalFees: 1,
-        }
-      },
-      {
-        $sort: { date: 1 }
+    const mergedResults = [...subscriptions1, ...fees].reduce((acc, item) => {
+      const name = item._id;
+      if (!acc[name]) {
+        acc[name] = { name, totalSubscription: 0, totalFees: 0 , total: 0};
       }
-    ]);
+      if (item.totalSubscription !== undefined) {
+        acc[name].totalSubscription = item.totalSubscription;
+      }
+      if (item.totalFees !== undefined) {
+        acc[name].totalFees = item.totalFees;
+      }
+      
+      acc[name].total = acc[name].totalSubscription + acc[name].totalFees; 
+      
+      return acc;
+    }, {});
+    
+    const finalResults = Object.values(mergedResults).sort((a, b) => new Date(a.name) - new Date(b.name));
+    
+    
     const properties = await Property.find().select('createdAt');
     let users = await User.find({}, { password: 0 }).select('firstName lastName email role createdAt image');
 
@@ -307,6 +298,11 @@ export const getDashboard = async (req, res, next) => {
       createdAt: formatDate(user.createdAt),
     }));
 
+    const formattedFeesRev = feesRev.map(user => ({
+      ...user.toObject(),
+      createdAt: formatDate(user.createdAt),
+    }));
+
     
 
     res.status(200).json({
@@ -318,6 +314,7 @@ export const getDashboard = async (req, res, next) => {
       users: formattedUsers,
       reservations: reservations,
       revenue: finalResults ,
+      feesRev: formattedFeesRev,
     });
   } catch (error) {
     console.error('Error getting dashboard data:', error);

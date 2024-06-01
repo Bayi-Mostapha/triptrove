@@ -556,10 +556,10 @@ export default function Support() {
             </div>
 :
     <div className='w-full pt-4'>
-        <div className='pb-2 '>
+        <div className='pb-2  '>
            
         </div>
-        <div className='flex flex-col rounded bg-[#faf8f8] w-full py-5 px-7 mb-4 min-h-screen relative'> 
+        <div className='flex flex-col rounded bg-[#faf8f8] w-full py-5 px-7 mb-4 min-h-screen relative pt-16'> 
         <div className='cursor-pointer absolute top-3 right-3 z-0' onClick={()=> setActualTicket(null)}>
                 <X    size={30} />
             </div>

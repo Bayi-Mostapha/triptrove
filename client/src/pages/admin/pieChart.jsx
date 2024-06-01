@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { PieChart, Pie, Sector, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 
-const COLORS = ['#0088FE', '#FFBB28', '#FFBB28'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
 export const Example1 = ({data01})=> {
  
