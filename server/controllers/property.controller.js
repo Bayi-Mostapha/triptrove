@@ -125,7 +125,7 @@ export const getPropertyHost = async (req, res) => {
 // get all properties of a location
 export const getPropertyLocation = async (req, res) => {
   try {
-    const city = req.params.city.toLowerCase();
+    const city = req.params.city();
     const properties = await Property.find({ city });
     res.status(200).json(properties);
   } catch (error) {
