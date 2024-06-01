@@ -31,16 +31,16 @@ export default function PlaceGallery({ place }) {
             <div className="grid gap-1 grid-cols-[2fr_1fr] rounded-lg overflow-hidden">
                 {place.photos?.[0] && (
                     <div>
-                        <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover" src={place.photos[0]} alt="" />
+                        <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover w-full h-full" src={place.photos[0]} alt="" />
                     </div>
                 )}
                 <div className="grid">
                     {place.photos?.[1] && (
-                        <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover" src={place.photos[1]} alt="" />
+                        <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover w-full h-full" src={place.photos[1]} alt="" />
                     )}
                     <div className="overflow-hidden">
                         {place.photos?.[2] && (
-                            <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover relative top-1" src={place.photos[2]} alt="" />
+                            <img onClick={() => setShowAllPhotos(true)} className="aspect-video cursor-pointer object-cover w-full h-full relative top-1" src={place.photos[2]} alt="" />
                         )}
                     </div>
                 </div>

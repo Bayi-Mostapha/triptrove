@@ -171,7 +171,7 @@ export const createBooking = async (req, res) => {
             }
         };
         const ourEarnings = getOurEarnings(host.subscriptionType);
-        await Fee.create({ amount: ourEarnings }, { session });
+        await Fee.create([{ price: ourEarnings }], { session: session });
 
         await session.commitTransaction();
         session.endSession();

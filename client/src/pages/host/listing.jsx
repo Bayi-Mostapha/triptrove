@@ -8,8 +8,11 @@ import Price from '@/components/steps/Price';
 import Additionalinfo from '@/components/steps/Additionalinfo';
 import Publish from '@/components/steps/Publish';
 import { axiosClient } from "../../api/axios"; // Adjust the path as needed
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function ListingComponent() {
+  const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1);
   const { userData } = useContext(StepperContext); // Access userData from StepperContext
 
@@ -55,18 +58,20 @@ function ListingComponent() {
     }
   };
   const uploadFiles = async (id) => {
-   
+
     const formData = new FormData();
     Array.from(userData.photos).forEach(file => formData.append('image', file));
 
     try {
-        console.log(formData)
+      console.log(formData)
       const response = await axiosClient.post(`/properties/images/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log('Upload successful:', response.data);
+      toast.success('created successfully')
+      navigate('/listings')
     } catch (error) {
       console.error('Error uploading files:', error);
     }
