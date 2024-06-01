@@ -424,17 +424,6 @@ export default function Properties() {
                                 ))}
                             </select>
                         </div>
-                        <div  className='mr-3'>
-                            <select 
-                             name="type" 
-                             onChange={handleTypeChange} 
-                             value={selectedType} 
-                             className='h-10 w-full  max-w-xs rounded-md border border-[#D7E0ED] bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'>
-                                <option value="null">choose a Type</option>
-                                <option value="villa">villa</option>
-                                <option value="appertement">appertement</option>
-                            </select>
-                        </div>
                     </div>
                 }
                 <div className='flex items-center'>
