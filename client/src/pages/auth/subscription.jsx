@@ -54,7 +54,7 @@ function CheckoutForm() {
         toast.error("something went wrong");
       } else {
         toast.success("Subscription created successfully!");
-          navigate("/home");
+          navigate("/explore");
       }
     } catch (error) {
       setLoading(false)
@@ -63,7 +63,7 @@ function CheckoutForm() {
   };
   const createFreeSubscription = async () => {
     try {
-        navigate("/home");
+        navigate("/explore");
     } catch (error) {
       toast.error("something went wrong");
     }

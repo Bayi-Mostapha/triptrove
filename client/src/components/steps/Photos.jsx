@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { axiosClient } from '@/api/axios';
 import { StepperContext } from '@/contexts/StepperContext';
-
+import { CircleCheckBig } from 'lucide-react';
 export default function Photos() {
   const { userData, updateUserData } = useContext(StepperContext);
   const [isDragging, setIsDragging] = useState(false);
@@ -71,14 +71,15 @@ export default function Photos() {
         </div>
       ) : (
         <div className="flex flex-wrap justify-center">
-          {userData.photos.map((fileURL, index) => (
+          <CircleCheckBig size={70} color='green'/>
+          {/* {userData.photos.map((fileURL, index) => (
             <img
               key={index}
               src={fileURL}
               alt={`Preview ${index}`}
               className="h-[100px] w-[100px] m-2 rounded-md object-cover"
             />
-          ))}
+          ))} */}
         </div>
       )}
     </div>
