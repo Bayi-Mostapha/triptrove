@@ -6,19 +6,22 @@ export default function Photos() {
   const { userData, updateUserData } = useContext(StepperContext);
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+
   const handleFiles = () => {
     if (files.length < 3) {
       alert('Please select at least 3 photos.');
-    } else{
+    } else {
       updateUserData({ photos: files });
+      console.log(files);
     }
   };
- useEffect(()=>{
-  if (files.length !== 0 ) {
-    handleFiles();
-  }
- },[files]);
- 
+  useEffect(() => {
+    if (files.length !== 0) {
+      handleFiles();
+    }
+  }, [files]);
+
 
   const handleClick = () => {
     document.getElementById('fileInput').click();
@@ -38,18 +41,55 @@ export default function Photos() {
     setIsDragging(false);
     const selectedFiles = Array.from(e.dataTransfer.files);
     setFiles(selectedFiles)
-   
+
   };
 
   const handleChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles)
-   
   };
-  
+
+  const displayImages = () => {
+    let promises = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      const file = files[i];
+
+      const promise = new Promise((resolve, reject) => {
+        reader.onload = (e) => {
+          resolve(e.target.result);
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+      });
+
+      reader.readAsDataURL(file);
+      promises.push(promise);
+    }
+
+    Promise.all(promises)
+      .then((results) => {
+        setImagePreviews(results);
+      })
+      .catch((error) => {
+        console.error('Error loading images:', error);
+      });
+
+    return imagePreviews.splice(0, 6).map((fileURL, index) => (
+      <img
+        key={index}
+        src={fileURL}
+        alt={`Preview ${index}`}
+        className="h-[100px] w-[100px] m-2 rounded-md object-cover"
+      />
+    ));
+  };
+
   return (
     <div
-      className={`border h-[300px] w-full rounded-xl flex items-center justify-center ${isDragging ? 'bg-gray-200' : ''}`}
+      className={`border p-4 w-full rounded-xl flex items-center justify-center ${isDragging ? 'bg-gray-200' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -70,16 +110,14 @@ export default function Photos() {
           <h1 className='underline cursor-pointer' onClick={handleClick}>Upload from your device</h1>
         </div>
       ) : (
-        <div className="flex flex-wrap justify-center">
-          <CircleCheckBig size={70} color='green'/>
-          {/* {userData.photos.map((fileURL, index) => (
-            <img
-              key={index}
-              src={fileURL}
-              alt={`Preview ${index}`}
-              className="h-[100px] w-[100px] m-2 rounded-md object-cover"
-            />
-          ))} */}
+        <div className='flex flex-col items-center'>
+          <CircleCheckBig size={60} color='green' />
+          <p className='text-green-800 font-medium mb-4'>Images selected</p>
+          <div className="grid grid-cols-3 gap-2">
+            {
+              displayImages()
+            }
+          </div>
         </div>
       )}
     </div>

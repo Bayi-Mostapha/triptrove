@@ -1,10 +1,11 @@
 import { axiosClient } from '@/api/axios';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CheckCircle } from 'lucide-react';
 
 function BookingSuccess() {
+    const navigate = useNavigate()
     const location = useLocation();
     const [paymentSaved, setPaymentSaved] = useState(false);
     const searchParams = new URLSearchParams(location.search);
@@ -21,6 +22,7 @@ function BookingSuccess() {
                 });
                 setPaymentSaved(true);
                 toast.success('Payment saved!');
+                navigate('/bookings')
             } catch (error) {
                 console.error(error);
                 toast.error('Something went wrong! Please refresh the page');
