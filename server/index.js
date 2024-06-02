@@ -27,7 +27,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { initSocket } from './services/socket.js';
 
-const app = express();
+const app = express();   
 const server = http.Server(app);
 const io = initSocket(server);
 

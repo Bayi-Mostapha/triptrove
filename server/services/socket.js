@@ -22,7 +22,7 @@ export function initSocket(server) {
       console.log('User disconnected');
     });
   });
-
+   
   return io;
 }
 

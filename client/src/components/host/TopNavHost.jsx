@@ -257,7 +257,7 @@ export default function TopNav() {
     return () => {
       socket.off('notification');
       socket.emit('leaveRoom', userContext.user?._id);
-    };
+    }; 
   }, [userContext.user]);
 
 
