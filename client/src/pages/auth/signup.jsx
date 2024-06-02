@@ -154,14 +154,7 @@ export default function SignUp() {
 
        <div className='basis-2/2 w-full md:basis-1/2 lg:ml-16 flex flex-col lg:mr-10 pb-16 lg:pb-0  '>
          <div> 
-          <div className='flex justify-end mb-5 '>
-            <div className='flex items-center cursor-pointer' onClick={changeLang}>
-              <p className=' text-sm text-gray-700 font-medium'>
-                english 
-              </p>
-              <TiArrowSortedDown  className='text-gray-700'/>
-            </div>
-          </div>
+         
            <h2 className='text-5xl font-medium mb-4'>Sign up</h2>
            <Link to={LOGIN_LINK} className='flex items-center mb-6'>
              <p className='text-sm text-gray-500'>Already have an account?</p>

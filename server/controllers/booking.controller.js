@@ -5,6 +5,8 @@ import User from "../models/user.model.js";
 import Wallet from "../models/wallet.model.js";
 import Stripe from "stripe";
 import Fee from "../models/fee.model.js";
+import { getSocket } from '../services/socket.js';
+import Notification from "../models/notification.model.js"
 
 export const getHostBookings = async (req, res) => {
     const userId = req.userId;
@@ -139,6 +141,19 @@ export const createBooking = async (req, res) => {
         if (!host) {
             throw new Error('Host not found');
         }
+        // notification start
+        const notification = new Notification({
+            user_id: hostId,
+            message: `you get a new reservation  `,
+            link: '/host/bookings'
+          });
+          await notification.save();
+      
+          const io = getSocket();
+          io.to(hostId.toString()).emit('notification', {
+            message: notification,
+          });
+        // notification end
 
         const hostWallet = await Wallet.findOne({ host: hostId }).session(session);
 

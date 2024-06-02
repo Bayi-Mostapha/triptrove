@@ -75,6 +75,7 @@ export default function Dashboard() {
   const [filteredTickets, setFilteredTickets] = useState(0);
   const [filteredReportP, setFilteredReportP] = useState(0);
   const [filteredReportR, setFilteredReportR] = useState(0);
+  const [subsData, setSubsData] = useState([]);
 
   const getSubsRevenue = async () => {
     try {
@@ -85,11 +86,11 @@ export default function Dashboard() {
         setTickets(response.data.tickets);
         setReportP(response.data.reportsProp);
         setReportR(response.data.reportsReview);
-        setReservations(response.data.reservations)
-        setRevenue(response.data.revenue)
-        setFeesRevenue(response.data.feesRev)
+        setReservations(response.data.reservations);
+        setRevenue(response.data.revenue);
+        setFeesRevenue(response.data.feesRev);
         processUserRoles(response.data.users);
-     
+        setSubsData(response.data.subs);
     } catch (error) {
         console.log(error)
         console.error('something went wrong when getting revenue data');
@@ -528,7 +529,7 @@ useEffect(()=>{
   </div>
   <div className='basis-1/3 p-5 rounded-xl border-[2px] border-gray-100 w-full flex-col flex bg-white'>
   <div>
-    <h3 className='text-2xl font-medium text-[#141414] mt-2'>Last transaction:</h3>
+    <h3 className='text-2xl font-medium text-[#141414] mt-2'>Last Subscribers:</h3>
   </div>
  <div className="flex items-center ">
  <table className="min-w-full divide-y divide-gray-200  ">
@@ -552,54 +553,26 @@ useEffect(()=>{
                           </tr>
                       </thead>
                       <tbody className="bg-white   dark:bg-gray-800 dark:divide-gray-700">
-                       <tr>
+
+                      { 
+                       subsData?.map((sub)=>(
+<tr>
                        <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
                             <Avatar className="w-10 h-10 cursor-pointer">
                                 <AvatarImage   alt="@shadcn"  />
-                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
+                                <AvatarFallback className="bg-[#e0eb4c]">{sub.userId.firstName[0]}</AvatarFallback>
                             </Avatar>
-                            <p>reda gggh</p>
+                            <p>{sub.userId.fullName}</p>
                        </td>
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{sub.userId.subscriptionType}</td>
         
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
+                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">{sub.price}</td>
                        </tr>
-                       <tr>
-                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
-                            <Avatar className="w-10 h-10 cursor-pointer">
-                                <AvatarImage   alt="@shadcn"  />
-                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
-                            </Avatar>
-                            <p>reda gggh</p>
-                       </td>
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
-        
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
-                       </tr>
-                       <tr>
-                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
-                            <Avatar className="w-10 h-10 cursor-pointer">
-                                <AvatarImage   alt="@shadcn"  />
-                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
-                            </Avatar>
-                            <p>reda gggh</p>
-                       </td>
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
-        
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
-                       </tr>
-                       <tr>
-                       <td className="py-3  text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center justify-start gap-2">
-                            <Avatar className="w-10 h-10 cursor-pointer">
-                                <AvatarImage   alt="@shadcn"  />
-                                <AvatarFallback className="bg-[#e0eb4c]">{"R"}</AvatarFallback>
-                            </Avatar>
-                            <p>reda gggh</p>
-                       </td>
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">premium</td>
-        
-                       <td className="py-3  text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">$100</td>
-                       </tr>
+                       ))
+                      
+                      }
+
+                       
                       </tbody>
 </table>
  </div>
