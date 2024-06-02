@@ -167,14 +167,7 @@ export default function ForgetPassword() {
 
      <div className='basis-2/2 w-full md:basis-1/2 lg:ml-16 flex flex-col lg:mr-10 pb-16 lg:pb-0  '>
        <div> 
-        <div className='flex justify-end mb-5 '>
-          <div className='flex items-center cursor-pointer' onClick={changeLang}>
-            <p className=' text-sm text-gray-700 font-medium'>
-              english 
-            </p>
-            <TiArrowSortedDown  className='text-gray-700'/>
-          </div>
-        </div>
+       
          <h2 className='text-5xl font-medium mb-4'>Reset Password</h2>
           { 
             error
@@ -235,7 +228,7 @@ export default function ForgetPassword() {
          }
          <div className=' mb-4'>
             <button 
-            className={`py-3   outline-none text-white text-xl font-medium rounded-xl w-full bg-green-700 ${disabledFlag ? 'cursor-not-allowed opacity-50' : ""}`}
+            className={`py-3   outline-none text-white text-xl font-medium rounded-xl w-full bg-[#7065f0] ${disabledFlag ? 'cursor-not-allowed opacity-50' : ""}`}
             onClick={codeSend  ? newPass ? handleNewPass : handleReset : handleSubmit}
             disabled={disabledFlag} 
             >

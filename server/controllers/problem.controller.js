@@ -25,7 +25,7 @@ export const createMessage = async (req, res) => {
         } if (userType == "admin") {
             const sender = await Admin.findById(req.userId);
             const newMessage = await Message.create({ problemReport: problemId, admin: sender, senderRole: sender.role, content });
-            await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
+             await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
         }
 
         res.status(201).json({ message: 'message sent' });

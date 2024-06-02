@@ -392,7 +392,7 @@ export default function TopNav() {
                                       :
                                       <DropdownMenuItem className="p-0" >
                                         <div className='w-full h-full rounded hover:bg-slate-200 py-2 px-3 text-md cursor-pointer' onClick={() => upgradePlan("premium")}>
-                                          downgrade premium
+                                          downgrade to premium
                                         </div>
                                       </DropdownMenuItem>
                                   }

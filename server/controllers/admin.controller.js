@@ -177,6 +177,10 @@ export const getDashboard = async (req, res, next) => {
     const feesRev = await Fee.find().select('price createdAt');
     const tickets = await ProblemReport.find().select('createdAt');
     const reportsProp = await PropertyReport.find().select('createdAt');
+    const subsData = await Subscription.find()
+  .sort({ _id: -1 })  // Sort by _id in descending order to get the most recent entries
+  .limit(4)  
+  .populate('userId');  
     const reportsReview = await ReviewReport.find().select('createdAt');
     const reservations = await Booking.aggregate([
       {
@@ -303,6 +307,11 @@ export const getDashboard = async (req, res, next) => {
       createdAt: formatDate(user.createdAt),
     }));
 
+    const formattedSubsData = subsData.map(user => ({
+      ...user.toObject(),
+      createdAt: formatDate(user.createdAt),
+    }));
+
     
 
     res.status(200).json({
@@ -315,6 +324,7 @@ export const getDashboard = async (req, res, next) => {
       reservations: reservations,
       revenue: finalResults ,
       feesRev: formattedFeesRev,
+      subs:formattedSubsData,
     });
   } catch (error) {
     console.error('Error getting dashboard data:', error);
