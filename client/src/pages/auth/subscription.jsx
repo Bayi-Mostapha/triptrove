@@ -66,7 +66,7 @@ function CheckoutForm() {
   const createFreeSubscription = async () => {
     try {
         navigate("/explore");
-    } catch (error) {
+    } catch (error) { 
       toast.error("something went wrong");
     }
   };

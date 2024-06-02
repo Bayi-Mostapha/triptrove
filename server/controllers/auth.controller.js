@@ -97,7 +97,7 @@ export const signin = async (request, response, next) => {
             user: "boumhaaziz@gmail.com", 
             pass: "xnzeixxvtnlsrhmj", 
           },
-        });
+        }); 
         
         await transporter.sendMail({
           from: 'boumhaaziz@gmail.com',

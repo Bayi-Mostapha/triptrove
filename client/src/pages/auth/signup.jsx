@@ -124,7 +124,7 @@ export default function SignUp() {
         }
       });
   
-      navigate("/home");
+      navigate("/explore");
       return true;
     } catch (error) {
       
