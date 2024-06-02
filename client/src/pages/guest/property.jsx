@@ -57,10 +57,11 @@ function Property() {
             if (response.data.reviews.length > 0) {
                 const starsArray = response.data.reviews.map(rating => rating.stars);
                 const avgRating = starsArray.reduce((acc, cur) => acc + cur, 0) / starsArray.length;
-                setRating(avgRating);
+                const formattedAvgRating = parseFloat(avgRating.toFixed(2));
+                setRating(formattedAvgRating);
             } else {
-                setRating(0)
-            }
+                setRating(0);
+            }            
 
             const res = await axiosClient.get('/favorites/' + response.data.property._id);
             setIsFavorite(res.data);

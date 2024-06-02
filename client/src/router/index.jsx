@@ -23,7 +23,6 @@ import Properties from "../pages/admin/properties"
 import Settings from "../pages/admin/settings"
 import NotFound from "../pages/notFound"
 
-import Home from "../pages/guest/home"
 import Explore from "../pages/guest/explore"
 
 import Profile from "../pages/guest/profile"
@@ -55,7 +54,6 @@ export const LOGIN_LINK = '/signin';
 export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
-export const HOME_LINK = '/home';
 export const EXPLORE_LINK = '/explore';
 export const HOST_LINK = '/host';
 export const LISTINGS_LINK = '/listings';

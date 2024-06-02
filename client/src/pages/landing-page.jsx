@@ -50,7 +50,7 @@ function LandingPage() {
         if (city) {
             const getProperties = async () => {
                 try {
-                    const res = await axiosClient.get('/properties/location/' + city);
+                    const res = await axiosClient.get('/properties/location/' + "Agadir");
                     setProperties(res.data)
                 } catch (error) {
                     console.error('Error getting properties:', error);

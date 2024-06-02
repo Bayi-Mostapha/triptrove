@@ -12,13 +12,13 @@ function BookingSuccess() {
     const pid = searchParams.get('pid');
     const checkIn = searchParams.get('checkIn');
     const checkOut = searchParams.get('checkOut');
-    const totalPrice = searchParams.get('totalPrice');
+    const tPrice = searchParams.get('tPrice');
 
     useEffect(() => {
         async function savePayment() {
             try {
                 await axiosClient.post('/book/' + pid, {
-                    checkIn, checkOut, totalPrice
+                    checkIn, checkOut, tPrice
                 });
                 setPaymentSaved(true);
                 toast.success('Payment saved!');
@@ -29,7 +29,7 @@ function BookingSuccess() {
             }
         }
         savePayment();
-    }, [pid, checkIn, checkOut, totalPrice]);
+    }, [pid, checkIn, checkOut, tPrice]);
 
     return (
         <div className='flex flex-col items-center justify-center w-full h-96'>

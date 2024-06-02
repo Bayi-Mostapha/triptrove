@@ -101,7 +101,7 @@ export const createBookingSession = async (req, res) => {
                 },
                 quantity: 1
             }],
-            success_url: frontend + `/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&totalPrice=${totalAmount}`,
+            success_url: frontend + `/booking-success?pid=${pid}&checkIn=${checkIn}&checkOut=${checkOut}&tPrice=${totalAmount}`,
             cancel_url: frontend + '/booking-fail',
         })
         res.json({ url: session.url })
@@ -116,7 +116,8 @@ export const createBooking = async (req, res) => {
 
     try {
         const { pid } = req.params;
-        const { checkIn, checkOut, totalPrice } = req.body;
+        const { checkIn, checkOut, tPrice } = req.body;
+        let totalPrice = parseFloat(tPrice)
         const guest = req.userId;
 
         if (!checkIn || !checkOut || !totalPrice) {
@@ -141,19 +142,20 @@ export const createBooking = async (req, res) => {
         if (!host) {
             throw new Error('Host not found');
         }
-        // notification start
+
+        // Notification start
         const notification = new Notification({
             user_id: hostId,
-            message: `you get a new reservation  `,
+            message: `you get a new reservation`,
             link: '/host/bookings'
-          });
-          await notification.save();
-      
-          const io = getSocket();
-          io.to(hostId.toString()).emit('notification', {
+        });
+        await notification.save();
+
+        const io = getSocket();
+        io.to(hostId.toString()).emit('notification', {
             message: notification,
-          });
-        // notification end
+        });
+        // Notification end
 
         const hostWallet = await Wallet.findOne({ host: hostId }).session(session);
 
@@ -169,7 +171,12 @@ export const createBooking = async (req, res) => {
             }
         };
         const hostEarnings = getHostEarnings(host.subscriptionType);
+
         if (hostWallet) {
+            // Check for invalid balance and correct it
+            if (!isFinite(hostWallet.balance) || isNaN(hostWallet.balance)) {
+                hostWallet.balance = 0;
+            }
             hostWallet.balance += hostEarnings;
             await hostWallet.save({ session });
         } else {
