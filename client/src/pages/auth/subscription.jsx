@@ -111,19 +111,19 @@ function CheckoutForm() {
     <div className="grid gap-4 m-auto lg:basis-1/2 md:w-2/3 w-full ">
     <h3 className="text-3xl font-semibold text-center ">Choose a Plan</h3>
       <div>
-          <label className="mb-3 flex  ps-4 border-2 border-[#7065f0] rounded flex-col py-2">
+          <label className="mb-3 flex  ps-4 border border-[#7065f0] rounded flex-col py-2">
           <div className="flex items-center">
-              <input id="free" checked={!isPaid} type="radio" value="null" onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-[#7065f0]  bg-gray-100 border-gray-300 " />
+              <input id="free" checked={!isPaid} type="radio" value="null" onChange={handleSubscriptionChange} name="subscription" className="accent-primary" />
               <label htmlFor="free" className="w-full py-4 ms-2 text-xl font-medium text-gray-900 dark:text-gray-300">free  0dh /month</label> 
           </div>
           <div className="flex flex-col ml-1">
                   <div className="flex items-center gap-2">
                     <CircleCheck  size={15} color="green"/>
-                    <p>only 5 properties</p>
+                    <p>up to 5 properties</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <CircleCheck  size={15} color="green"/>
-                    <p>5  fees on transactions</p>
+                    <p>10%  fees on transactions</p>
                   </div>
                  
                 </div>
@@ -131,36 +131,36 @@ function CheckoutForm() {
           {
             plans.length !== 0 && 
             <>
-            <label className="mb-3 flex  ps-4 border-2 border-[#7065f0] rounded flex-col py-2" >
+            <label className="mb-3 flex  ps-4 border border-[#7065f0] rounded flex-col py-2" >
                <div className="flex items-center">
-                <input id={plans[0].title} type="radio" value={plans[0].priceId} onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-[#7065f0]  bg-gray-100 border-gray-300 " />
+                <input id={plans[0].title} type="radio" value={plans[0].priceId} onChange={handleSubscriptionChange} name="subscription" className="accent-primary" />
                 <label htmlFor={plans[0].title} className="w-full py-4 ms-2 text-xl font-medium text-gray-900 dark:text-gray-300">{plans[0].title}  {plans[0].price}dh /month</label> 
                </div>
                 <div className="flex flex-col ml-1">
                   <div className="flex items-center gap-1">
                     <CircleCheck  size={15} color="green"/>
-                    <p>15 properties</p>
+                    <p>up to 15 properties</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <CircleCheck  size={15} color="green"/>
-                    <p>2  fees on transactions</p>
+                    <p>10%  fees on transactions</p>
                   </div>
                 </div>
           </label>
-          <label className="mb-3 flex  ps-4 border-2 border-[#7065f0] rounded flex-col py-2" >
+          <label className="mb-3 flex  ps-4 border border-[#7065f0] rounded flex-col py-2" >
           <div className="flex items-center">
-            <input id={plans[1].title} type="radio" value={plans[1].priceId} onChange={handleSubscriptionChange} name="subscription" className="w-4 h-4 text-[#7065f0]  bg-gray-100 border-gray-300 " />
+            <input id={plans[1].title} type="radio" value={plans[1].priceId} onChange={handleSubscriptionChange} name="subscription" className="accent-primary" />
             <label htmlFor={plans[1].title} className="w-full py-4 ms-2 text-xl font-medium text-gray-900 dark:text-gray-300">{plans[1].title}  {plans[1].price}dh /month</label> 
          </div>
          
             <div className="flex flex-col ml-1">
                   <div className="flex items-center gap-1">
                     <CircleCheck  size={15} color="green"/>
-                    <p>15 properties</p>
+                    <p>unlimited properties</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <CircleCheck  size={15} color="green"/>
-                    <p>2  fees on transactions</p>
+                    <p>0%  fees on transactions</p>
                   </div>
                 </div>
           </label></>
