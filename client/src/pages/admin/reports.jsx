@@ -54,7 +54,7 @@ function Reports() {
     }, [])
     return (
         <div className="mt-5 px-5 pt-16 pl-24 p-3 pr-5">
-            
+
             <Tabs defaultValue="reviews" className="w-full">
                 <div className="flex items-center justify-between">
                     <h1 className="mb-5 text-3xl font-semibold text-[#141414]">Reports</h1>

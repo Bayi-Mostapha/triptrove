@@ -16,7 +16,7 @@ function SupportProblem({ actualTicket, setActualTicket }) {
 
     const submitMessage = async () => {
         try {
-            await axiosClient.post('/problem/' + actualTicket._id + '/messages/user', { content: message })
+            await axiosClient.post('/problem/' + actualTicket._id + '/messages/user', { content: message, userType: 'user' })
             messages.push({ senderRole: 'user', content: message })
             setMessage('');
         } catch (error) {

@@ -22,10 +22,10 @@ export const createMessage = async (req, res) => {
             const sender = await User.findById(req.userId);
             const newMessage = await Message.create({ problemReport: problemId, user: sender, senderRole: sender.role, content });
             await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
-        } if (userType == "admin") {
+        } else if (userType == "admin") {
             const sender = await Admin.findById(req.userId);
             const newMessage = await Message.create({ problemReport: problemId, admin: sender, senderRole: sender.role, content });
-             await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
+            await ProblemReport.findByIdAndUpdate(problemId, { $push: { messages: newMessage._id } });
         }
 
         res.status(201).json({ message: 'message sent' });

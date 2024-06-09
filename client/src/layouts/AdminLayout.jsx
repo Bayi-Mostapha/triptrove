@@ -33,7 +33,7 @@ function AdminLayout() {
                 } */}
                 <SidebarItem icon={<Users color="#222222" size={22}/>} text={'Users'} location={"/admin/users"} />
                 <SidebarItem icon={<Building2   color="#222222" size={22}/>} text={'Properties'} location={"/admin/properties"} />
-                <SidebarItem icon={<ClipboardCheck   color="#222222" size={22}/>} text={'Reports'} location={"/admin/reports"} />
+                <SidebarItem icon={<ClipboardCheck   color="#222222" size={22}/>} text={'Reports'} location={"/admin/reports/all"} />
                 <SidebarItem icon={<MessageSquareWarning     color="#222222" size={22}/>} text={'support'} location={"/admin/support"} />
                 {  userContext.user.role === "superAdmin" &&
                     <SidebarItem icon={<UserRoundCheck    color="#222222" size={22}/>} text={'Admins'} location={ADMIN_ADMINS_LINK} />

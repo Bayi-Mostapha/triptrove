@@ -44,7 +44,7 @@ export const getReports = async (req, res) => {
 
         res.json(reportedProperties);
     } catch (error) {
-        console.error(`Error fetching reports for property ${id}:`, error);
+        console.error(`Error fetching reports for property:`, error);
         res.status(500).json({ message: 'Failed to fetch reports' });
     }
 };
