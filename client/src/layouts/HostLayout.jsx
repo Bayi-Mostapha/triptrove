@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import TopNav from "../components/host/TopNavHost"
-import Footer from "@/components/footer";
+
 function GuestLayout() {
 
     return (
@@ -8,8 +8,7 @@ function GuestLayout() {
             <TopNav />
             <main className="w-full max-w-6xl mx-auto flex-grow">
                 <Outlet />
-            </main>
-            <Footer />
+            </main>          
         </div>
     );
 }

@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
 import { authContext } from '../../contexts/AuthWrapper';
-import { LOGIN_LINK, PAYMENT_LINK } from '../../router/index'
+import { LOGIN_LINK } from '../../router/index'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

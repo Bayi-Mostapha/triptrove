@@ -4,7 +4,6 @@ import {
 
 // layouts 
 import AuthLayout from '../layouts/AuthLayout';
-import GuestLayout from '../layouts/GuestLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import HostLayout from '../layouts/HostLayout';
 
@@ -12,7 +11,6 @@ import HostLayout from '../layouts/HostLayout';
 import SignUp from '../pages/auth/signup';
 import SignIn from '../pages/auth/signin';
 import ForgetPassword from '../pages/auth/forgetPassword';
-import SubscriptionForm from "../pages/auth/paymentSubscription"
 
 import AdminSignIn from "../pages/admin/signin"
 import Dashboard from "../pages/admin/dashboard"
@@ -23,52 +21,27 @@ import Properties from "../pages/admin/properties"
 import Settings from "../pages/admin/settings"
 import NotFound from "../pages/notFound"
 
-import Explore from "../pages/guest/explore"
 
-import Profile from "../pages/guest/profile"
-import Property from '@/pages/guest/property';
 
-// import List from "../pages/host/listg"
-import List from "../pages/host/listing"
-import AllListings from "../pages/host/AllListings"
 
-import PropertyReviews from '@/pages/host/property-reviews';
-import BookingSucces from '@/pages/guest/booking-success';
-import Bookings from '@/pages/guest/bookings';
-import Reports from '@/pages/admin/reports';
-import BookingFail from '@/pages/guest/booking-fail';
-import Favorites from '@/pages/guest/favorites';
-import HostDashboard from '@/pages/host/dashboard';
-import HostBookings from '@/pages/host/bookings';
+
 
 // protectors 
 import GuestRoute from './protectors/GuestRoute';
 import AuthRoute from './protectors/AuthRoute';
 import AdminAuthRoute from './protectors/AdminAuthRoute';
-import USupport from '@/pages/support';
 import LandingPage from '@/pages/landing-page';
-import GuestLayout2 from '@/layouts/GuestLayout2';
+
 
 // auth 
 export const LOGIN_LINK = '/signin';
 export const REGISTER_LINK = '/signup/:role';
 export const RESETPASSWORD_LINK = '/forget-password';
 export const PAYMENT_LINK = '/pay';
-export const EXPLORE_LINK = '/explore';
-export const HOST_LINK = '/host';
-export const LISTINGS_LINK = '/listings';
 
 
-// Guest 
-export const PROFILE_LINK = '/profile';
-export const PROPERTY_LINK = '/property/:id';
-export const BOOKING_SUCCESS = '/booking-success';
-export const BOOKING_FAIL = '/booking-fail';
-export const BOOKINGS = '/bookings';
-export const FAVORITES = '/favorites';
 
-// Host
-export const REVIEWS = '/listing-reviews/:id';
+
 
 // Admin
 export const RESETPASSWORD_ADMIN_LINK = '/admin/forget-password';
@@ -109,73 +82,11 @@ export const router = createBrowserRouter([
         ]
     },
     {
-        element: <AuthLayout />,
+        element: <GuestRoute><HostLayout /></GuestRoute>,
         children: [
             {
-                path: PAYMENT_LINK,
-                element: <SubscriptionForm />
-            },
-        ]
-    },
-    {
-        element: <AuthRoute><GuestLayout /></AuthRoute>,
-        children: [
-            {
-                path: PROFILE_LINK,
-                element: <Profile />
-            },
-            {
-                path: EXPLORE_LINK,
-                element: <Explore />
-            },
-            {
-                path: PROPERTY_LINK,
-                element: <Property />
-            },
-            {
-                path: BOOKING_SUCCESS,
-                element: <BookingSucces />
-            },
-            {
-                path: BOOKING_FAIL,
-                element: <BookingFail />
-            },
-            {
-                path: BOOKINGS,
-                element: <Bookings />
-            },
-            {
-                path: FAVORITES,
-                element: <Favorites />
-            },
-            {
-                path: '/support',
-                element: <USupport />
-            },
-        ]
-    },
-    {
-        element: <AuthRoute><HostLayout /></AuthRoute>,
-        children: [
-            {
-                path: HOST_LINK,
-                element: <List />
-            },
-            {
-                path: LISTINGS_LINK,
-                element: <AllListings />
-            },
-            {
-                path: REVIEWS,
-                element: <PropertyReviews />
-            },
-            {
-                path: '/host/dashboard',
-                element: <HostDashboard />
-            },
-            {
-                path: '/host/bookings',
-                element: <HostBookings limit={false} />
+                path: "/home",
+                element: <LandingPage />
             },
         ]
     },
@@ -205,25 +116,7 @@ export const router = createBrowserRouter([
             {
                 path: ADMIN_SETTINGS_LINK,
                 element: <Settings />
-            },
-            {
-                path: ADMIN_REPORTS_LINK,
-                element: <Reports />
-            },
-            {
-                path: '/admin/reports/:id',
-                element: <Reports />
-            },
-        ]
-    },
-    {
-        element: <GuestLayout2 />, // not authenticated
-        children: [
-            {
-                path: '/',
-                element: <LandingPage />
-            },
-
+            }
         ]
     },
     {

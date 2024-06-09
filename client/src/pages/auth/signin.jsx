@@ -5,7 +5,6 @@ import { axiosClient } from "../../api/axios"
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { app } from '../../firebase';
-import { RESETPASSWORD_LINK, PAYMENT_LINK, REGISTER_LINK } from "../../router/index";
 import { authContext } from '../../contexts/AuthWrapper';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -160,7 +159,7 @@ export default function SignIn() {
               />
            </div>
            <div className='mb-3'>
-              <Link to={RESETPASSWORD_LINK} className='cursor-pointer'>forget password</Link>  
+              forget password 
            </div>
            <div className=' mb-4'>
               <button 
