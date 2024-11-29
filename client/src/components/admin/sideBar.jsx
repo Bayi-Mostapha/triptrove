@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 const SidebarContext = createContext()
 
 export default function SideBar({ children }) {
-    const [expanded, setExpanded] = useState(false)
+    // const [expanded, setExpanded] = useState(false)
 
     return (
         <aside className=" side-nav h-screen w-fit fixed top-0 left-0 z-50 shadow bg-white">
